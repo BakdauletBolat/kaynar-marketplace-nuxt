@@ -1,8 +1,16 @@
 <script setup lang="ts">
+import {isOpenCart} from "~/storages/storage";
+import Dialog from "~/components/Dialog/index";
+import UserCard from "~/components/UserCard.vue";
+
 </script>
 
 <template>
   <SidebarModal></SidebarModal>
+  <Dialog title="Ваша корзина" v-model="isOpenCart">
+    <UserCard></UserCard>
+<!--    <button @click="navigateToOrder" class="mt-3 bg-primary w-full block p-3 text-center rounded-sm">Оформить заказ</button>-->
+  </Dialog>
   <div class="relative min-h-full bg-slate-100">
     <Header></Header>
     <div class="bg-slate-100">

@@ -6,9 +6,10 @@
         <!-- Filters -->
         <FilterForm></FilterForm>
       </Dialog>
-      <main class="mx-auto max-w-7xl p-4 sm:px-6 lg:px-8">
-        <div class="flex p-4 items-baseline justify-between">
-          <h1 class="text-xl font-bold tracking-tight text-gray-900">Каталог</h1>
+      <main class="mx-auto max-w-7xl px-4">
+        <BreadCrumb class="mt-4" :options="breadcrumbs"></BreadCrumb>
+        <div class="flex mt-4 items-baseline justify-between">
+          <h1 class="text-xl font-bold tracking-tight text-gray-900">Поиск запчастей</h1>
           <div class="flex items-center">
             <Menu as="div" class="relative inline-block text-left">
               <div>
@@ -48,7 +49,7 @@
           </div>
         </div>
 
-        <section aria-labelledby="products-heading" class="pb-24">
+        <section aria-labelledby="products-heading" class="pb-24 mt-4">
           <div class="grid grid-cols-1 relative gap-3 lg:mt-3 items-start lg:grid-cols-[350px_1fr]">
             <!-- Filters -->
             <div class="">
@@ -57,7 +58,7 @@
             <!-- Product grid -->
             <div :class="{
               'opacity-40': status == 'pending'
-            }" v-if="data != null" class="relative grid md:px-0 grid-cols-2 gap-1 md:gap-3">
+            }" v-if="data != null" class="relative grid gap-3">
               <Card :item="item" v-for="item in data.results"></Card>
             </div>
             <div v-else>
@@ -79,10 +80,21 @@ import FilterForm from '../../components/filter-form.vue';
 import { CatalogStorage } from '@/storages/storage';
 import Card from '@/components/Card.vue';
 import { useRoute } from 'vue-router';
-import {getProducts} from "~/api/products";
+import {getProducts, type Product} from "~/api/products";
 
 
 const catalogStorage = CatalogStorage.getInstance();
+
+const breadcrumbs = ref([
+  {
+    "text": "Главная",
+    "link": null
+  },
+  {
+    "text": "Каталог автомобилей",
+    "link": null
+  }
+]);
 
 const route = useRoute();
 
@@ -96,11 +108,27 @@ if (route.params.manufactor_id != null) {
   catalogStorage.selectedValues.value.manufactor_id = route.params.manufactor_id.toString();
 }
 
-const {data,status, refresh} = useAsyncData('catalog-products', ()=>getProducts(catalogStorage.selectedValues.value));
+const {data,status, refresh} = await useAsyncData('catalog-products', ()=>getProducts(catalogStorage.selectedValues.value));
+
+onMounted(()=>{
+  // addBreadCrumbs(data.value?.results[0]!);
+})
 
 watch(catalogStorage.selectedValues.value, (value)=>{
   refresh();
 });
+
+
+function addBreadCrumbs(value: Product) {
+  breadcrumbs.value.push({
+    link: null,
+    text: value.modification.modelCar.name.toString()
+  })
+  breadcrumbs.value.push({
+    link: null,
+    text: value.category
+  })
+}
 
 const sortOptions = [
   { name: 'Самые популярные', href: '#', current: true },

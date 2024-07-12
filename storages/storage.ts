@@ -28,6 +28,7 @@ export interface BodyType {
 }
 
 export const isOpenSidebar = ref(false);
+export const isOpenCart = ref(false);
 
 abstract class AbstractCardStorage {
     goods = ref<Good[]>([]);

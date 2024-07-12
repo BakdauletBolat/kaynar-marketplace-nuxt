@@ -15,19 +15,19 @@
   
         <div class="fixed inset-0 overflow-y-auto">
           <div
-            class="flex min-h-full h-full items-end md:items-center justify-end  text-center"
+            class="flex min-h-full h-full items-end lg:items-center justify-end  text-center"
           >
             <TransitionChild
               as="template"
               enter="duration-300 ease-out"
-              enter-from="translate-y-[500px] md:translate-y-0 md:translate-x-[500px]"
-              enter-to="translate-y-0 md:translate-x-0"
+              enter-from="translate-y-[500px] lg:translate-y-0 lg:translate-x-[500px]"
+              enter-to="translate-y-0 lg:translate-x-0"
               leave="duration-200 ease-in"
-              leave-from="translate-y-0 md:translate-x-0"
-              leave-to="translate-y-[500px] md:translate-y-0 md:translate-x-[500px]"
+              leave-from="translate-y-0 lg:translate-x-0"
+              leave-to="translate-y-[500px] lg:translate-y-0 lg:translate-x-[500px]"
             >
               <DialogPanel
-                class="w-[500px] transform overflow-scroll rounded-md md:rounded-none bg-white max-h-[80vh] md:max-h-full md:h-full p-6 text-left shadow-xl transition-all"
+                class="w-[500px] transform overflow-scroll rounded-md lg:rounded-none bg-white max-h-[80vh] lg:max-h-full lg:h-full p-6 text-left shadow-xl transition-all"
               >
                 <DialogTitle
                   as="template"

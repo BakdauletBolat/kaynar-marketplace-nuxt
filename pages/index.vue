@@ -24,7 +24,7 @@ const { data, error } = await useAsyncData('products', () => getProducts( {}))
     </section>
     <section class="mx-auto max-w-7xl px-4 lg:px-6">
       <h3 class="mt-9 px-3 md:px-0 text-lg font-bold">Лучшие предложение</h3>
-      <div v-if="data?.results"  class="grid gap-1 md:px-0 md:grid-cols-2 md:gap-3 mt-3">
+      <div v-if="data?.results"  class="grid gap-2 md:grid-cols-2 md:gap-3 mt-3">
         <Card :item="item" v-for="item in data.results"></Card>
       </div>
       <div v-else>

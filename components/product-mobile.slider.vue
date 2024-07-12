@@ -6,17 +6,17 @@
                 duration: 100
             }">
                 <div :key="picture.id" v-for="picture in pictures" class="panel cursor-pointer w-full h-[300px]">
-                    <img loading="lazy" class=" w-full pointer-events-none h-full object-cover" :src="picture.image" />
+                    <img :alt="picture.product" loading="lazy" class=" w-full pointer-events-none h-full object-cover" :src="picture.image" />
                 </div>
             </Flicking>
             <div>
-                <ChevronLeftIcon @click="prev" class="absolute z-10 top-1/2 cursor-pointer w-7 h-7"></ChevronLeftIcon>
-                <ChevronRightIcon  @click="next" class="absolute z-10 top-1/2 right-0 w-7 h-7 cursor-pointer"></ChevronRightIcon>
+                <ChevronLeftIcon @click="prev" class="absolute z-10 -translate-y-1/2 top-1/2 cursor-pointer w-7 h-7"></ChevronLeftIcon>
+                <ChevronRightIcon  @click="next" class="absolute z-10 -translate-y-1/2 top-1/2 right-0 w-7 h-7 cursor-pointer"></ChevronRightIcon>
             </div>
-            <div class="flex justify-center py-3 gap-1">
+            <div class="flex justify-center items-center py-3 gap-1">
                 <div v-for="(_, index) in pictures.length" :class="{
-                '!bg-primary-hover': index == currentValue
-            }" class="w-3 h-3 rounded-full bg-gray-300" ></div>
+                '!bg-primary w-3 h-3': index == currentValue
+            }" class="w-2 h-2 rounded-full bg-slate-100" ></div>
             </div>
         </div>
     </div>

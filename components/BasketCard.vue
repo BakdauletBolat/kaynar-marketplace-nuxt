@@ -8,7 +8,7 @@
         <div class="">
             <div class="flex flex-col justify-between w-full">
                 <RouterLink :to="{
-                    name: 'product-detail',
+                    name: 'product-id',
                     params: {
                         id: item.id
                     }

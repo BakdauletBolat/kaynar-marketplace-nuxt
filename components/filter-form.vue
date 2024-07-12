@@ -1,7 +1,7 @@
 <template>
     <form :class="{
       'pointer-events-none opacity-50': catalogStorage.isProductLoading.value,
-    }" class="lg:px-5 lg:py-2 rounded-sm lg:max-h-[100vh] lg:overflow-scroll">
+    }" class="lg:px-5 lg:py-2 rounded-lg lg:max-h-[100vh] lg:overflow-scroll">
               <h3 class="sr-only">Categories</h3>
               <Disclosure :defaultOpen="section.isOpen"  as="div" v-for="section in catalogStorage.filters" :key="section.id"
                 class="py-3" v-slot="{ open }">
@@ -25,18 +25,17 @@
                       <input :id="`filter-${section.id}-${optionIdx}`" :name="`${section.id}[]`"
                         @click="catalogStorage.updateSelectedValues(section.id, option)" :value="option"
                         type="checkbox" :checked="option.checked"
-                        class="h-5 w-5 rounded border-gray-300 bg-primary checked:bg-primary focus:ring-bg-primary" />
+                        class="h-5 w-5 rounded" />
                       <label :for="`filter-${section.id}-${optionIdx}`" class="ml-3 text-sm text-gray-600">{{ option
                       }}</label>
                     </div>
                   </div>
                   <div v-else class="space-y-4">
-              
                     <div v-for="(option, optionIdx) in section.options" :key="option.value" class="flex items-center">
                       <input :id="`filter-${section.id}-${optionIdx}`" :name="`${section.id}[]`"
                         @click="catalogStorage.updateSelectedValues(section.id, option.value)" :value="option.value"
                         type="checkbox" :checked="option.checked"
-                        class="h-5 w-5 rounded border-gray-300 bg-primary checked:bg-primary focus:ring-bg-primary" />
+                        class="h-5 w-5 rounded " />
                       <label :for="`filter-${section.id}-${optionIdx}`" class="ml-3 text-sm text-gray-600">{{ option.label
                       }}</label>
                     </div>
