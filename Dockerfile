@@ -1,15 +1,11 @@
-FROM node:lts as build-stage
-WORKDIR /nuxtapp
-COPY . .
-RUN npm install
+FROM node:lts
+
+ENV APP_ROOT /web
+
+WORKDIR ${APP_ROOT}
+ADD . ${APP_ROOT}
+
+RUN npm ci
+
 RUN npm run build
-RUN rm -rf node_modules && \
-  NODE_ENV=production npm install \
-  --prefer-offline \
-  --pure-lockfile \
-  --non-interactive \
-  --production=true
-FROM node:lts as prod-stage
-WORKDIR /nuxtapp
-COPY --from=build-stage /nuxtapp/.output/  ./.output/
-CMD [ "node", ".output/server/index.mjs" ]
+CMD node .output/server/index.mjs
