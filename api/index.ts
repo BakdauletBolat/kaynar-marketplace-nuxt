@@ -2,7 +2,7 @@ import axios from 'axios';
 
 
 const axiosInstance = axios.create({
-    baseURL: 'http://94.198.219.2:8000',
+    baseURL: 'https://back-kaynar.kz',
     timeout: 10000
 });
 
