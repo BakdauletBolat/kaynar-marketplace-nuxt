@@ -7,7 +7,7 @@ const axiosInstance = axios.create({
 });
 
 export function customFetch<T>(url: string, options: any = {}) {
-    const baseURL = 'http://94.198.219.2:8000';
+    const baseURL = 'https://back-kaynar.kz';
     return $fetch<T>(baseURL+url, {
         headers: {
         },
