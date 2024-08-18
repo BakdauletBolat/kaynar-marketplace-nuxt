@@ -1,1 +1,0 @@
-import{_ as o}from"./DlAUqK2U.js";import{c,o as e}from"./CBD-eXxQ.js";const t={},n={class:"max-w-2xl mx-auto"};function r(s,a){return e(),c("main",n," LOGIN ")}const f=o(t,[["render",r]]);export{f as default};
