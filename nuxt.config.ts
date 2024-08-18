@@ -29,7 +29,7 @@ export default defineNuxtConfig({
         },
     },
     compatibilityDate: '2024-07-11',
-    modules: ['@pinia/nuxt', "nuxtjs-naive-ui"],
+    modules: ['@pinia/nuxt', "@bg-dev/nuxt-naiveui"],
     devtools: {enabled: true},
     css: ['~/assets/css/main.css'],
     postcss: {

@@ -76,7 +76,7 @@ const mobileFiltersOpen = ref(false)
 
 <template>
   <div>
-    <n-drawer :z-index="10000" v-model:show="mobileFiltersOpen" width="100%">
+    <n-drawer :z-index="10000" v-model:show="mobileFiltersOpen" width="90%">
       <n-drawer-content title="Поиск запчестей" closable>
         <filter-form></filter-form>
       </n-drawer-content>

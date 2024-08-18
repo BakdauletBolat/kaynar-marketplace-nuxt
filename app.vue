@@ -8,6 +8,7 @@
 </template>
 <script lang="ts" setup>
 import {NConfigProvider} from 'naive-ui';
+
 const themeOverrides = {
   common: {
     primaryColor: '#FFEB3B',
