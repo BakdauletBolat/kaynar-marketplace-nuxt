@@ -1,23 +1,31 @@
-# Use an official Node.js runtime as a parent image
-FROM node:18-alpine
+ARG NODE_VERSION=18.14.2
 
-# Set the working directory
-WORKDIR /app
+FROM node:${NODE_VERSION}-slim as base
 
-# Copy the package.json and yarn.lock files to the working directory
-COPY package.json yarn.lock ./
+ARG PORT=3000
 
-# Install dependencies using Yarn
-RUN yarn install --frozen-lockfile
+ENV NODE_ENV=production
 
-# Copy the rest of the application code to the working directory
-COPY . .
+WORKDIR /src
 
-# Build the Nuxt.js application
-RUN yarn build
+# Build
+FROM base as build
 
-# Expose the port that the app runs on
-EXPOSE 3000
+COPY --link package.json package-lock.json .
+RUN npm install --production=false
 
-# Set the command to start the application
-CMD ["yarn", "start"]
+COPY --link . .
+
+RUN npm run build
+RUN npm prune
+
+# Run
+FROM base
+
+ENV PORT=$PORT
+
+COPY --from=build /src/.output /src/.output
+# Optional, only needed if you rely on unbundled dependencies
+# COPY --from=build /src/node_modules /src/node_modules
+
+CMD [ "node", ".output/server/index.mjs" ] 
