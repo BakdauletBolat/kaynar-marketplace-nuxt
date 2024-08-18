@@ -11,21 +11,29 @@ WORKDIR /src
 # Build
 FROM base as build
 
-COPY --link package.json yarn.lock .  # Copy yarn.lock instead of package-lock.json
-RUN yarn install --frozen-lockfile  # Use yarn to install dependencies
+# Copy both package.json and yarn.lock
+COPY --link package.json yarn.lock .
+
+# Install dependencies with Yarn
+RUN yarn install --frozen-lockfile
 
 COPY --link . .
 
-RUN yarn build  # Use yarn to build the project
-RUN yarn install --production --frozen-lockfile  # Prune unnecessary dependencies
+# Build the project
+RUN yarn build
+
+# Install only production dependencies
+RUN yarn install --production --frozen-lockfile
 
 # Run
 FROM base
 
 ENV PORT=$PORT
 
+# Copy the built output from the build stage
 COPY --from=build /src/.output /src/.output
-# Optional, only needed if you rely on unbundled dependencies
+
+# Optional: Copy the node_modules if unbundled dependencies are needed
 # COPY --from=build /src/node_modules /src/node_modules
 
 CMD ["node", ".output/server/index.mjs"]
