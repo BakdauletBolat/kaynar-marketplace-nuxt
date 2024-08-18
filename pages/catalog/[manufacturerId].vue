@@ -1,11 +1,6 @@
-<script setup lang="ts">
-
-</script>
-
 <template>
-Manufactor
-</template>
-
-<style scoped>
-
-</style>
+   <catalog></catalog>
+  </template>
+  <script setup lang="ts">
+  import Catalog from "~/components/catalog.vue";
+  </script>

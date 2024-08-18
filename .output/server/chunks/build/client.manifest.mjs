@@ -5,7 +5,7 @@ const client_manifest = {
     "prefetch": true,
     "preload": true,
     "file": "B1KPasxI.js",
-    "name": "Card.vue",
+    "name": "card.vue",
     "imports": [
       "_Bo7bj1_A.js",
       "_CxyL4IgC.js",

@@ -1,33 +1,24 @@
 <script setup lang="ts">
 import {isOpenCart} from "~/storages/storage";
-import Dialog from "~/components/Dialog/index";
-import UserCard from "~/components/UserCard.vue";
-
+import UserCard from "~/components/user-card.vue";
+import AppHeader from '~/components/header.vue';
+import AppFooter from '~/components/footer.vue';
+import {NDrawer, NDrawerContent, NButton} from 'naive-ui';
 </script>
 
 <template>
-  <SidebarModal></SidebarModal>
-  <Dialog title="Ваша корзина" v-model="isOpenCart">
-    <UserCard></UserCard>
-<!--    <button @click="navigateToOrder" class="mt-3 bg-primary w-full block p-3 text-center rounded-sm">Оформить заказ</button>-->
-  </Dialog>
+  <n-drawer  v-model:show="isOpenCart">
+    <n-drawer-content title="Ваша корзина" closable>
+      <user-card></user-card>
+      <n-button class="w-full" type="primary">Оформить заказ</n-button>
+    </n-drawer-content>
+  </n-drawer>
   <div class="relative min-h-full bg-slate-100">
-    <Header></Header>
+    <app-header></app-header>
     <div class="bg-slate-100">
-      <Errors></Errors>
       <slot></slot>
     </div>
-    <div class="flex flex-col items-center lg:flex-row p-3bg-slate-100 max-w-7xl mx-auto mt-[200px] gap-3 justify-end">
-      <div>О нас</div>
-      <div>Условия использования</div>
-      <div>Покупка</div>
-      <div>Политика конфиденциальности</div>
-      <div>ЧЗВ</div>
-      <div>Контакты</div>
-    </div>
-    <div class="mx-auto items-center flex justify-center max-w-7xl py-5">
-      2024 Все права защищены
-    </div>
+    <app-footer></app-footer>
   </div>
 </template>
 

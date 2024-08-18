@@ -1,62 +1,77 @@
 <template>
-    <form :class="{
-      'pointer-events-none opacity-50': catalogStorage.isProductLoading.value,
-    }" class="lg:px-5 lg:py-2 rounded-lg lg:max-h-[100vh] lg:overflow-scroll">
-              <h3 class="sr-only">Categories</h3>
-              <Disclosure :defaultOpen="section.isOpen"  as="div" v-for="section in catalogStorage.filters" :key="section.id"
-                class="py-3" v-slot="{ open }">
-                <h3 class="-my-3 flow-root">
-                  <DisclosureButton
-                    class="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
-                    <span class="font-medium text-gray-900">{{ section.name }}</span>
-                    <span class="ml-6 flex items-center">
-                      <ChevronDownIcon v-if="!open" class="h-5 w-5" aria-hidden="true" />
-                      <ChevronUpIcon v-else class="h-5 w-5" aria-hidden="true" />
-                    </span>
-                  </DisclosureButton>
-                </h3>
-                <DisclosurePanel class="mt-5">
-                  <div class="grid gap-1 grid-cols-2 w-full" v-if="section.type == 'range'">
-                      <input class="border text-sm rounded-sm p-2" :placeholder="section.range.labelFrom" />
-                      <input class="border text-sm rounded-sm p-2" :placeholder="section.range.labelTo" />
-                  </div>
-                  <div v-else-if="section.type == 'array'" class="grid grid-cols-3 gap-4">
-                    <div v-for="(option, optionIdx) in section.options" :key="option.value" class="flex items-center">
-                      <input :id="`filter-${section.id}-${optionIdx}`" :name="`${section.id}[]`"
-                        @click="catalogStorage.updateSelectedValues(section.id, option)" :value="option"
-                        type="checkbox" :checked="option.checked"
-                        class="h-5 w-5 rounded" />
-                      <label :for="`filter-${section.id}-${optionIdx}`" class="ml-3 text-sm text-gray-600">{{ option
-                      }}</label>
-                    </div>
-                  </div>
-                  <div v-else class="space-y-4">
-                    <div v-for="(option, optionIdx) in section.options" :key="option.value" class="flex items-center">
-                      <input :id="`filter-${section.id}-${optionIdx}`" :name="`${section.id}[]`"
-                        @click="catalogStorage.updateSelectedValues(section.id, option.value)" :value="option.value"
-                        type="checkbox" :checked="option.checked"
-                        class="h-5 w-5 rounded " />
-                      <label :for="`filter-${section.id}-${optionIdx}`" class="ml-3 text-sm text-gray-600">{{ option.label
-                      }}</label>
-                    </div>
-                  </div>
-                </DisclosurePanel>
-              </Disclosure>
-            </form>
+    <n-form :model="filterStore.filterValues" ref="formRef">
+      <div>
+        <n-form-item label="Искать по модели">
+          <n-select
+              placeholder="Выберите варианты"
+              filterable
+              :options="manufacturerStore.manufacturerOptions"
+              v-model:value="filterStore.filterValues.manufacturer"
+          />
+        </n-form-item>
+      </div>
+      <div>
+        <n-form-item label="Искать по категории">
+          <n-tree-select
+              placeholder="Выберите варианты"
+              multiple
+              cascade
+              filterable
+              checkable
+              :check-strategy="'all'"
+              :options="categoryStore.categoriesTreeOptions"
+              :value="filterStore.filterValues.category != null ? filterStore.filterValues.category!.split(',').map(item=>parseInt(item)) : []"
+              @update:value="handleUpdateValue"
+          />
+        </n-form-item>
+      </div>
+      <div v-for="fields in filterStore.filtersForm">
+        <n-form-item :label="fields.title" :path="fields.key">
+          <n-select
+              v-if="fields.type == 'select'"
+              multiple placeholder="Выберите один из вариантов"
+              v-model:value="filterStore.filterValues[fields.key]"
+              :options="fields.options">
+          </n-select>
+          <n-radio-group class="grid grid-cols-3 gap-1" v-else-if="fields.type == 'radio'"
+                         v-model:value="filterStore.filterValues[fields.key]"
+                         :name="fields.key">
+              <n-radio
+                  v-for="option in fields.options"
+                  :key="option.value"
+                  :value="option.value"
+                  :label="option.label"
+              />
+          </n-radio-group>
+        </n-form-item>
+      </div>
+
+    </n-form>
 </template>
 <script setup lang="ts">
-import { Disclosure, DisclosureButton, DisclosurePanel} from '@headlessui/vue';
-import { ChevronDownIcon,  ChevronUpIcon } from '@heroicons/vue/20/solid'
-import { CatalogStorage } from '@/storages/storage';
-import { onMounted } from 'vue';
-const catalogStorage = CatalogStorage.getInstance();
+import {useFilterStore} from '@/storages/filter-store';
+import {onMounted, ref} from 'vue';
+import type { TreeSelectOption } from 'naive-ui'
+import {NSelect, NRadio, NForm, NFormItem,NTreeSelect, NRadioGroup} from 'naive-ui';
+import {useCategoryStore} from "~/storages/category-storage";
+import {useManufacturerStore} from "~/storages/manufacturer-store";
+
+const filterStore = useFilterStore();
+const categoryStore = useCategoryStore();
+const manufacturerStore = useManufacturerStore();
 
 
-// watch(catalogStorage.selectedValues.value, (value)=>{
-//   catalogStorage.loadProducts(value);
-// });
+const formRef = ref();
 
-onMounted(()=>{
-  catalogStorage.loadFilters();
+function handleUpdateValue( value: string | number | Array<string | number> | null,
+                            _: TreeSelectOption | null | Array<TreeSelectOption | null>) {
+  //@ts-ignore
+  filterStore.filterValues.category = value.join(',');
+}
+
+onMounted(() => {
+  filterStore.loadFilters();
+  categoryStore.loadCategoriesTree();
+  manufacturerStore.loadManufacturers();
 });
 </script>

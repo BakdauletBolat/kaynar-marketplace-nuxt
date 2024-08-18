@@ -1,5 +1,5 @@
 <template>
-    <main class="max-w-7xl mx-auto p-3">
+    <main class="container px-4 mx-auto p-3">
         <TabGroup :selected-index="selectedIndex" @change="changeTab">
             <TabList class="grid grid-cols-4 p-3 justify-center gap-2">
                 <Tab :disabled="order" as="template" v-slot="{ selected }">
@@ -170,7 +170,7 @@ import {
 import { MapIcon, TruckIcon, BanknotesIcon, CheckBadgeIcon,CreditCardIcon } from '@heroicons/vue/24/outline';
 import Input from '@/components/Input/index.vue';
 import { useForm } from 'vee-validate';
-import UserCard from '@/components/UserCard.vue';
+import UserCard from '~/components/user-card.vue';
 import { ref } from 'vue';
 import { CardStorage } from '@/storages/storage';
 import * as yup from 'yup';

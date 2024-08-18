@@ -3,7 +3,12 @@ import axios, {customFetch} from "./index";
 export interface Product {
     id:           number;
     price:        number;
-    warehouse:    null;
+    warehouse:    {
+        name: string;
+        city: {
+            name: string;
+        }
+    };
     color:        null;
     category:     any[];
     code:         any[];
@@ -58,7 +63,9 @@ function generateQuery(queries: object) {
     Object.keys(queries).forEach(function(key, _) {
         // @ts-ignore
         const ne: any = queries[key];
-        query += `${key}=${ne}&`;
+        if (ne != null) {
+            query += `${key}=${ne}&`;
+        }
     });
     return query;
 }

@@ -1,9 +1,9 @@
 {
-  "_hash": "c2SkzCOqSf",
+  "_hash": "MALw19QT7d",
   "project": {
-    "rootDir": "/Users/bolat/PycharmProjects/kaynar-marketplace"
+    "rootDir": "/Users/bolat/Desktop/Projects/kaynar-marketplace"
   },
   "versions": {
-    "nuxt": "3.12.3"
+    "nuxt": "3.12.4"
   }
 }
