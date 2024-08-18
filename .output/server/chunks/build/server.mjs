@@ -1,10 +1,14 @@
-import { version, unref, inject, defineComponent, ref, provide, createElementBlock, h, computed, shallowReactive, watch, Suspense, nextTick, Fragment, Transition, hasInjectionContext, getCurrentInstance, mergeProps, useSSRContext, createApp, effectScope, reactive, getCurrentScope, onErrorCaptured, onServerPrefetch, createVNode, resolveDynamicComponent, toRef, defineAsyncComponent, shallowRef, isReadonly, withCtx, isRef, isShallow, isReactive, toRaw, markRaw } from 'vue';
+import { version, unref, inject, defineComponent, ref, provide, createElementBlock, h, computed, shallowReactive, watch, Suspense, nextTick, Fragment, Transition, shallowRef, markRaw, useSSRContext, hasInjectionContext, getCurrentInstance, mergeProps, withCtx, createVNode, createApp, effectScope, reactive, getCurrentScope, isRef, isReactive, toRaw, onErrorCaptured, onServerPrefetch, resolveDynamicComponent, toRef, onScopeDispose, defineAsyncComponent, isReadonly, toRefs, isShallow } from 'vue';
 import { $ as $fetch, l as hasProtocol, m as isScriptProtocol, n as joinURL, w as withQuery, h as createError$1, o as defu, p as sanitizeStatusCode, q as createHooks, t as toRouteMatcher, r as createRouter$1 } from '../runtime.mjs';
 import { b as baseURL } from '../routes/renderer.mjs';
 import { getActiveHead, CapoPlugin } from 'unhead';
 import { defineHeadPlugin } from '@unhead/shared';
 import { useRoute as useRoute$1, RouterView, createMemoryHistory, createRouter, START_LOCATION } from 'vue-router';
-import { ssrRenderSuspense, ssrRenderComponent, ssrRenderVNode, ssrRenderAttrs } from 'vue/server-renderer';
+import { setup } from '@css-render/vue3-ssr';
+import { ssrRenderComponent, ssrRenderSuspense, ssrRenderVNode } from 'vue/server-renderer';
+import { useMemo } from 'vooks';
+import { merge } from 'lodash-es';
+import { hash } from 'css-render';
 import 'node:http';
 import 'node:https';
 import 'fs';
@@ -138,7 +142,7 @@ function createNuxtApp(options) {
     globalName: "nuxt",
     versions: {
       get nuxt() {
-        return "3.12.3";
+        return "3.12.4";
       },
       get vue() {
         return nuxtApp.vueApp.version;
@@ -306,8 +310,8 @@ function defineNuxtPlugin(plugin2) {
   return Object.assign(plugin2.setup || (() => {
   }), plugin2, { [NuxtPluginIndicator]: true, _name });
 }
-function callWithNuxt(nuxt, setup, args) {
-  const fn = () => setup();
+function callWithNuxt(nuxt, setup2, args) {
+  const fn = () => setup2();
   const nuxtAppCtx = getNuxtAppCtx(nuxt._name);
   {
     return nuxt.vueApp.runWithContext(() => nuxtAppCtx.callAsync(nuxt, fn));
@@ -671,37 +675,37 @@ const _routes = [
   {
     name: "auth-login",
     path: "/auth/login",
-    component: () => import('./login-DHeglNIV.mjs').then((m) => m.default || m)
+    component: () => import('./login-1QnH0l_1.mjs').then((m) => m.default || m)
   },
   {
     name: "catalog-manufacturerId",
     path: "/catalog/:manufacturerId()",
-    component: () => import('./_manufacturerId_-S4ukyupB.mjs').then((m) => m.default || m)
+    component: () => import('./_manufacturerId_-EHGxn3Sr.mjs').then((m) => m.default || m)
   },
   {
     name: "catalog",
     path: "/catalog",
-    component: () => import('./index-DKMeGStP.mjs').then((m) => m.default || m)
+    component: () => import('./index-CbTgnx4D.mjs').then((m) => m.default || m)
   },
   {
     name: "index",
     path: "/",
-    component: () => import('./index-B6wMTj1l.mjs').then((m) => m.default || m)
+    component: () => import('./index-BNhMCDal.mjs').then((m) => m.default || m)
   },
   {
     name: "order-create",
     path: "/order/create",
-    component: () => import('./create-CCP0jNl0.mjs').then((m) => m.default || m)
+    component: () => import('./create-Bpb3aCeG.mjs').then((m) => m.default || m)
   },
   {
     name: "product-id",
     path: "/product/:id()",
-    component: () => import('./_id_-CnPqd0Nr.mjs').then((m) => m.default || m)
+    component: () => import('./_id_-Bnx2j6T3.mjs').then((m) => m.default || m)
   },
   {
     name: "services",
     path: "/services",
-    component: () => import('./services-CD2ML6s6.mjs').then((m) => m.default || m)
+    component: () => import('./services-DEU3y6TE.mjs').then((m) => m.default || m)
   }
 ];
 const _wrapIf = (component, props, slots) => {
@@ -772,7 +776,7 @@ function _getHashElementScrollMarginTop(selector) {
   try {
     const elem = (void 0).querySelector(selector);
     if (elem) {
-      return Number.parseFloat(getComputedStyle(elem).scrollMarginTop);
+      return Number.parseFloat(getComputedStyle(elem).scrollMarginTop) + Number.parseFloat(getComputedStyle((void 0).documentElement).scrollPaddingTop);
     }
   } catch {
   }
@@ -1024,10 +1028,15 @@ const isVue2 = false;
  * (c) 2023 Eduardo San Martin Morote
  * @license MIT
  */
+let activePinia;
+const setActivePinia = (pinia) => activePinia = pinia;
 const piniaSymbol = (
   /* istanbul ignore next */
   Symbol()
 );
+function isPlainObject(o) {
+  return o && typeof o === "object" && Object.prototype.toString.call(o) === "[object Object]" && typeof o.toJSON !== "function";
+}
 var MutationType;
 (function(MutationType2) {
   MutationType2["direct"] = "direct";
@@ -1041,6 +1050,7 @@ function createPinia() {
   let toBeInstalled = [];
   const pinia = markRaw({
     install(app) {
+      setActivePinia(pinia);
       {
         pinia._a = app;
         app.provide(piniaSymbol, pinia);
@@ -1066,6 +1076,295 @@ function createPinia() {
     state
   });
   return pinia;
+}
+const noop = () => {
+};
+function addSubscription(subscriptions, callback, detached, onCleanup = noop) {
+  subscriptions.push(callback);
+  const removeSubscription = () => {
+    const idx = subscriptions.indexOf(callback);
+    if (idx > -1) {
+      subscriptions.splice(idx, 1);
+      onCleanup();
+    }
+  };
+  if (!detached && getCurrentScope()) {
+    onScopeDispose(removeSubscription);
+  }
+  return removeSubscription;
+}
+function triggerSubscriptions(subscriptions, ...args) {
+  subscriptions.slice().forEach((callback) => {
+    callback(...args);
+  });
+}
+const fallbackRunWithContext = (fn) => fn();
+function mergeReactiveObjects(target, patchToApply) {
+  if (target instanceof Map && patchToApply instanceof Map) {
+    patchToApply.forEach((value, key) => target.set(key, value));
+  }
+  if (target instanceof Set && patchToApply instanceof Set) {
+    patchToApply.forEach(target.add, target);
+  }
+  for (const key in patchToApply) {
+    if (!patchToApply.hasOwnProperty(key))
+      continue;
+    const subPatch = patchToApply[key];
+    const targetValue = target[key];
+    if (isPlainObject(targetValue) && isPlainObject(subPatch) && target.hasOwnProperty(key) && !isRef(subPatch) && !isReactive(subPatch)) {
+      target[key] = mergeReactiveObjects(targetValue, subPatch);
+    } else {
+      target[key] = subPatch;
+    }
+  }
+  return target;
+}
+const skipHydrateSymbol = (
+  /* istanbul ignore next */
+  Symbol()
+);
+function shouldHydrate(obj) {
+  return !isPlainObject(obj) || !obj.hasOwnProperty(skipHydrateSymbol);
+}
+const { assign } = Object;
+function isComputed(o) {
+  return !!(isRef(o) && o.effect);
+}
+function createOptionsStore(id, options, pinia, hot) {
+  const { state, actions, getters } = options;
+  const initialState = pinia.state.value[id];
+  let store;
+  function setup2() {
+    if (!initialState && (!("production" !== "production") )) {
+      {
+        pinia.state.value[id] = state ? state() : {};
+      }
+    }
+    const localState = toRefs(pinia.state.value[id]);
+    return assign(localState, actions, Object.keys(getters || {}).reduce((computedGetters, name) => {
+      computedGetters[name] = markRaw(computed(() => {
+        setActivePinia(pinia);
+        const store2 = pinia._s.get(id);
+        return getters[name].call(store2, store2);
+      }));
+      return computedGetters;
+    }, {}));
+  }
+  store = createSetupStore(id, setup2, options, pinia, hot, true);
+  return store;
+}
+function createSetupStore($id, setup2, options = {}, pinia, hot, isOptionsStore) {
+  let scope;
+  const optionsForPlugin = assign({ actions: {} }, options);
+  const $subscribeOptions = {
+    deep: true
+    // flush: 'post',
+  };
+  let isListening;
+  let isSyncListening;
+  let subscriptions = [];
+  let actionSubscriptions = [];
+  let debuggerEvents;
+  const initialState = pinia.state.value[$id];
+  if (!isOptionsStore && !initialState && (!("production" !== "production") )) {
+    {
+      pinia.state.value[$id] = {};
+    }
+  }
+  ref({});
+  let activeListener;
+  function $patch(partialStateOrMutator) {
+    let subscriptionMutation;
+    isListening = isSyncListening = false;
+    if (typeof partialStateOrMutator === "function") {
+      partialStateOrMutator(pinia.state.value[$id]);
+      subscriptionMutation = {
+        type: MutationType.patchFunction,
+        storeId: $id,
+        events: debuggerEvents
+      };
+    } else {
+      mergeReactiveObjects(pinia.state.value[$id], partialStateOrMutator);
+      subscriptionMutation = {
+        type: MutationType.patchObject,
+        payload: partialStateOrMutator,
+        storeId: $id,
+        events: debuggerEvents
+      };
+    }
+    const myListenerId = activeListener = Symbol();
+    nextTick().then(() => {
+      if (activeListener === myListenerId) {
+        isListening = true;
+      }
+    });
+    isSyncListening = true;
+    triggerSubscriptions(subscriptions, subscriptionMutation, pinia.state.value[$id]);
+  }
+  const $reset = isOptionsStore ? function $reset2() {
+    const { state } = options;
+    const newState = state ? state() : {};
+    this.$patch(($state) => {
+      assign($state, newState);
+    });
+  } : (
+    /* istanbul ignore next */
+    noop
+  );
+  function $dispose() {
+    scope.stop();
+    subscriptions = [];
+    actionSubscriptions = [];
+    pinia._s.delete($id);
+  }
+  function wrapAction(name, action) {
+    return function() {
+      setActivePinia(pinia);
+      const args = Array.from(arguments);
+      const afterCallbackList = [];
+      const onErrorCallbackList = [];
+      function after(callback) {
+        afterCallbackList.push(callback);
+      }
+      function onError(callback) {
+        onErrorCallbackList.push(callback);
+      }
+      triggerSubscriptions(actionSubscriptions, {
+        args,
+        name,
+        store,
+        after,
+        onError
+      });
+      let ret;
+      try {
+        ret = action.apply(this && this.$id === $id ? this : store, args);
+      } catch (error) {
+        triggerSubscriptions(onErrorCallbackList, error);
+        throw error;
+      }
+      if (ret instanceof Promise) {
+        return ret.then((value) => {
+          triggerSubscriptions(afterCallbackList, value);
+          return value;
+        }).catch((error) => {
+          triggerSubscriptions(onErrorCallbackList, error);
+          return Promise.reject(error);
+        });
+      }
+      triggerSubscriptions(afterCallbackList, ret);
+      return ret;
+    };
+  }
+  const partialStore = {
+    _p: pinia,
+    // _s: scope,
+    $id,
+    $onAction: addSubscription.bind(null, actionSubscriptions),
+    $patch,
+    $reset,
+    $subscribe(callback, options2 = {}) {
+      const removeSubscription = addSubscription(subscriptions, callback, options2.detached, () => stopWatcher());
+      const stopWatcher = scope.run(() => watch(() => pinia.state.value[$id], (state) => {
+        if (options2.flush === "sync" ? isSyncListening : isListening) {
+          callback({
+            storeId: $id,
+            type: MutationType.direct,
+            events: debuggerEvents
+          }, state);
+        }
+      }, assign({}, $subscribeOptions, options2)));
+      return removeSubscription;
+    },
+    $dispose
+  };
+  const store = reactive(partialStore);
+  pinia._s.set($id, store);
+  const runWithContext = pinia._a && pinia._a.runWithContext || fallbackRunWithContext;
+  const setupStore = runWithContext(() => pinia._e.run(() => (scope = effectScope()).run(setup2)));
+  for (const key in setupStore) {
+    const prop = setupStore[key];
+    if (isRef(prop) && !isComputed(prop) || isReactive(prop)) {
+      if (!isOptionsStore) {
+        if (initialState && shouldHydrate(prop)) {
+          if (isRef(prop)) {
+            prop.value = initialState[key];
+          } else {
+            mergeReactiveObjects(prop, initialState[key]);
+          }
+        }
+        {
+          pinia.state.value[$id][key] = prop;
+        }
+      }
+    } else if (typeof prop === "function") {
+      const actionValue = wrapAction(key, prop);
+      {
+        setupStore[key] = actionValue;
+      }
+      optionsForPlugin.actions[key] = prop;
+    } else ;
+  }
+  {
+    assign(store, setupStore);
+    assign(toRaw(store), setupStore);
+  }
+  Object.defineProperty(store, "$state", {
+    get: () => pinia.state.value[$id],
+    set: (state) => {
+      $patch(($state) => {
+        assign($state, state);
+      });
+    }
+  });
+  pinia._p.forEach((extender) => {
+    {
+      assign(store, scope.run(() => extender({
+        store,
+        app: pinia._a,
+        pinia,
+        options: optionsForPlugin
+      })));
+    }
+  });
+  if (initialState && isOptionsStore && options.hydrate) {
+    options.hydrate(store.$state, initialState);
+  }
+  isListening = true;
+  isSyncListening = true;
+  return store;
+}
+function defineStore(idOrOptions, setup2, setupOptions) {
+  let id;
+  let options;
+  const isSetupStore = typeof setup2 === "function";
+  if (typeof idOrOptions === "string") {
+    id = idOrOptions;
+    options = isSetupStore ? setupOptions : setup2;
+  } else {
+    options = idOrOptions;
+    id = idOrOptions.id;
+  }
+  function useStore(pinia, hot) {
+    const hasContext = hasInjectionContext();
+    pinia = // in test mode, ignore the argument provided as we can always retrieve a
+    // pinia instance with getActivePinia()
+    (pinia) || (hasContext ? inject(piniaSymbol, null) : null);
+    if (pinia)
+      setActivePinia(pinia);
+    pinia = activePinia;
+    if (!pinia._s.has(id)) {
+      if (isSetupStore) {
+        createSetupStore(id, setup2, options, pinia);
+      } else {
+        createOptionsStore(id, options, pinia);
+      }
+    }
+    const store = pinia._s.get(id);
+    return store;
+  }
+  useStore.$id = id;
+  return useStore;
 }
 const clientOnlySymbol = Symbol.for("nuxt:client-only");
 defineComponent({
@@ -1093,6 +1392,7 @@ defineComponent({
 const plugin = /* @__PURE__ */ defineNuxtPlugin((nuxtApp) => {
   const pinia = createPinia();
   nuxtApp.vueApp.use(pinia);
+  setActivePinia(pinia);
   {
     nuxtApp.payload.pinia = pinia.state.value;
   }
@@ -1105,12 +1405,27 @@ const plugin = /* @__PURE__ */ defineNuxtPlugin((nuxtApp) => {
 const components_plugin_KR1HBZs4kY = /* @__PURE__ */ defineNuxtPlugin({
   name: "nuxt:global-components"
 });
+const plugin_nLxjltirRS = /* @__PURE__ */ defineNuxtPlugin((_nuxtApp) => {
+  {
+    const { collect } = setup(_nuxtApp.vueApp);
+    _nuxtApp.hooks.hook("app:rendered", () => {
+      if (_nuxtApp.ssrContext) {
+        if (typeof _nuxtApp.ssrContext.styles === "string") {
+          _nuxtApp.ssrContext.styles += collect();
+        } else if (!_nuxtApp.ssrContext.styles) {
+          _nuxtApp.ssrContext.styles = collect();
+        }
+      }
+    });
+  }
+});
 const plugins = [
   unhead_KgADcZ0jPj,
   plugin$1,
   revive_payload_server_eJ33V7gbc6,
   plugin,
-  components_plugin_KR1HBZs4kY
+  components_plugin_KR1HBZs4kY,
+  plugin_nLxjltirRS
 ];
 function defaultEstimatedProgress(duration, elapsed) {
   const completionPercentage = elapsed / duration * 100;
@@ -1125,9 +1440,9 @@ function createLoadingIndicator(opts = {}) {
   const error = ref(false);
   const start = () => {
     error.value = false;
-    set(0);
+    set2(0);
   };
-  function set(at = 0) {
+  function set2(at = 0) {
     if (nuxtApp.isHydrating) {
       return;
     }
@@ -1163,7 +1478,7 @@ function createLoadingIndicator(opts = {}) {
     isLoading: computed(() => isLoading.value),
     error: computed(() => error.value),
     start,
-    set,
+    set: set2,
     finish,
     clear
   };
@@ -1237,7 +1552,7 @@ const __nuxt_component_0 = defineComponent({
   }
 });
 const layouts = {
-  default: () => import('./default-DyjF_xBh.mjs').then((m) => m.default || m)
+  default: () => import('./default-Bd3wpriq.mjs').then((m) => m.default || m)
 };
 const LayoutLoader = defineComponent({
   name: "LayoutLoader",
@@ -1479,41 +1794,308 @@ function hasChildrenRoutes(fork, newRoute, Component) {
   });
   return index < newRoute.matched.length - 1;
 }
-const _export_sfc = (sfc, props) => {
-  const target = sfc.__vccOpts || sfc;
-  for (const [key, val] of props) {
-    target[key] = val;
-  }
-  return target;
-};
-const _sfc_main$2 = {};
-function _sfc_ssrRender(_ctx, _push, _parent, _attrs) {
-  const _component_NuxtLoadingIndicator = __nuxt_component_0;
-  const _component_NuxtLayout = __nuxt_component_1;
-  const _component_NuxtPage = __nuxt_component_2;
-  _push(`<div${ssrRenderAttrs(_attrs)}>`);
-  _push(ssrRenderComponent(_component_NuxtLoadingIndicator, null, null, _parent));
-  _push(ssrRenderComponent(_component_NuxtLayout, null, {
-    default: withCtx((_, _push2, _parent2, _scopeId) => {
-      if (_push2) {
-        _push2(ssrRenderComponent(_component_NuxtPage, null, null, _parent2, _scopeId));
-      } else {
-        return [
-          createVNode(_component_NuxtPage)
-        ];
-      }
-    }),
-    _: 1
-  }, _parent));
-  _push(`</div>`);
+const warnedMessages = /* @__PURE__ */ new Set();
+function warnOnce(location, message) {
+  const mergedMessage = `[naive/${location}]: ${message}`;
+  if (warnedMessages.has(mergedMessage)) return;
+  warnedMessages.add(mergedMessage);
+  console.error(mergedMessage);
 }
+function warn(location, message) {
+  console.error(`[naive/${location}]: ${message}`);
+}
+function throwError(location, message) {
+  throw new Error(`[naive/${location}]: ${message}`);
+}
+function createInjectionKey(key) {
+  return key;
+}
+const configProviderInjectionKey = createInjectionKey("n-config-provider");
+const defaultClsPrefix = "n";
+function useConfig(props = {}, options = {
+  defaultBordered: true
+}) {
+  const NConfigProvider2 = inject(configProviderInjectionKey, null);
+  return {
+    // NConfigProvider,
+    inlineThemeDisabled: NConfigProvider2 === null || NConfigProvider2 === void 0 ? void 0 : NConfigProvider2.inlineThemeDisabled,
+    mergedRtlRef: NConfigProvider2 === null || NConfigProvider2 === void 0 ? void 0 : NConfigProvider2.mergedRtlRef,
+    mergedComponentPropsRef: NConfigProvider2 === null || NConfigProvider2 === void 0 ? void 0 : NConfigProvider2.mergedComponentPropsRef,
+    mergedBreakpointsRef: NConfigProvider2 === null || NConfigProvider2 === void 0 ? void 0 : NConfigProvider2.mergedBreakpointsRef,
+    mergedBorderedRef: computed(() => {
+      var _a, _b;
+      const {
+        bordered
+      } = props;
+      if (bordered !== void 0) return bordered;
+      return (_b = (_a = NConfigProvider2 === null || NConfigProvider2 === void 0 ? void 0 : NConfigProvider2.mergedBorderedRef.value) !== null && _a !== void 0 ? _a : options.defaultBordered) !== null && _b !== void 0 ? _b : true;
+    }),
+    mergedClsPrefixRef: NConfigProvider2 ? NConfigProvider2.mergedClsPrefixRef : shallowRef(defaultClsPrefix),
+    namespaceRef: computed(() => NConfigProvider2 === null || NConfigProvider2 === void 0 ? void 0 : NConfigProvider2.mergedNamespaceRef.value)
+  };
+}
+const configProviderProps = {
+  abstract: Boolean,
+  bordered: {
+    type: Boolean,
+    default: void 0
+  },
+  clsPrefix: {
+    type: String,
+    default: defaultClsPrefix
+  },
+  locale: Object,
+  dateLocale: Object,
+  namespace: String,
+  rtl: Array,
+  tag: {
+    type: String,
+    default: "div"
+  },
+  hljs: Object,
+  katex: Object,
+  theme: Object,
+  themeOverrides: Object,
+  componentOptions: Object,
+  icons: Object,
+  breakpoints: Object,
+  preflightStyleDisabled: Boolean,
+  inlineThemeDisabled: {
+    type: Boolean,
+    default: void 0
+  },
+  // deprecated
+  as: {
+    type: String,
+    validator: () => {
+      warn("config-provider", "`as` is deprecated, please use `tag` instead.");
+      return true;
+    },
+    default: void 0
+  }
+};
+const NConfigProvider = defineComponent({
+  name: "ConfigProvider",
+  alias: ["App"],
+  props: configProviderProps,
+  setup(props) {
+    const NConfigProvider2 = inject(configProviderInjectionKey, null);
+    const mergedThemeRef = computed(() => {
+      const {
+        theme
+      } = props;
+      if (theme === null) return void 0;
+      const inheritedTheme = NConfigProvider2 === null || NConfigProvider2 === void 0 ? void 0 : NConfigProvider2.mergedThemeRef.value;
+      return theme === void 0 ? inheritedTheme : inheritedTheme === void 0 ? theme : Object.assign({}, inheritedTheme, theme);
+    });
+    const mergedThemeOverridesRef = computed(() => {
+      const {
+        themeOverrides
+      } = props;
+      if (themeOverrides === null) return void 0;
+      if (themeOverrides === void 0) {
+        return NConfigProvider2 === null || NConfigProvider2 === void 0 ? void 0 : NConfigProvider2.mergedThemeOverridesRef.value;
+      } else {
+        const inheritedThemeOverrides = NConfigProvider2 === null || NConfigProvider2 === void 0 ? void 0 : NConfigProvider2.mergedThemeOverridesRef.value;
+        if (inheritedThemeOverrides === void 0) {
+          return themeOverrides;
+        } else {
+          return merge({}, inheritedThemeOverrides, themeOverrides);
+        }
+      }
+    });
+    const mergedNamespaceRef = useMemo(() => {
+      const {
+        namespace
+      } = props;
+      return namespace === void 0 ? NConfigProvider2 === null || NConfigProvider2 === void 0 ? void 0 : NConfigProvider2.mergedNamespaceRef.value : namespace;
+    });
+    const mergedBorderedRef = useMemo(() => {
+      const {
+        bordered
+      } = props;
+      return bordered === void 0 ? NConfigProvider2 === null || NConfigProvider2 === void 0 ? void 0 : NConfigProvider2.mergedBorderedRef.value : bordered;
+    });
+    const mergedIconsRef = computed(() => {
+      const {
+        icons
+      } = props;
+      return icons === void 0 ? NConfigProvider2 === null || NConfigProvider2 === void 0 ? void 0 : NConfigProvider2.mergedIconsRef.value : icons;
+    });
+    const mergedComponentPropsRef = computed(() => {
+      const {
+        componentOptions
+      } = props;
+      if (componentOptions !== void 0) return componentOptions;
+      return NConfigProvider2 === null || NConfigProvider2 === void 0 ? void 0 : NConfigProvider2.mergedComponentPropsRef.value;
+    });
+    const mergedClsPrefixRef = computed(() => {
+      const {
+        clsPrefix
+      } = props;
+      if (clsPrefix !== void 0) return clsPrefix;
+      if (NConfigProvider2) return NConfigProvider2.mergedClsPrefixRef.value;
+      return defaultClsPrefix;
+    });
+    const mergedRtlRef = computed(() => {
+      var _a;
+      const {
+        rtl
+      } = props;
+      if (rtl === void 0) {
+        return NConfigProvider2 === null || NConfigProvider2 === void 0 ? void 0 : NConfigProvider2.mergedRtlRef.value;
+      }
+      const rtlEnabledState = {};
+      for (const rtlInfo of rtl) {
+        rtlEnabledState[rtlInfo.name] = markRaw(rtlInfo);
+        (_a = rtlInfo.peers) === null || _a === void 0 ? void 0 : _a.forEach((peerRtlInfo) => {
+          if (!(peerRtlInfo.name in rtlEnabledState)) {
+            rtlEnabledState[peerRtlInfo.name] = markRaw(peerRtlInfo);
+          }
+        });
+      }
+      return rtlEnabledState;
+    });
+    const mergedBreakpointsRef = computed(() => {
+      return props.breakpoints || (NConfigProvider2 === null || NConfigProvider2 === void 0 ? void 0 : NConfigProvider2.mergedBreakpointsRef.value);
+    });
+    const inlineThemeDisabled = props.inlineThemeDisabled || (NConfigProvider2 === null || NConfigProvider2 === void 0 ? void 0 : NConfigProvider2.inlineThemeDisabled);
+    const preflightStyleDisabled = props.preflightStyleDisabled || (NConfigProvider2 === null || NConfigProvider2 === void 0 ? void 0 : NConfigProvider2.preflightStyleDisabled);
+    const mergedThemeHashRef = computed(() => {
+      const {
+        value: theme
+      } = mergedThemeRef;
+      const {
+        value: mergedThemeOverrides
+      } = mergedThemeOverridesRef;
+      const hasThemeOverrides = mergedThemeOverrides && Object.keys(mergedThemeOverrides).length !== 0;
+      const themeName = theme === null || theme === void 0 ? void 0 : theme.name;
+      if (themeName) {
+        if (hasThemeOverrides) {
+          return `${themeName}-${hash(JSON.stringify(mergedThemeOverridesRef.value))}`;
+        }
+        return themeName;
+      } else {
+        if (hasThemeOverrides) {
+          return hash(JSON.stringify(mergedThemeOverridesRef.value));
+        }
+        return "";
+      }
+    });
+    provide(configProviderInjectionKey, {
+      mergedThemeHashRef,
+      mergedBreakpointsRef,
+      mergedRtlRef,
+      mergedIconsRef,
+      mergedComponentPropsRef,
+      mergedBorderedRef,
+      mergedNamespaceRef,
+      mergedClsPrefixRef,
+      mergedLocaleRef: computed(() => {
+        const {
+          locale
+        } = props;
+        if (locale === null) return void 0;
+        return locale === void 0 ? NConfigProvider2 === null || NConfigProvider2 === void 0 ? void 0 : NConfigProvider2.mergedLocaleRef.value : locale;
+      }),
+      mergedDateLocaleRef: computed(() => {
+        const {
+          dateLocale
+        } = props;
+        if (dateLocale === null) return void 0;
+        return dateLocale === void 0 ? NConfigProvider2 === null || NConfigProvider2 === void 0 ? void 0 : NConfigProvider2.mergedDateLocaleRef.value : dateLocale;
+      }),
+      mergedHljsRef: computed(() => {
+        const {
+          hljs
+        } = props;
+        return hljs === void 0 ? NConfigProvider2 === null || NConfigProvider2 === void 0 ? void 0 : NConfigProvider2.mergedHljsRef.value : hljs;
+      }),
+      mergedKatexRef: computed(() => {
+        const {
+          katex
+        } = props;
+        return katex === void 0 ? NConfigProvider2 === null || NConfigProvider2 === void 0 ? void 0 : NConfigProvider2.mergedKatexRef.value : katex;
+      }),
+      mergedThemeRef,
+      mergedThemeOverridesRef,
+      inlineThemeDisabled: inlineThemeDisabled || false,
+      preflightStyleDisabled: preflightStyleDisabled || false
+    });
+    return {
+      mergedClsPrefix: mergedClsPrefixRef,
+      mergedBordered: mergedBorderedRef,
+      mergedNamespace: mergedNamespaceRef,
+      mergedTheme: mergedThemeRef,
+      mergedThemeOverrides: mergedThemeOverridesRef
+    };
+  },
+  render() {
+    var _a, _b, _c, _d;
+    return !this.abstract ? h(this.as || this.tag, {
+      class: `${this.mergedClsPrefix || defaultClsPrefix}-config-provider`
+    }, (_b = (_a = this.$slots).default) === null || _b === void 0 ? void 0 : _b.call(_a)) : (_d = (_c = this.$slots).default) === null || _d === void 0 ? void 0 : _d.call(_c);
+  }
+});
+const _sfc_main$2 = /* @__PURE__ */ defineComponent({
+  __name: "app",
+  __ssrInlineRender: true,
+  setup(__props) {
+    const themeOverrides = {
+      common: {
+        primaryColor: "#FFEB3B",
+        primaryColorHover: "#FFB300",
+        primaryColorPressed: "#FFA000"
+      },
+      Button: {
+        textColorPrimary: "black",
+        textColorHoverPrimary: "black",
+        textColorPressedPrimary: "black"
+      }
+    };
+    return (_ctx, _push, _parent, _attrs) => {
+      const _component_nuxt_loading_indicator = __nuxt_component_0;
+      const _component_nuxt_layout = __nuxt_component_1;
+      const _component_nuxt_page = __nuxt_component_2;
+      _push(ssrRenderComponent(unref(NConfigProvider), mergeProps({ "theme-overrides": themeOverrides }, _attrs), {
+        default: withCtx((_, _push2, _parent2, _scopeId) => {
+          if (_push2) {
+            _push2(ssrRenderComponent(_component_nuxt_loading_indicator, null, null, _parent2, _scopeId));
+            _push2(ssrRenderComponent(_component_nuxt_layout, null, {
+              default: withCtx((_2, _push3, _parent3, _scopeId2) => {
+                if (_push3) {
+                  _push3(ssrRenderComponent(_component_nuxt_page, null, null, _parent3, _scopeId2));
+                } else {
+                  return [
+                    createVNode(_component_nuxt_page)
+                  ];
+                }
+              }),
+              _: 1
+            }, _parent2, _scopeId));
+          } else {
+            return [
+              createVNode(_component_nuxt_loading_indicator),
+              createVNode(_component_nuxt_layout, null, {
+                default: withCtx(() => [
+                  createVNode(_component_nuxt_page)
+                ]),
+                _: 1
+              })
+            ];
+          }
+        }),
+        _: 1
+      }, _parent));
+    };
+  }
+});
 const _sfc_setup$2 = _sfc_main$2.setup;
 _sfc_main$2.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("app.vue");
   return _sfc_setup$2 ? _sfc_setup$2(props, ctx) : void 0;
 };
-const AppComponent = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["ssrRender", _sfc_ssrRender]]);
 const _sfc_main$1 = {
   __name: "nuxt-error-page",
   __ssrInlineRender: true,
@@ -1535,8 +2117,8 @@ const _sfc_main$1 = {
     const statusMessage = _error.statusMessage ?? (is404 ? "Page Not Found" : "Internal Server Error");
     const description = _error.message || _error.toString();
     const stack = void 0;
-    const _Error404 = defineAsyncComponent(() => import('./error-404-BfggHaXL.mjs').then((r) => r.default || r));
-    const _Error = defineAsyncComponent(() => import('./error-500-DvnsTViX.mjs').then((r) => r.default || r));
+    const _Error404 = defineAsyncComponent(() => import('./error-404-DHxPHRs5.mjs').then((r) => r.default || r));
+    const _Error = defineAsyncComponent(() => import('./error-500-DDvVgZTB.mjs').then((r) => r.default || r));
     const ErrorTemplate = is404 ? _Error404 : _Error;
     return (_ctx, _push, _parent, _attrs) => {
       _push(ssrRenderComponent(unref(ErrorTemplate), mergeProps({ statusCode: unref(statusCode), statusMessage: unref(statusMessage), description: unref(description), stack: unref(stack) }, _attrs), null, _parent));
@@ -1583,7 +2165,7 @@ const _sfc_main = {
           } else if (unref(SingleRenderer)) {
             ssrRenderVNode(_push, createVNode(resolveDynamicComponent(unref(SingleRenderer)), null, null), _parent);
           } else {
-            _push(ssrRenderComponent(unref(AppComponent), null, null, _parent));
+            _push(ssrRenderComponent(unref(_sfc_main$2), null, null, _parent));
           }
         },
         _: 1
@@ -1617,5 +2199,5 @@ let entry;
 }
 const entry$1 = (ssrContext) => entry(ssrContext);
 
-export { _export_sfc as _, asyncDataDefaults as a, useRouter as b, createError as c, resolveRouteObject as d, entry$1 as default, navigateTo as e, useRuntimeConfig as f, injectHead as i, nuxtLinkDefaults as n, resolveUnrefHeadInput as r, useNuxtApp as u };
+export { warnOnce as a, useRouter as b, createInjectionKey as c, defineStore as d, entry$1 as default, useNuxtApp as e, asyncDataDefaults as f, createError as g, configProviderInjectionKey as h, injectHead as i, resolveRouteObject as j, navigateTo as k, useRuntimeConfig as l, nuxtLinkDefaults as n, resolveUnrefHeadInput as r, throwError as t, useConfig as u, warn as w };
 //# sourceMappingURL=server.mjs.map

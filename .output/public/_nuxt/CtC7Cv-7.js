@@ -1,1 +1,0 @@
-import{_ as e,c,o as s}from"./BdcIS8BQ.js";const t={},r={class:"flex h-[95vh] justify-center items-center"};function n(o,_){return s(),c("div",r,"Пока сервис в разработке")}const f=e(t,[["render",n]]);export{f as default};

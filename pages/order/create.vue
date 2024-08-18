@@ -168,15 +168,12 @@ import {
     RadioGroupOption,
 } from '@headlessui/vue';
 import { MapIcon, TruckIcon, BanknotesIcon, CheckBadgeIcon,CreditCardIcon } from '@heroicons/vue/24/outline';
-import Input from '@/components/Input/index.vue';
 import { useForm } from 'vee-validate';
 import UserCard from '~/components/user-card.vue';
 import { ref } from 'vue';
 import { CardStorage } from '@/storages/storage';
 import * as yup from 'yup';
 import axiosInstance from '@/api';
-import {addError} from '@/components/Errors';
-import Button from '@/components/Button';
 const order = ref<any>(null);
 
 const plan = ref('2');
@@ -237,10 +234,7 @@ function createOrder() {
         order.value = res.data;
         cardStorage.resetCard();
     }).catch(e=>{
-        addError({
-            timeout: 5,
-            message: e.toString(),
-        });
+        console.log(e)
     }).finally(()=>{
         orderCreateLoading.value = false;
     });
