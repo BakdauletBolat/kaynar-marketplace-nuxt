@@ -3,31 +3,39 @@ import {TruckIcon, CheckBadgeIcon, StarIcon} from "@heroicons/vue/24/outline";
 import {ref} from "vue";
 import ProductSlider from "@/components/product-slider.vue";
 import {useRoute} from "vue-router";
-import {type Product} from '@/api/products';
+import {type ProductDetail} from '@/api/products';
 import ProductMobileSlider from '@/components/product-mobile.slider.vue';
 import {customFetch} from "~/api";
 import {CardStorage, isOpenCart} from "@/storages/storage";
-import {NSelect, NButton} from 'naive-ui';
+import {NSelect, NButton, NBreadcrumb, NBreadcrumbItem} from 'naive-ui';
 
 function getProduct(id: number) {
-  console.log('asdas')
-  return customFetch<Product>(`/api/product/${id}/`);
+  return customFetch<ProductDetail>(`/api/v2/product/${id}/`);
 }
 
-const {data: product} = await useAsyncData('product', () => getProduct(parseInt(route.params.id.toString())));
+const route = useRoute();
+const {
+  data: product,
+  status,
+  error
+} = await useAsyncData('product-detail', () => getProduct(parseInt(route.params.id.toString())));
 
 const cardStorage = CardStorage.getInstance();
-const route = useRoute();
+
 const countryId = ref<any | undefined>(null);
 
-const breadcrumbs = ref([
+const breadcrumbs = ref<{text: string, link: any}[]>([
   {
-    "text": "Главная",
-    "link": null
+    text: "Главная",
+    link: {
+      name: "index"
+    }
   },
   {
-    "text": "Каталог автомобилей",
-    "link": null
+    text: "Каталог автомобилей",
+    link: {
+      name: "catalog"
+    }
   }
 ]);
 
@@ -49,37 +57,36 @@ const countryOptions: any[] = [{
 
 onMounted(() => {
   if (product.value != null) {
-    addBreadCrumbs(product.value!);
+    // addBreadCrumbs(product.value!);
   }
 
 })
 
 watch(product, (value) => {
   if (value != null) {
-    addBreadCrumbs(value!);
+    // addBreadCrumbs(value!);
   }
 })
 
 
-
-function addBreadCrumbs(value: Product) {
+function addBreadCrumbs(value: ProductDetail) {
   breadcrumbs.value.push({
-    link: null,
-    text: value.modification.modelCar.name.toString()
-  })
-  breadcrumbs.value.push({
-    link: null,
-    text: value.category.toString()
+    link: {
+      name: "catalog",
+      query: {
+        category: value.category.id
+      }
+    },
+    text: value.category.name.toString()
   })
 }
-
-
 
 function addGoods() {
   cardStorage.addGood({
     quantity: 1,
     id: product.value!.id,
     name: product.value!.name,
+    // @ts-ignore
     price: product.value!.price,
     // @ts-ignore
     picture_url: product.value!.pictures.length > 0 ? product.value!.pictures[0].image : null
@@ -87,20 +94,22 @@ function addGoods() {
   cardStorage.isActive.value = true;
 }
 
-
-
-
 </script>
 <template>
+  <div class="mx-auto container px-4 mt-4">
+    <n-breadcrumb>
+      <n-breadcrumb-item v-for="option in breadcrumbs">
+        <nuxt-link :to="option.link">{{ option.text }}</nuxt-link>
+      </n-breadcrumb-item>
+    </n-breadcrumb>
+  </div>
   <div class="mx-auto relative container px-4">
-
-    {{product }} asdasd {{data}}
     <div v-if="product" class="mt-4 grid relative w-full grid-cols-1 lg:grid-cols-[500px_1fr] gap-5">
       <div class="order-2 lg:order-1">
-        <div class="p-5 w-full bg-white rounded-lg hidden lg:block">
+        <n-card class="w-full hidden lg:block">
           <ProductSlider :pictures="product?.pictures"></ProductSlider>
-        </div>
-        <div class="p-5 w-full text-sm lg:mt-5 bg-white rounded-lg">
+        </n-card>
+        <n-card class="w-full text-sm">
           <h2 class="font-bold text-lg">Машина</h2>
           <div>
             <ul>
@@ -109,8 +118,8 @@ function addGoods() {
                   Модификация
                 </div>
                 <p class="font-light">
-                  {{ product.modification.modelCar.name }} (2015, {{ product.modification.power }}kw,
-                  {{ product.modification.capacity }}l)
+                  {{ product.eav_attributes?.modelCar?.name }} (2015, {{ product.eav_attributes?.power }}kw,
+                  {{ product.eav_attributes?.capacity }}l)
                 </p>
               </li>
 
@@ -119,7 +128,7 @@ function addGoods() {
                   Год
                 </div>
                 <p class="font-light">
-                  {{ product.modification.modelCar.startDate }}
+                  {{ product.eav_attributes?.modelCar?.startDate }}
                 </p>
               </li>
 
@@ -128,7 +137,7 @@ function addGoods() {
                   Тип топлива
                 </div>
                 <p class="font-light">
-                  {{ product.modification.fuelType }}
+                  {{ product.eav_attributes?.fuelType }}
                 </p>
               </li>
 
@@ -137,7 +146,7 @@ function addGoods() {
                   Объем двигателя
                 </div>
                 <p class="font-light">
-                  {{ product.modification.capacity }} l
+                  {{ product.eav_attributes?.capacity }} l
                 </p>
               </li>
 
@@ -146,7 +155,7 @@ function addGoods() {
                   Тип коробки передач
                 </div>
                 <p class="font-light">
-                  Ручная
+                  {{ product.eav_attributes?.gearType }}
                 </p>
               </li>
 
@@ -155,7 +164,7 @@ function addGoods() {
                   Ведущие колеса
                 </div>
                 <p class="font-light">
-                  Задний
+                  {{ product.eav_attributes?.axleConfiguration }}
                 </p>
               </li>
               <li class="flex py-3 justify-between -b">
@@ -163,7 +172,7 @@ function addGoods() {
                   Тип кузова
                 </div>
                 <p class="font-light">
-                  {{ product.modification.bodyType }}
+                  {{ product.eav_attributes?.bodyType }}
                 </p>
               </li>
               <li class="flex py-3 justify-between -b">
@@ -171,7 +180,7 @@ function addGoods() {
                   Положение рулевого колеса
                 </div>
                 <p class="font-light">
-                  Правосторонний руль
+                  {{ product.eav_attributes?.steeringType }}
                 </p>
               </li>
 
@@ -180,7 +189,7 @@ function addGoods() {
                   OEM-коды
                 </div>
                 <p class="font-light">
-                  6792112
+                  {{ product.eav_attributes?.vinCode }}
                 </p>
               </li>
 
@@ -198,22 +207,22 @@ function addGoods() {
                   Мощность двигателя
                 </div>
                 <p class="font-light">
-                  {{ product.modification.power }} kW
+                  {{ product.eav_attributes?.power }} kW
                 </p>
               </li>
             </ul>
           </div>
-        </div>
+        </n-card>
       </div>
       <div class="order-1 lg:order-2">
-        <div class="lg:sticky lg:top-20 z-10">
-          <div class=" bg-white rounded-lg p-5">
-            <h1 class="text-lg block lg:hidden lg:text-2xl font-bold">{{ product.modification.modelCar.name }} (
-              {{ product.modification.modelCar.startDate }} - {{ product.modification.modelCar.endDate }}
+        <div class="lg:sticky z-10">
+          <n-card >
+            <h1 class="text-lg block lg:hidden lg:text-2xl font-bold">{{ product.eav_attributes?.modelCar?.name }} (
+              {{ product.eav_attributes?.modelCar?.startDate }} - {{ product.eav_attributes?.modelCar?.endDate }}
               ) {{ product.name }}</h1>
             <ProductMobileSlider :pictures="product?.pictures" class="lg:hidden mt-3"></ProductMobileSlider>
-            <h1 class="text-lg hidden lg:block lg:text-2xl font-bold">{{ product.modification.modelCar.name }} (
-              {{ product.modification.modelCar.startDate }} - {{ product.modification.modelCar.endDate }}
+            <h1 class="text-lg hidden lg:block lg:text-2xl font-bold">{{ product.eav_attributes?.modelCar?.name }} (
+              {{ product.eav_attributes?.modelCar?.startDate }} - {{ product.eav_attributes?.modelCar?.endDate }}
               ) {{ product.name }}</h1>
             <div class="mt-2">
               <span>Код товара в системе: </span><span
@@ -221,39 +230,41 @@ function addGoods() {
             </div>
             <div class="flex justify-between flex-col lg:flex-row gap-2 lg:gap-0 lg:items-center mt-3">
               <div class="text-2xl font-bold">{{ product.price }} ₸</div>
-              <n-button @click="isOpenCart = true" v-if="cardStorage.checkInGoods(product.id)">
+              <n-button size="large" @click="isOpenCart = true" v-if="cardStorage.checkInGoods(product.id)">
                 Товар в корзине
               </n-button>
-              <n-button type="primary" v-else @click="addGoods">
+              <n-button size="large" type="primary" v-else @click="addGoods">
                 Купить
               </n-button>
             </div>
-          </div>
-          <div
-              class="grid grid-cols-1 lg:grid-cols-3 rounded-lg bg-white lg:gap-2 py-5 px-5 justify-between my-4 gap-5">
-            <div class="flex gap-2 flex-col items-center">
-              <TruckIcon class="w-12 h-12 text-sky-500"></TruckIcon>
-              <div class="flex flex-col justify-center items-center">
-                <h3>1-2 д.</h3>
-                <p class="text-sm text-gray-500">Расчетная дата доставки*</p>
+          </n-card>
+          <n-card
+              class=" my-4 gap-5">
+            <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-2 justify-between">
+              <div class="flex gap-2 flex-col items-center">
+                <TruckIcon class="w-12 h-12 text-sky-500"></TruckIcon>
+                <div class="flex flex-col justify-center items-center">
+                  <h3>1-2 д.</h3>
+                  <p class="text-sm text-gray-500">Расчетная дата доставки*</p>
+                </div>
+              </div>
+              <div class="flex gap-2 flex-col items-center">
+                <CheckBadgeIcon class="w-12 h-12 text-sky-500"></CheckBadgeIcon>
+                <div class="flex flex-col justify-center items-center">
+                  <h3>14 д.</h3>
+                  <p class="text-sm text-gray-500">Гарантия возврата</p>
+                </div>
+              </div>
+              <div class="flex gap-2 flex-col items-center">
+                <StarIcon class="w-12 h-12 text-sky-500"></StarIcon>
+                <div class="flex flex-col justify-center items-center">
+                  <h3>4.6/5</h3>
+                  <p class="text-sm text-gray-500">Оценка клиента</p>
+                </div>
               </div>
             </div>
-            <div class="flex gap-2 flex-col items-center">
-              <CheckBadgeIcon class="w-12 h-12 text-sky-500"></CheckBadgeIcon>
-              <div class="flex flex-col justify-center items-center">
-                <h3>14 д.</h3>
-                <p class="text-sm text-gray-500">Гарантия возврата</p>
-              </div>
-            </div>
-            <div class="flex gap-2 flex-col items-center">
-              <StarIcon class="w-12 h-12 text-sky-500"></StarIcon>
-              <div class="flex flex-col justify-center items-center">
-                <h3>4.6/5</h3>
-                <p class="text-sm text-gray-500">Оценка клиента</p>
-              </div>
-            </div>
-          </div>
-          <div class=" pt-5 bg-white rounded-lg p-3">
+          </n-card>
+          <n-card>
             <h2 class="text-xl font-bold">Расчетная время доставки*</h2>
             <n-select class="mt-5" v-model:value="countryId" :options="countryOptions"
                       placeholder="Выберите страну"></n-select>
@@ -279,7 +290,7 @@ function addGoods() {
 
               </tbody>
             </table>
-          </div>
+          </n-card>
         </div>
       </div>
     </div>

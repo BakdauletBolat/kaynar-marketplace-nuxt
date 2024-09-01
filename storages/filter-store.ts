@@ -58,6 +58,7 @@ export const useFilterStore = defineStore("filter-products", {
     state: () => {
         return {
             filterValues: {
+                search: null as string | null,
                 category: null as string | null,
                 modification: null as string | null,
                 manufacturer: null as number | null,
@@ -82,6 +83,26 @@ export const useFilterStore = defineStore("filter-products", {
             axiosInstance.get<CarFilterData>("/api/car/filters/").then((res) => {
                 this.filterData = res.data;
             });
+        },
+        clearValues() {
+            this.filterValues = {
+                search: null,
+                category: null,
+                modification: null,
+                manufacturer: null,
+                axleConfiguration: null,
+                bodyType: null,
+                capacity: null,
+                driveType: null,
+                engineDisplacement: null,
+                fuelType: null,
+                gearType: null,
+                numberOfCycle: null,
+                numberOfValves: null,
+                power: null,
+                steeringType: null,
+                vinCode: null,
+            }
         }
     },
     getters: {
@@ -94,12 +115,12 @@ export const useFilterStore = defineStore("filter-products", {
                 switch (key) {
                     case "axleConfiguration":
                         type = 'radio';
-                        options = state.filterData[key].map(item=>{return {label: item.name, value: item.id}});
+                        options = state.filterData[key].map(item=>{return {label: item.name, value: item.name}});
                         title = "Конфигурация оси";
                         break;
                     case "bodyType":
                         type = 'radio';
-                        options = state.filterData[key].map(item=>{return {label: item.name, value: item.id}});
+                        options = state.filterData[key].map(item=>{return {label: item.name, value: item.name}});
                         title = "Тип кузова";
                         break;
                     case "capacity":
@@ -109,7 +130,7 @@ export const useFilterStore = defineStore("filter-products", {
                         break;
                     case "driveType":
                         type = 'radio';
-                        options = state.filterData[key].map(item=>{return {label: item.name, value: item.id}});
+                        options = state.filterData[key].map(item=>{return {label: item.name, value: item.name}});
                         title = "Тип диска";
                         break;
                     case "engineDisplacement":
@@ -119,12 +140,12 @@ export const useFilterStore = defineStore("filter-products", {
                         break;
                     case "fuelType":
                         type = 'radio';
-                        options = state.filterData[key].map(item=>{return {label: item.name, value: item.id}});
+                        options = state.filterData[key].map(item=>{return {label: item.name, value: item.name}});
                         title = "Тип топлива";
                         break;
                     case "gearType":
                         type = 'radio';
-                        options = state.filterData[key].map(item=>{return {label: item.name, value: item.id}});
+                        options = state.filterData[key].map(item=>{return {label: item.name, value: item.name}});
                         title = "Тип шестерни";
                         break;
                     case "numberOfCycle":
@@ -144,7 +165,7 @@ export const useFilterStore = defineStore("filter-products", {
                         break;
                     case "steeringType":
                         type = 'radio';
-                        options = state.filterData[key].map(item=>{return {label: item.name, value: item.id}});
+                        options = state.filterData[key].map(item=>{return {label: item.name, value: item.name}});
                         title = "Тип рулевого управления";
                         break;
                     case "vinCode":

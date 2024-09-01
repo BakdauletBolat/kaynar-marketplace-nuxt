@@ -5,9 +5,9 @@
                 preventClickOnDrag: true,
                 duration: 100
             }">
-                <div :key="picture.id" v-for="picture in pictures" class="panel cursor-pointer w-full h-[300px]">
-                    <img :alt="picture.product" loading="lazy" class=" w-full pointer-events-none h-full object-cover" :src="picture.image" />
-                </div>
+                    <div :key="picture.id" v-for="picture in pictures" class="pointer-events-none panel h-[300px] w-full" >
+                      <n-image class="object-cover" width="100%" height="100%" :src="picture.image" />
+                    </div>
             </Flicking>
             <div>
                 <ChevronLeftIcon @click="prev" class="absolute z-10 -translate-y-1/2 top-1/2 cursor-pointer w-7 h-7"></ChevronLeftIcon>
@@ -28,6 +28,7 @@
 import Flicking from "@egjs/vue3-flicking";
 import { ref, watchEffect } from 'vue';
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/vue/24/outline";
+import {NImage} from 'naive-ui';
 import { type Picture } from "@/api/products";
 
 type ChangedValue = {

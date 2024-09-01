@@ -1,6 +1,102 @@
 import axios, {customFetch} from "./index";
 
-export interface Product {
+interface Category {
+    id: number;
+    created_at: string;
+    updated_at: string;
+    name: string;
+    recar_category_id: number;
+    parent: number | null;
+}
+
+interface WarehouseCategory {
+    id: number;
+    created_at: string;
+    updated_at: string;
+    name: string;
+    recar_category_id: number;
+    parent: number | null;
+}
+
+interface City {
+    id: number;
+    created_at: string;
+    updated_at: string;
+    name: string;
+    uid: string | null;
+    country: number;
+}
+
+interface Warehouse {
+    id: number;
+    name: string;
+    categories: WarehouseCategory[];
+    city: City;
+}
+
+interface Detail {
+    id: number;
+    height: number;
+    width: number;
+    length: number;
+    weight: number;
+}
+
+export interface Picture {
+    id: number;
+    image: string;
+    product: number;
+}
+
+interface ModelCar {
+    id: number;
+    name: string;
+    startDate: string;
+    endDate: string;
+    manufacturer: number;
+}
+
+interface EavAttributes {
+    axleConfiguration: string;
+    bodyType: string;
+    capacity: string;
+    driveType: string;
+    engineDisplacement: string;
+    fuelType: string;
+    gearType: string;
+    numberOfCycle: string;
+    numberOfValves: string;
+    power: string;
+    steeringType: string;
+    vinCode: string;
+    modelCar: ModelCar;
+}
+
+export interface ProductDetail {
+    id: number;
+    price: number | null;
+    color: string | null;
+    category: Category;
+    code: any[]; // Assuming the code is an array, adjust if necessary
+    warehouse: Warehouse;
+    detail: Detail;
+    status: string;
+    pictures: Picture[];
+    eav_attributes: EavAttributes;
+    created_at: string;
+    updated_at: string;
+    name: string;
+    market_price: number | null;
+    properties: any | null;
+    defect: any | null;
+    comment: any | null;
+    mileage: number | null;
+    modification: number;
+    mileageType: any | null;
+}
+
+
+export interface ProductList {
     id:           number;
     price:        number;
     warehouse:    {
@@ -10,9 +106,13 @@ export interface Product {
         }
     };
     color:        null;
-    category:     any[];
+    category:     {
+        name: string
+    }
+    modelCar: {
+        name: string;
+    };
     code:         any[];
-    modification: Modification;
     detail:       null;
     status:       string;
     pictures:     Picture[];
@@ -27,36 +127,7 @@ export interface Product {
     mileageType:  null;
 }
 
-export interface Modification {
-    id:                number;
-    axleConfiguration: null;
-    engines:           any[];
-    driveType:         string;
-    gearType:          null;
-    fuelType:          string;
-    bodyType:          string;
-    modelCar:          ModelCar;
-    name:              string;
-    capacity:          number;
-    power:             number;
-    numberOfCycle:     number;
-    numberOfValves:    number;
-    vinCode:           number;
-}
 
-export interface ModelCar {
-    id:           number;
-    name:         string;
-    startDate:    Date;
-    endDate:      Date;
-    manufacturer: number;
-}
-
-export interface Picture {
-    id:      number;
-    image:   string;
-    product: number;
-}
 
 function generateQuery(queries: object) {
     let query = '?'
@@ -73,10 +144,10 @@ function generateQuery(queries: object) {
 export async function getProducts(options: object = {}) {
     const query = generateQuery(options)
     return await customFetch<{
-        results: Product[]
-    }>(`/api/product/${query}`)
+        results: ProductList[]
+    }>(`/api/v2/product/${query}`)
 }
 
 export async function getProduct(id: string) {
-    return await axios.get(`/api/product/${id}`)
+    return await axios.get(`/api/v2/product/${id}`)
 }

@@ -15,17 +15,17 @@
                 }" class="text-lg">{{ item.name }}</RouterLink>
                 <span class=" ">{{ item.price }} ₸</span>
                 <div class="flex items-center mt-3 gap-2">
-                    <div><PlusCircleIcon @click="cardStorage.increaseGood(item.id)" class="w-[24px] text-slate-600 cursor-pointer"></PlusCircleIcon></div>
+                    <div><add-icon @click="cardStorage.increaseGood(item.id)" class="w-[24px] text-slate-600 cursor-pointer"></add-icon></div>
                     <div>{{ item.quantity }}</div>
-                    <div><MinusCircleIcon @click="cardStorage.decreaseGood(item.id)" class="w-[24px] text-slate-600 cursor-pointer"></MinusCircleIcon></div>
-                    <div><TrashIcon @click="cardStorage.removeGood(item.id)" class="w-[24px] text-red-500 cursor-pointer"></TrashIcon></div>
+                    <div><remove-icon @click="cardStorage.decreaseGood(item.id)" class="w-[24px] text-slate-600 cursor-pointer"></remove-icon></div>
+                    <div><trash-icon @click="cardStorage.removeGood(item.id)" class="w-[24px] text-red-500 cursor-pointer"></trash-icon></div>
                 </div>
             </div>
         </div>
     </div>
 </template>
 <script setup lang="ts">
-import { PlusCircleIcon, MinusCircleIcon, TrashIcon } from '@heroicons/vue/24/outline';
+import {Add as AddIcon, Remove as RemoveIcon, Trash as TrashIcon} from '@vicons/ionicons5';
 import {CardStorage} from '@/storages/storage';
 const cardStorage = CardStorage.getInstance();
 defineProps(['item']);
