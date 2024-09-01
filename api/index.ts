@@ -7,7 +7,9 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(function (config) {
   const token = useCookie("token");
-  config["headers"]["Authorization"] = `Bearer ${token.value}`;
+  if (token.value) {
+    config["headers"]["Authorization"] = `Bearer ${token.value}`;
+  }
   return config;
 });
 

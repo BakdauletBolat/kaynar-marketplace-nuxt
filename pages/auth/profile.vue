@@ -51,6 +51,7 @@ import { NTabs, NTabPane } from "naive-ui";
 import { useAuthStore } from "~/storages/auth-store";
 
 // Sample user data
+const token = useCookie("token");
 const authStore = useAuthStore();
 const userName = ref("Иван Иванов");
 const userEmail = ref("ivan.ivanov@example.com");
@@ -68,6 +69,10 @@ onMounted(() => {
 });
 
 const activeTab = ref("userInfo");
+
+definePageMeta({
+    middleware: "auth",
+});
 </script>
 
 <style scoped>
