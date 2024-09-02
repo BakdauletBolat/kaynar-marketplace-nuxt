@@ -34,11 +34,7 @@
                 <!-- User Favorite Items -->
                 <div class="p-4 bg-white rounded shadow">
                     <h2 class="text-xl font-semibold mb-2">Избранные товары</h2>
-                    <ul>
-                        <li v-for="item in favoriteItems" :key="item.id">
-                            {{ item.name }} - {{ item.price }} ₽
-                        </li>
-                    </ul>
+                    <favorites-list :items="favoritesStore.favorites"></favorites-list>
                 </div>
             </n-tab-pane>
         </n-tabs>
@@ -49,23 +45,20 @@
 import { ref } from "vue";
 import { NTabs, NTabPane } from "naive-ui";
 import { useAuthStore } from "~/storages/auth-store";
+import FavoritesList from "@/components/favorites-list.vue";
+import {useFavoritesStore} from "~/storages/favorites-store";
 
-// Sample user data
-const token = useCookie("token");
 const authStore = useAuthStore();
-const userName = ref("Иван Иванов");
-const userEmail = ref("ivan.ivanov@example.com");
+const favoritesStore = useFavoritesStore();
+
 const userAddresses = ref([
     { id: 1, street: "Ленина 1", city: "Алматы" },
     { id: 2, street: "Абая 5", city: "Алматы" },
 ]);
-const favoriteItems = ref([
-    { id: 1, name: "Пицца", price: 800 },
-    { id: 2, name: "Суши", price: 1200 },
-]);
 
 onMounted(() => {
     authStore.loadUser();
+    favoritesStore.loadFavorites();
 });
 
 const activeTab = ref("userInfo");
