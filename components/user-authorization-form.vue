@@ -1,7 +1,6 @@
 <template>
     <div class="max-w-[400px] w-full">
         <div v-if="user" class="flex w-full justify-center items-center">
-            {{ token }} token
             <n-form class="w-full" :model="user" ref="formRef" :rules="rules">
                 <n-form-item label="Телефон" path="phone">
                     <n-input
