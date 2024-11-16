@@ -72,11 +72,12 @@ import {
 } from "naive-ui";
 import { useCategoryStore } from "~/storages/category-storage";
 import { useManufacturerStore } from "~/storages/manufacturer-store";
+import { useProductStore } from "~/storages/product-store";
 
 const filterStore = useFilterStore();
 const categoryStore = useCategoryStore();
 const manufacturerStore = useManufacturerStore();
-
+const productStore = useProductStore();
 const formRef = ref();
 
 function handleUpdateValue(
@@ -93,5 +94,9 @@ onMounted(() => {
     filterStore.loadFilters();
     categoryStore.loadCategoriesTree();
     manufacturerStore.loadManufacturers();
+});
+
+watch(filterStore.filterValues, (state) => {
+    productStore.loadProducts(state);
 });
 </script>

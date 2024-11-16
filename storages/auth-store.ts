@@ -48,9 +48,9 @@ export const useAuthStore = defineStore("auth-store", {
     authenticated: false,
   }),
   actions: {
-    loadUser() {
+    async loadUser() {
       this.$state.isLoadingUser = true;
-      axiosInstance
+      return await axiosInstance
         .get("/api/users/me/")
         .then((res) => {
           this.$state.user = res.data;

@@ -2,7 +2,6 @@
 import { ref, watch } from "vue";
 import { FunnelIcon } from "@heroicons/vue/20/solid";
 import { useRoute } from "vue-router";
-import { type ProductList } from "~/api/products";
 import {
     NBreadcrumb,
     NBreadcrumbItem,
@@ -43,6 +42,8 @@ const sortOptions = [
 
 const route = useRoute();
 const router = useRouter();
+const isScrolled = ref(false);
+let ticking = false;
 
 onMounted(() => {
     filterStore.clearValues();
@@ -62,6 +63,8 @@ onMounted(() => {
         );
     }
 
+    window.addEventListener("scroll", handleScroll);
+
     productStore.loadProducts(filterStore.filterValues);
 });
 
@@ -69,9 +72,22 @@ function handleBack() {
     router.back();
 }
 
-watch(filterStore.filterValues, (state) => {
-    console.log(state);
-    productStore.loadProducts(state);
+const handleScroll = () => {
+    // Если уже ждем следующего кадра, выходим
+    if (!ticking) {
+        // Устанавливаем флаг
+        ticking = true;
+
+        // Используем requestAnimationFrame для оптимизации
+        requestAnimationFrame(() => {
+            isScrolled.value = window.scrollY > 100;
+            ticking = false; // Сбрасываем флаг
+        });
+    }
+};
+
+onUnmounted(() => {
+    window.removeEventListener("scroll", handleScroll);
 });
 
 watch(route, (state) => {
@@ -92,13 +108,13 @@ const mobileFiltersOpen = ref(false);
             <div
                 class="z-[99] bg-white shadow sticky top-0 place-items-center p-4 w-full"
             >
-                <div>
+                <div class="w-full">
                     <n-page-header
-                        class="container px-4 mx-auto"
+                        class="w-full container px-4 mx-auto"
                         @back="handleBack"
                     >
                         <template #title> Поиск запчастей </template>
-                        <template #header>
+                        <template #header v-if="!isScrolled">
                             <n-breadcrumb id="breadcrumbsb">
                                 <n-breadcrumb-item
                                     v-for="option in breadcrumbs"

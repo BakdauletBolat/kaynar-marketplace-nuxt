@@ -42,9 +42,9 @@ onMounted(() => {
             >
         </n-drawer-content>
     </n-drawer>
-    <div class="relative min-h-full bg-slate-100">
+    <div class="relative min-h-full">
         <app-header></app-header>
-        <div class="bg-slate-100">
+        <div>
             <slot></slot>
         </div>
         <app-footer></app-footer>

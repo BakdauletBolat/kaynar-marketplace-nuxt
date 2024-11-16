@@ -5,7 +5,7 @@
             <n-form class="w-full" :model="user" ref="formRef" :rules="rules">
                 <n-form-item label="Телефон" path="phone">
                     <n-input
-                        class="w-full"
+                        class="w-full imask-elem"
                         v-model:value="user.phone"
                         placeholder="+7 (___) ___-__-__"
                     />
@@ -41,7 +41,7 @@ import {
 } from "@/storages/auth-store";
 import { NForm, NFormItem, NInput, NButton, useMessage } from "naive-ui";
 import axiosInstance from "@/api";
-
+import IMask from "imask";
 const formRef = ref();
 const isLoading = ref();
 
@@ -51,6 +51,17 @@ const token = useCookie("token", {
     maxAge: 10000,
 });
 const { user } = storeToRefs(useAuthStore());
+
+const maskOptions = {
+    mask: "+{7} (000) 000 00 00",
+};
+let mask = null;
+onMounted(() => {
+    mask = IMask(
+        document.querySelector(".imask-elem").querySelector("input"),
+        maskOptions,
+    );
+});
 
 function handleOnSuccess(res: any) {
     token.value = res.data.access;
@@ -65,6 +76,7 @@ function handleOnFail(e: any) {
 
 function auth(form: UserAuthPayload) {
     isLoading.value = true;
+    form.phone = "+" + mask.unmaskedValue;
     axiosInstance
         .post("/api/users/token/", form)
         .then(handleOnSuccess)

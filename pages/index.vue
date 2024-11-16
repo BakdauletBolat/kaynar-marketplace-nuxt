@@ -3,7 +3,6 @@ import SearchBlock from "~/components/search-block.vue";
 import Card from "~/components/card.vue";
 import { useProductStore } from "@/storages/product-store";
 import ManufacturersList from "~/components/manufacturers-list.vue";
-import CategoriesList from "~/components/categories-list.vue";
 
 const productStore = useProductStore();
 

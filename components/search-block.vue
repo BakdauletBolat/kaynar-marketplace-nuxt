@@ -92,8 +92,13 @@ onMounted(() => {
     categoryStore.loadCategories();
 });
 
-function onChangeManufacturer(value: number) {
+function clearModelCar() {
     selectedModel.value = undefined;
+}
+
+function onChangeManufacturer(value: number) {
+    clearModelCar();
+    selectedManufacturer.value = value;
     getCarModels(value);
 }
 

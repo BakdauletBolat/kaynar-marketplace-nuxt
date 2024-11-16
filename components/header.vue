@@ -50,7 +50,7 @@ const route = useRoute();
             class="w-full bg-black z-[9999] lg:border-b border-b-slate-100"
         >
             <div
-                class="mx-auto justify-between bg-black items-center text-white flex container px-4 p-2"
+                class="mx-auto justify-between gap-2 bg-black items-center text-white flex container px-4 p-2"
             >
                 <div class="flex items-center gap-5">
                     <nuxt-link
@@ -91,7 +91,7 @@ const route = useRoute();
                         :to="{
                             name: 'auth-profile',
                         }"
-                        class="cursor-pointer"
+                        class="cursor-pointer hidden md:block"
                     >
                         <PersonOutline class="w-6 h-6"></PersonOutline>
                     </nuxt-link>
