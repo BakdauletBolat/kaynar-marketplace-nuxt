@@ -10,9 +10,9 @@ interface Good {
   quantity: number;
 }
 
-
 export const isOpenSidebar = ref(false);
 export const isOpenCart = ref(false);
+export const isOpenMenu = ref(false);
 
 abstract class AbstractCardStorage {
   goods = ref<Good[]>([]);
@@ -24,7 +24,7 @@ abstract class AbstractCardStorage {
     this.uuid.value = id;
     if (this.storage.value != null) {
       //@ts-ignore
-      const card: {uuid: string, goods: Good[]} = this.storage.value;
+      const card: { uuid: string; goods: Good[] } = this.storage.value;
       this.goods.value = card.goods;
       this.uuid.value = card.uuid;
     }

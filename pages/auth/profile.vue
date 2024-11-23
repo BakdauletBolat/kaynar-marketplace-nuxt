@@ -14,22 +14,13 @@
                     <p>Email: {{ authStore.user?.email }}</p>
                 </div>
             </n-tab-pane>
-            <n-tab-pane name="addresses" tab="Адреса">
-                <!-- User Addresses -->
-                <div class="p-4 bg-white rounded shadow">
-                    <h2 class="text-xl font-semibold mb-2">Адреса</h2>
-                    <ul>
-                        <li v-for="address in userAddresses" :key="address.id">
-                            {{ address.street }}, {{ address.city }}
-                        </li>
-                    </ul>
-                </div>
-            </n-tab-pane>
             <n-tab-pane name="favorites" tab="Избранные товары">
                 <!-- User Favorite Items -->
                 <div class="p-4 bg-white rounded shadow">
                     <h2 class="text-xl font-semibold mb-2">Избранные товары</h2>
-                    <favorites-list :items="favoritesStore.favorites"></favorites-list>
+                    <favorites-list
+                        :items="favoritesStore.favorites"
+                    ></favorites-list>
                 </div>
             </n-tab-pane>
         </n-tabs>
@@ -41,15 +32,10 @@ import { ref } from "vue";
 import { NTabs, NTabPane } from "naive-ui";
 import { useAuthStore } from "~/storages/auth-store";
 import FavoritesList from "@/components/favorites-list.vue";
-import {useFavoritesStore} from "~/storages/favorites-store";
+import { useFavoritesStore } from "~/storages/favorites-store";
 
 const authStore = useAuthStore();
 const favoritesStore = useFavoritesStore();
-
-const userAddresses = ref([
-    { id: 1, street: "Ленина 1", city: "Алматы" },
-    { id: 2, street: "Абая 5", city: "Алматы" },
-]);
 
 onMounted(() => {
     authStore.loadUser();

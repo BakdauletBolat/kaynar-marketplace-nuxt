@@ -8,6 +8,13 @@ import ProductMobileSlider from "@/components/product-mobile.slider.vue";
 import { customFetch } from "~/api";
 import { CardStorage, isOpenCart } from "@/storages/storage";
 import { NSelect, NButton, NBreadcrumb, NBreadcrumbItem } from "naive-ui";
+import { NInput, NIcon, NImage, NAffix } from "naive-ui";
+import {
+    Search,
+    PersonOutline,
+    HeartOutline,
+    BagOutline,
+} from "@vicons/ionicons5";
 
 function getProduct(id: number) {
     return customFetch<ProductDetail>(`/api/v2/product/${id}/`);

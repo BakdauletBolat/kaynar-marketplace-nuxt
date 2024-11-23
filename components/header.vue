@@ -95,9 +95,14 @@ const route = useRoute();
                     >
                         <PersonOutline class="w-6 h-6"></PersonOutline>
                     </nuxt-link>
-                    <div class="cursor-pointer hidden lg:block">
+                    <nuxt-link
+                        :to="{
+                            name: 'auth-favorites',
+                        }"
+                        class="cursor-pointer hidden lg:block"
+                    >
                         <HeartOutline class="w-6 h-6"></HeartOutline>
-                    </div>
+                    </nuxt-link>
                     <client-only>
                         <div class="cursor-pointer" @click="openCart">
                             <n-badge
