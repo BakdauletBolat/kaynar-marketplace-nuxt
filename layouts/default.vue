@@ -52,11 +52,36 @@ onMounted(() => {
             <div>
                 <div class="mb-4">
                     <ul class="flex gap-2 flex-col text-xs cursor-pointer">
-                        <li class="hover:underline">Доставка</li>
-                        <li class="hover:underline">Возврат</li>
-                        <li class="hover:underline">Оплата</li>
-                        <li class="hover:underline">Контакты</li>
-                        <li class="hover:underline">Продавайте</li>
+                        <nuxt-link
+                            @click="() => (isOpenSidebar = false)"
+                            :to="{
+                                name: 'delivery',
+                            }"
+                            class="hover:underline"
+                            >Доставка</nuxt-link
+                        >
+                        <nuxt-link
+                            @click="() => (isOpenSidebar = false)"
+                            :to="{
+                                name: 'refund',
+                            }"
+                            class="hover:underline"
+                            >Возврат</nuxt-link
+                        >
+                        <nuxt-link
+                            @click="() => (isOpenSidebar = false)"
+                            :to="{
+                                name: 'pay',
+                            }"
+                            class="hover:underline"
+                            >Оплата</nuxt-link
+                        >
+                        <nuxt-link
+                            @click="() => (isOpenSidebar = false)"
+                            :to="{ name: 'contacts' }"
+                            class="hover:underline"
+                            >Контакты</nuxt-link
+                        >
                     </ul>
                 </div>
                 <n-divider></n-divider>

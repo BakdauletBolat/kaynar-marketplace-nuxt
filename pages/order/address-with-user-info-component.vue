@@ -66,14 +66,16 @@ const authStore = useAuthStore();
 const message = useMessage();
 
 onMounted(() => {
-    authStore.loadUser().then(() => {
-        console.log(authStore.user, "user");
-        orderStore.updateUserInfo({
-            first_name: authStore.user.first_name,
-            last_name: authStore.user.last_name,
-            email: authStore.user.email,
-            phone_number: authStore.user.phone,
-        });
+    authStore.loadUser().then((user) => {
+        if (user != undefined) {
+            console.log("a");
+            orderStore.updateUserInfo({
+                first_name: user.first_name,
+                last_name: user.last_name,
+                email: user.email,
+                phone_number: user.phone,
+            });
+        }
     });
 });
 

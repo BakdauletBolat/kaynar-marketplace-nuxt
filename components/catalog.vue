@@ -45,8 +45,13 @@ const router = useRouter();
 const isScrolled = ref(false);
 let ticking = false;
 
+const props = defineProps(["category"]);
+
 onMounted(() => {
     filterStore.clearValues();
+    if (props.category != null) {
+        filterStore.filterValues.category = props.category;
+    }
     if (route.query.category != null) {
         filterStore.filterValues.category = route.query.category.toString();
     }

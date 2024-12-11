@@ -18,9 +18,8 @@ const containerRef = ref<HTMLElement | undefined>(undefined);
 
 const navigation = [
     { name: "Автозапчасти", to: "index" },
-    { name: "Колеса и шины", to: "services" },
-    { name: "Запрос детали", to: "services" },
-    { name: "Купить онлайн", to: "services" },
+    { name: "Колеса и шины", to: "catalog-kolesa-and-shin" },
+    { name: "Купить онлайн", to: "pay" },
 ];
 
 function searchAndNavigateCatalog() {
@@ -141,11 +140,32 @@ const route = useRoute();
                         </nuxt-link>
                     </div>
                     <ul class="flex gap-2 text-xs cursor-pointer">
-                        <li class="hover:underline">Доставка</li>
-                        <li class="hover:underline">Возврат</li>
-                        <li class="hover:underline">Оплата</li>
-                        <li class="hover:underline">Контакты</li>
-                        <li class="hover:underline">Продавайте</li>
+                        <nuxt-link
+                            :to="{
+                                name: 'delivery',
+                            }"
+                            class="hover:underline"
+                            >Доставка</nuxt-link
+                        >
+                        <nuxt-link
+                            :to="{
+                                name: 'refund',
+                            }"
+                            class="hover:underline"
+                            >Возврат</nuxt-link
+                        >
+                        <nuxt-link
+                            :to="{
+                                name: 'pay',
+                            }"
+                            class="hover:underline"
+                            >Оплата</nuxt-link
+                        >
+                        <nuxt-link
+                            :to="{ name: 'contacts' }"
+                            class="hover:underline"
+                            >Контакты</nuxt-link
+                        >
                     </ul>
                 </div>
             </div>

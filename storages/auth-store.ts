@@ -49,11 +49,16 @@ export const useAuthStore = defineStore("auth-store", {
   }),
   actions: {
     async loadUser() {
+      const token = useCookie("token");
+      if (!token.value) {
+        return;
+      }
       this.$state.isLoadingUser = true;
       return await axiosInstance
         .get("/api/users/me/")
         .then((res) => {
           this.$state.user = res.data;
+          return this.$state.user;
         })
         .catch((e) => {})
         .finally(() => {
