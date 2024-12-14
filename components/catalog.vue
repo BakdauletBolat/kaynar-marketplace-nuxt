@@ -96,7 +96,10 @@ onUnmounted(() => {
 });
 
 watch(route, (state) => {
-    productStore.loadProducts(filterStore.filterValues);
+  if (route.query.search != null) {
+    filterStore.filterValues.search = route.query.search.toString();
+  }
+    productStore.loadProducts({...filterStore.filterValues, page_size: 50});
 });
 
 const mobileFiltersOpen = ref(false);

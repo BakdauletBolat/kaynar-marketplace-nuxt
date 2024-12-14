@@ -10,7 +10,7 @@
                       id: item.id
                   }
               }" >
-              <img class="rounded border lg:h-[120px] h-[200px] object-cover w-full lg:w-[160px]"
+              <img loading="lazy" class="rounded border lg:h-[120px] h-[200px] object-cover w-full lg:w-[160px]"
                    :src="item.pictures.length != 0 ? item.pictures[0].image : 'https://demofree.sirv.com/nope-not-here.jpg'"
                    alt="">
             </nuxt-link>

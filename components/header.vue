@@ -54,9 +54,7 @@ const route = useRoute();
                 <div class="flex items-center gap-5">
                     <nuxt-link
                         class="flex gap-5"
-                        :to="{
-                            name: 'index',
-                        }"
+                        :to="{name: 'index'}"
                     >
                         <div>
                             <n-image
@@ -87,17 +85,13 @@ const route = useRoute();
                 </div>
                 <div class="flex gap-3">
                     <nuxt-link
-                        :to="{
-                            name: 'auth-profile',
-                        }"
+                        :to="{name: 'auth-profile'}"
                         class="cursor-pointer hidden md:block"
                     >
                         <PersonOutline class="w-6 h-6"></PersonOutline>
                     </nuxt-link>
                     <nuxt-link
-                        :to="{
-                            name: 'auth-favorites',
-                        }"
+                        :to="{name: 'auth-favorites'}"
                         class="cursor-pointer hidden lg:block"
                     >
                         <HeartOutline class="w-6 h-6"></HeartOutline>
@@ -141,23 +135,17 @@ const route = useRoute();
                     </div>
                     <ul class="flex gap-2 text-xs cursor-pointer">
                         <nuxt-link
-                            :to="{
-                                name: 'delivery',
-                            }"
+                            :to="{name: 'delivery'}"
                             class="hover:underline"
                             >Доставка</nuxt-link
                         >
                         <nuxt-link
-                            :to="{
-                                name: 'refund',
-                            }"
+                            :to="{name: 'refund'}"
                             class="hover:underline"
                             >Возврат</nuxt-link
                         >
                         <nuxt-link
-                            :to="{
-                                name: 'pay',
-                            }"
+                            :to="{name: 'pay'}"
                             class="hover:underline"
                             >Оплата</nuxt-link
                         >
