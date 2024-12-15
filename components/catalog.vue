@@ -20,6 +20,7 @@ import { useFilterStore } from "~/storages/filter-store";
 
 const productStore = useProductStore();
 const filterStore = useFilterStore();
+const page = ref(1);
 
 const breadcrumbs = ref([
     {
@@ -42,9 +43,6 @@ const sortOptions = [
 
 const route = useRoute();
 const router = useRouter();
-const isScrolled = ref(false);
-let ticking = false;
-
 const props = defineProps(["category"]);
 
 onMounted(() => {
@@ -67,9 +65,6 @@ onMounted(() => {
             route.params.manufacturerId.toString(),
         );
     }
-
-    window.addEventListener("scroll", handleScroll);
-
     productStore.loadProducts(filterStore.filterValues);
 });
 
@@ -77,30 +72,21 @@ function handleBack() {
     router.back();
 }
 
-const handleScroll = () => {
-    // Если уже ждем следующего кадра, выходим
-    if (!ticking) {
-        // Устанавливаем флаг
-        ticking = true;
-
-        // Используем requestAnimationFrame для оптимизации
-        requestAnimationFrame(() => {
-            isScrolled.value = window.scrollY > 100;
-            ticking = false; // Сбрасываем флаг
-        });
-    }
-};
-
-onUnmounted(() => {
-    window.removeEventListener("scroll", handleScroll);
-});
 
 watch(route, (state) => {
   if (route.query.search != null) {
     filterStore.filterValues.search = route.query.search.toString();
   }
-    productStore.loadProducts({...filterStore.filterValues, page_size: 50});
+    productStore.loadProducts(filterStore.filterValues);
 });
+
+watch(page, (newState, _) => {
+  productStore.loadProducts({...filterStore.filterValues, page: newState});
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+})
 
 const mobileFiltersOpen = ref(false);
 </script>
@@ -122,7 +108,7 @@ const mobileFiltersOpen = ref(false);
                         @back="handleBack"
                     >
                         <template #title> Поиск запчастей </template>
-                        <template #header v-if="!isScrolled">
+                        <template #header>
                             <n-breadcrumb id="breadcrumbsb">
                                 <n-breadcrumb-item
                                     v-for="option in breadcrumbs"
@@ -201,6 +187,8 @@ const mobileFiltersOpen = ref(false);
                                 ></card>
                             </div>
                             <div v-else>Запчастей не найдено</div>
+                            <n-pagination class="mt-6" v-model:page="page"
+                                          :page-count="productStore.pageCount" />
                         </div>
                     </div>
                 </section>

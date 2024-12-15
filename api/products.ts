@@ -144,7 +144,8 @@ function generateQuery(queries: object) {
 export async function getProducts(options: object = {}) {
     const query = generateQuery(options)
     return await customFetch<{
-        results: ProductList[]
+        results: ProductList[],
+        count: number,
     }>(`/api/v2/product/${query}`)
 }
 

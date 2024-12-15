@@ -1,12 +1,12 @@
 <template>
     <div v-if="pictures.length > 0" class="w-full flex flex-col gap-3">
         <div class="w-full relative">
-            <Flicking @changed="onChange" class="rounded-sm" ref="flicking" :options="{
+            <Flicking @changed="onChange" class="rounded" ref="flicking" :options="{
                 preventClickOnDrag: true,
                 duration: 100
             }">
                     <div :key="picture.id" v-for="picture in pictures" class="pointer-events-none panel h-[300px] w-full" >
-                      <n-image class="object-cover" width="100%" height="100%" :src="picture.image" />
+                      <n-image class="object-cover h-full" width="100%" :src="picture.image" />
                     </div>
             </Flicking>
             <div>

@@ -3,37 +3,32 @@
                       hover:shadow transition cursor-pointer
                      flex-col p-3 lg:p-5 gap-3 hover:border-slate-200">
         <div>
-          <n-badge class="w-full">
             <nuxt-link class="w-full" :to="{
-                  name: 'product-id',
                   params: {
                       id: item.id
-                  }
+                  },
+                  name: 'product-id'
               }" >
               <img loading="lazy" class="rounded border lg:h-[120px] h-[200px] object-cover w-full lg:w-[160px]"
                    :src="item.pictures.length != 0 ? item.pictures[0].image : 'https://demofree.sirv.com/nope-not-here.jpg'"
                    alt="">
             </nuxt-link>
-
-            <template #value>
-              <div class="flex justify-center items-center" @click="handleFavorite">
-                <n-icon :component="favoritesStore.checkInFavorites(item.id) ? Heart : HeartOutline" />
-              </div>
-            </template>
-          </n-badge>
         </div>
         <div class="w-full">
             <div class="flex justify-between flex-col w-full">
-                <nuxt-link :to="{
+                <div class="w-full flex items-center justify-between" >
+                  <nuxt-link :to="{
                   name: 'product-id',
                   params: {
                       id: item.id
                   }
               }" >
-                  <h2>
                     {{ item.name ?? 'Навзание' }}
-                  </h2>
-                </nuxt-link>
+                  </nuxt-link>
+                  <div class="flex justify-center items-center" @click="handleFavorite">
+                    <n-icon size="24" color="red" :component="favoritesStore.checkInFavorites(item.id) ? Heart : HeartOutline" />
+                  </div>
+                </div>
                 <span class="text-2xl">{{ item.price ?? 1000 }} ₸</span>
             </div>
             <p class="text-sm mt-2">{{item.modelCar.name}}</p>

@@ -11,10 +11,10 @@ export interface Address {
 }
 
 export interface UserInfo {
-  first_name: string;
-  last_name: string;
-  phone_number: string;
-  email: string;
+  first_name: string | undefined;
+  last_name: string | undefined;
+  phone_number: string | undefined;
+  email: string | undefined;
 }
 
 export const useOrderStore = defineStore("order-store", {
@@ -27,7 +27,7 @@ export const useOrderStore = defineStore("order-store", {
         last_name: undefined,
         phone_number: undefined,
         email: undefined,
-      },
+      } as UserInfo,
       isLoadingAddressCreate: false,
       isOrderCreateLoading: false,
       userForm: null as IDefaultAPI | null,

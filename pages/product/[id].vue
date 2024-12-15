@@ -8,13 +8,7 @@ import ProductMobileSlider from "@/components/product-mobile.slider.vue";
 import { customFetch } from "~/api";
 import { CardStorage, isOpenCart } from "@/storages/storage";
 import { NSelect, NButton, NBreadcrumb, NBreadcrumbItem } from "naive-ui";
-import { NInput, NIcon, NImage, NAffix } from "naive-ui";
-import {
-    Search,
-    PersonOutline,
-    HeartOutline,
-    BagOutline,
-} from "@vicons/ionicons5";
+
 
 function getProduct(id: number) {
     return customFetch<ProductDetail>(`/api/v2/product/${id}/`);
@@ -66,13 +60,13 @@ const countryOptions: any[] = [
 
 onMounted(() => {
     if (product.value != null) {
-        // addBreadCrumbs(product.value!);
+        addBreadCrumbs(product.value!);
     }
 });
 
 watch(product, (value) => {
     if (value != null) {
-        // addBreadCrumbs(value!);
+        addBreadCrumbs(value!);
     }
 });
 
@@ -103,6 +97,15 @@ function addGoods() {
     });
     cardStorage.isActive.value = true;
 }
+
+const title = `${ product.value?.eav_attributes?.modelCar?.name } (${ product.value?.eav_attributes?.modelCar?.startDate } - ${ product.value?.eav_attributes?.modelCar?.endDate } )${ product.value?.name }`
+
+useHead({
+  title: title || 'Загрузка...',
+  meta: [
+    { name: 'description', content: `${title}` || 'Описание по умолчанию' }
+  ]
+})
 </script>
 <template>
     <div class="mx-auto container px-4 mt-4">
@@ -149,7 +152,7 @@ function addGoods() {
                                 </p>
                             </li>
 
-                            <li class="flex py-3 justify-between -b">
+                            <li v-if="product.eav_attributes?.fuelType" class="flex py-3 justify-between -b">
                                 <div class="font-light text-slate-500">
                                     Тип топлива
                                 </div>
@@ -158,7 +161,7 @@ function addGoods() {
                                 </p>
                             </li>
 
-                            <li class="flex py-3 justify-between -b">
+                            <li v-if="product.eav_attributes?.capacity" class="flex py-3 justify-between -b">
                                 <div class="font-light text-slate-500">
                                     Объем двигателя
                                 </div>
@@ -167,7 +170,7 @@ function addGoods() {
                                 </p>
                             </li>
 
-                            <li class="flex py-3 justify-between -b">
+                            <li v-if="product.eav_attributes?.gearType" class="flex py-3 justify-between -b">
                                 <div class="font-light text-slate-500">
                                     Тип коробки передач
                                 </div>
@@ -176,18 +179,15 @@ function addGoods() {
                                 </p>
                             </li>
 
-                            <li class="flex py-3 justify-between -b">
+                            <li v-if="product.eav_attributes?.axleConfiguration" class="flex py-3 justify-between -b">
                                 <div class="font-light text-slate-500">
                                     Ведущие колеса
                                 </div>
                                 <p class="font-light">
-                                    {{
-                                        product.eav_attributes
-                                            ?.axleConfiguration
-                                    }}
+                                    {{product.eav_attributes?.axleConfiguration}}
                                 </p>
                             </li>
-                            <li class="flex py-3 justify-between -b">
+                            <li v-if="product.eav_attributes?.bodyType" class="flex py-3 justify-between -b">
                                 <div class="font-light text-slate-500">
                                     Тип кузова
                                 </div>
@@ -195,7 +195,7 @@ function addGoods() {
                                     {{ product.eav_attributes?.bodyType }}
                                 </p>
                             </li>
-                            <li class="flex py-3 justify-between -b">
+                            <li v-if="product.eav_attributes?.steeringType" class="flex py-3 justify-between -b">
                                 <div class="font-light text-slate-500">
                                     Положение рулевого колеса
                                 </div>
@@ -204,7 +204,7 @@ function addGoods() {
                                 </p>
                             </li>
 
-                            <li class="flex py-3 justify-between -b">
+                            <li v-if="product.eav_attributes?.vinCode" class="flex py-3 justify-between -b">
                                 <div class="font-light text-slate-500">
                                     OEM-коды
                                 </div>
@@ -220,7 +220,7 @@ function addGoods() {
                                 <p class="font-light">Использованная/-ый</p>
                             </li>
 
-                            <li class="flex py-3 justify-between -b">
+                            <li v-if="product.eav_attributes?.power" class="flex py-3 justify-between -b">
                                 <div class="font-light text-slate-500">
                                     Мощность двигателя
                                 </div>
