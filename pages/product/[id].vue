@@ -109,7 +109,7 @@ useHead({
 </script>
 <template>
     <div class="mx-auto container px-4 mt-4">
-        <n-breadcrumb>
+        <n-breadcrumb class="!whitespace-normal"  >
             <n-breadcrumb-item v-for="option in breadcrumbs">
                 <nuxt-link :to="option.link">{{ option.text }}</nuxt-link>
             </n-breadcrumb-item>

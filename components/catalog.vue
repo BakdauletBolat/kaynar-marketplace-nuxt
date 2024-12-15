@@ -109,7 +109,7 @@ const mobileFiltersOpen = ref(false);
                     >
                         <template #title> Поиск запчастей </template>
                         <template #header>
-                            <n-breadcrumb id="breadcrumbsb">
+                            <n-breadcrumb>
                                 <n-breadcrumb-item
                                     v-for="option in breadcrumbs"
                                     >{{ option.text }}</n-breadcrumb-item
@@ -187,7 +187,7 @@ const mobileFiltersOpen = ref(false);
                                 ></card>
                             </div>
                             <div v-else>Запчастей не найдено</div>
-                            <n-pagination class="mt-6" v-model:page="page"
+                            <n-pagination size="small" class="mt-6 w-full" v-model:page="page"
                                           :page-count="productStore.pageCount" />
                         </div>
                     </div>
