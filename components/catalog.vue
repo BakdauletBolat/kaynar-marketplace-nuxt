@@ -17,9 +17,12 @@ import FilterForm from "./filter-form.vue";
 import Card from "./card.vue";
 import { useProductStore } from "~/storages/product-store";
 import { useFilterStore } from "~/storages/filter-store";
+import {useCarModelsStore} from "~/storages/car-models-store";
 
 const productStore = useProductStore();
 const filterStore = useFilterStore();
+const modelCarStore = useCarModelsStore();
+
 const page = ref(1);
 
 const breadcrumbs = ref([
@@ -63,6 +66,7 @@ onMounted(() => {
         filterStore.filterValues.manufacturer = parseInt(
             route.params.manufacturerId.toString(),
         );
+        modelCarStore.loadCarModelsByManufacturer(filterStore.filterValues.manufacturer);
     }
     productStore.loadProducts(filterStore.filterValues);
 });
@@ -214,8 +218,8 @@ const mobileFiltersOpen = ref(false);
                                 ></card>
                             </div>
                             <div v-else>Запчастей не найдено</div>
-                            <n-pagination size="small" class="mt-6 w-full" v-model:page="page"
-                                          :page-count="productStore.pageCount" />
+                            <n-pagination :item-count="productStore.pageCount" size="small" class="mt-6 w-full"
+                                          v-model:page="page"/>
                         </div>
                     </div>
                 </section>

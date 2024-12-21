@@ -83,14 +83,13 @@ import {
 } from "naive-ui";
 import { useCategoryStore } from "~/storages/category-storage";
 import { useManufacturerStore } from "~/storages/manufacturer-store";
-import { useProductStore } from "~/storages/product-store";
 import {useCarModelsStore} from "~/storages/car-models-store";
 
+const modelCarStore = useCarModelsStore();
 const filterStore = useFilterStore();
 const categoryStore = useCategoryStore();
 const manufacturerStore = useManufacturerStore();
-const modelCarStore = useCarModelsStore();
-const productStore = useProductStore();
+
 
 const formRef = ref();
 
@@ -113,9 +112,6 @@ onMounted(async () => {
     filterStore.loadFilters();
     categoryStore.loadCategoriesTree();
     manufacturerStore.loadManufacturers();
-    if (filterStore.filterValues.manufacturer != null) {
-      await modelCarStore.loadCarModelsByManufacturer(filterStore.filterValues.manufacturer);
-    }
 });
 
 
