@@ -15,12 +15,39 @@ export const useCarModelsStore = defineStore("car-models-store", {
             carModels: [] as CarModel[],
         }
     },
+    getters: {
+        modelCarOptions: (state) => {
+            return state.carModels.map((item) => {
+                return {
+                    label: item.name,
+                    value: item.id,
+                };
+            });
+        }
+    },
     actions: {
         loadCarModels(options: object) {
             axiosInstance.get("/api/car/models/")
                 .then((res) => {
                     this.carModels = res.data.results;
                 })
-        }
+        },
+        getOptionValueById(id: string) {
+            const value = this.carModels.findIndex((item: any) => item.id === id);
+            if (value != -1) {
+                return {
+                    label: this.carModels[value].name,
+                    value: this.carModels[value].id
+                }
+            }
+            return null;
+        },
+        async loadCarModelsByManufacturer(value: number | null) {
+            await axiosInstance.get(`/api/car/models/?manufacturer=${value}`)
+                .then((res) => {
+                    this.carModels = res.data.results;
+                })
+        },
+
     }
 })

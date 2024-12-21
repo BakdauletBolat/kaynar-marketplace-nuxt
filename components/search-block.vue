@@ -6,7 +6,7 @@
             <div class="flex justify-center text-white w-full h-full flex-col">
                 <h1 class="text-2xl">
                     <strong class="text-primary">Б/у автозапчасти </strong
-                    >онлайн от 13 европейских продавцов
+                    >Онлайн
                 </h1>
                 <p class="mt-2">
                     Выбирайте из 70 000 б/у запчастей по доступным ценам в одном
@@ -110,7 +110,7 @@ function search() {
                 : "catalog",
         query: {
             category: selectedCategory.value?.toString(),
-            modification: selectedModel.value?.toString(),
+            modelCar: selectedModel.value?.toString(),
         },
         params: {
             manufacturerId:

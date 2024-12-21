@@ -330,40 +330,40 @@ useHead({
                             </div>
                         </div>
                     </n-card>
-                    <n-card>
-                        <h2 class="text-xl font-bold">
-                            Расчетная время доставки*
-                        </h2>
-                        <n-select
-                            class="mt-5"
-                            v-model:value="countryId"
-                            :options="countryOptions"
-                            placeholder="Выберите страну"
-                        ></n-select>
-                        <table class="table-auto text-sm mt-5 w-full">
-                            <thead>
-                                <tr
-                                    class="text-left -b text-gray-500 font-light"
-                                >
-                                    <th class="font-light py-2">Курьер</th>
-                                    <th class="font-light py-2">Цена от</th>
-                                    <th class="font-light py-2">Доставка</th>
-                                </tr>
-                            </thead>
-                            <tbody class="font-light">
-                                <tr>
-                                    <td class="py-2">FedEx Plus</td>
-                                    <td class="py-2">1290 ₸</td>
-                                    <td class="py-2">26 Февраля</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-2">FedEx Priority</td>
-                                    <td class="py-2">1400 ₸</td>
-                                    <td class="py-2">2 Марта</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </n-card>
+<!--                    <n-card>-->
+<!--                        <h2 class="text-xl font-bold">-->
+<!--                            Расчетная время доставки*-->
+<!--                        </h2>-->
+<!--                        <n-select-->
+<!--                            class="mt-5"-->
+<!--                            v-model:value="countryId"-->
+<!--                            :options="countryOptions"-->
+<!--                            placeholder="Выберите страну"-->
+<!--                        ></n-select>-->
+<!--                        <table class="table-auto text-sm mt-5 w-full">-->
+<!--                            <thead>-->
+<!--                                <tr-->
+<!--                                    class="text-left -b text-gray-500 font-light"-->
+<!--                                >-->
+<!--                                    <th class="font-light py-2">Курьер</th>-->
+<!--                                    <th class="font-light py-2">Цена от</th>-->
+<!--                                    <th class="font-light py-2">Доставка</th>-->
+<!--                                </tr>-->
+<!--                            </thead>-->
+<!--                            <tbody class="font-light">-->
+<!--                                <tr>-->
+<!--                                    <td class="py-2">FedEx Plus</td>-->
+<!--                                    <td class="py-2">1290 ₸</td>-->
+<!--                                    <td class="py-2">26 Февраля</td>-->
+<!--                                </tr>-->
+<!--                                <tr>-->
+<!--                                    <td class="py-2">FedEx Priority</td>-->
+<!--                                    <td class="py-2">1400 ₸</td>-->
+<!--                                    <td class="py-2">2 Марта</td>-->
+<!--                                </tr>-->
+<!--                            </tbody>-->
+<!--                        </table>-->
+<!--                    </n-card>-->
                 </div>
             </div>
         </div>

@@ -60,7 +60,7 @@ export const useFilterStore = defineStore("filter-products", {
             filterValues: {
                 search: null as string | null,
                 category: null as string | null,
-                modification: null as string | null,
+                modelCar: null as number | null,
                 manufacturer: null as number | null,
                 axleConfiguration: null as number | null,
                 bodyType: null as number | null,
@@ -88,7 +88,7 @@ export const useFilterStore = defineStore("filter-products", {
             this.filterValues = {
                 search: null,
                 category: null,
-                modification: null,
+                modelCar: null,
                 manufacturer: null,
                 axleConfiguration: null,
                 bodyType: null,

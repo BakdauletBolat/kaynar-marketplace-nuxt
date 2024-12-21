@@ -1,14 +1,25 @@
 <template>
-    <n-form :model="filterStore.filterValues" ref="formRef">
+    <n-form :model="filterStore.filterValues" class="relative" ref="formRef">
         <div>
-            <n-form-item label="Искать по модели" path="manufacturer">
+            <n-form-item label="Искать по производителю" path="manufacturer">
                 <n-select
                     placeholder="Выберите варианты"
                     filterable
                     :options="manufacturerStore.manufacturerOptions"
                     v-model:value="filterStore.filterValues.manufacturer"
+                    @update:value="handleOnChangeManufacturer"
                 />
             </n-form-item>
+        </div>
+        <div>
+          <n-form-item label="Искать по модели" path="modelCar">
+            <n-select
+                placeholder="Выберите варианты"
+                filterable
+                :options="modelCarStore.modelCarOptions"
+                v-model:value="filterStore.filterValues.modelCar"
+            />
+          </n-form-item>
         </div>
         <div>
             <n-form-item label="Искать по категории" path="category">
@@ -73,11 +84,14 @@ import {
 import { useCategoryStore } from "~/storages/category-storage";
 import { useManufacturerStore } from "~/storages/manufacturer-store";
 import { useProductStore } from "~/storages/product-store";
+import {useCarModelsStore} from "~/storages/car-models-store";
 
 const filterStore = useFilterStore();
 const categoryStore = useCategoryStore();
 const manufacturerStore = useManufacturerStore();
+const modelCarStore = useCarModelsStore();
 const productStore = useProductStore();
+
 const formRef = ref();
 
 function handleUpdateValue(
@@ -90,13 +104,19 @@ function handleUpdateValue(
         .join(",");
 }
 
-onMounted(() => {
+function handleOnChangeManufacturer(
+    value: number | null) {
+  modelCarStore.loadCarModelsByManufacturer(value);
+}
+
+onMounted(async () => {
     filterStore.loadFilters();
     categoryStore.loadCategoriesTree();
     manufacturerStore.loadManufacturers();
+    if (filterStore.filterValues.manufacturer != null) {
+      await modelCarStore.loadCarModelsByManufacturer(filterStore.filterValues.manufacturer);
+    }
 });
 
-watch(filterStore.filterValues, (state) => {
-    productStore.loadProducts(state);
-});
+
 </script>

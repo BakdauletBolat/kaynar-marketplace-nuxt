@@ -53,9 +53,8 @@ onMounted(() => {
     if (route.query.category != null) {
         filterStore.filterValues.category = route.query.category.toString();
     }
-    if (route.query.modification != null) {
-        filterStore.filterValues.modification =
-            route.query.modification.toString();
+    if (route.query.modelCar != null) {
+      filterStore.filterValues.modelCar = parseInt(route.query.modelCar.toString());
     }
     if (route.query.search != null) {
         filterStore.filterValues.search = route.query.search.toString();
@@ -88,6 +87,20 @@ watch(page, (newState, _) => {
   });
 })
 
+function submitFilter() {
+  productStore.loadProducts(filterStore.filterValues);
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+
+function clearFilter() {
+  filterStore.clearValues();
+  productStore.loadProducts(filterStore.filterValues);
+}
+
+
 const mobileFiltersOpen = ref(false);
 </script>
 
@@ -95,7 +108,14 @@ const mobileFiltersOpen = ref(false);
     <div>
         <n-drawer :z-index="10000" v-model:show="mobileFiltersOpen" width="90%">
             <n-drawer-content title="Поиск запчестей" closable>
+              <div class="relative">
+                <div class="bottom-6 justify-center z-50 fixed flex gap-2">
+                  <n-button @click="submitFilter" type="primary">Применить филтры</n-button>
+                  <n-button @click="clearFilter" class="!bg-white">Очистить</n-button>
+                </div>
                 <filter-form></filter-form>
+              </div>
+
             </n-drawer-content>
         </n-drawer>
         <main>
@@ -155,9 +175,16 @@ const mobileFiltersOpen = ref(false);
                     <div
                         class="grid grid-cols-1 relative gap-3 lg:mt-3 items-start lg:grid-cols-[450px_1fr]"
                     >
-                        <n-card class="hidden lg:block sticky -top-[500px]">
-                            <filter-form></filter-form>
+                      <div class="sticky top-[120px]">
+                        <div class="bottom-6 justify-center w-full z-50 absolute flex gap-2">
+                          <n-button @click="submitFilter" type="primary">Применить филтры</n-button>
+                          <n-button @click="clearFilter" class="!bg-white">Очистить</n-button>
+                        </div>
+                        <n-card class="hidden lg:block h-[600px] overflow-scroll ">
+                          <filter-form></filter-form>
                         </n-card>
+                      </div>
+
                         <div>
                             <div
                                 class="grid gap-3"
