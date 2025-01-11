@@ -1,18 +1,15 @@
-ARG NODE_VERSION=18.14.2
+FROM node:18-alpine
 
-FROM node:${NODE_VERSION}-slim as base
+WORKDIR /app
 
-ARG PORT=3000
+COPY package*.json ./
 
-ENV NODE_ENV=production
+RUN npm install
 
-WORKDIR /src
+COPY . .
 
-# Run
-FROM base
+RUN npm run build
 
-ENV PORT=$PORT
+EXPOSE 3000
 
-COPY .output /src/.output
-
-CMD [ "node", ".output/server/index.mjs" ]
+CMD ["node", ".output/server/index.mjs"]
