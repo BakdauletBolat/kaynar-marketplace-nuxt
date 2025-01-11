@@ -42,5 +42,6 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           script: |
             cd /var/www/kaynar-marketplace-nuxt
+            git pull
             docker compose pull # Загружаем новую версию образа
             docker compose up -d # Перезапускаем контейнеры с новой версией
