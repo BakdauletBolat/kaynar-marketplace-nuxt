@@ -5,7 +5,7 @@
                 preventClickOnDrag: true,
                 duration: 100
             }">
-              <img :key="picture.id" v-for="picture in pictures" class="panel pointer-events-none" width="100%" height="300px" :src="picture.image" />
+              <img :key="picture.id" v-for="picture in pictures" class="panel pointer-events-none object-cover" width="100%" height="300px" :src="picture.image" />
             </Flicking>
             <div>
                 <ChevronLeftIcon @click="prev" class="absolute z-10 top-1/2 cursor-pointer w-7 h-7"></ChevronLeftIcon>
@@ -23,7 +23,7 @@
                 <div @click="currentValue = index" :key="product.id" v-for="(product, index) in pictures"
                     class="mx-1 rounded-sm border-b overflow-hidden cursor-pointer">
                     <div class="w-full h-[80px] relative">
-                        <img :alt="product.product" class="w-full absolute top-0 left-0 pointer-events-none h-full object-cover" :src="product.image" />
+                        <img :alt="product.product.toString()" class="w-full absolute top-0 left-0 pointer-events-none h-full object-cover" :src="product.image" />
                         <div v-if="currentValue == index" class="w-full h-full bg-black opacity-10 absolute top-0"></div>
                     </div>
                 </div>

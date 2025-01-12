@@ -5,10 +5,9 @@ import AppHeader from "~/components/header.vue";
 import AppFooter from "~/components/footer.vue";
 import { NDrawer, NDrawerContent, NButton, NDivider } from "naive-ui";
 import {
-    Search,
+    HelpCircle,
     PersonOutline,
     HeartOutline,
-    BagOutline,
 } from "@vicons/ionicons5";
 const widthRef = ref(0);
 const router = useRouter();
@@ -107,6 +106,16 @@ onMounted(() => {
                     >
                         <HeartOutline class="w-6 text-black h-6"></HeartOutline>
                         <div>Избранные</div>
+                    </nuxt-link>
+                    <nuxt-link
+                        @click="() => (isOpenSidebar = false)"
+                        :to="{
+                            name: 'feadback',
+                        }"
+                        class="cursor-pointer flex gap-2"
+                    >
+                        <HelpCircle class="w-6 text-black h-6"></HelpCircle>
+                        <div>Помощь</div>
                     </nuxt-link>
                 </div>
             </div>

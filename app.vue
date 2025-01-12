@@ -1,15 +1,17 @@
 <template>
     <n-config-provider :theme-overrides="themeOverrides">
+        <n-notification-provider placement="bottom">
         <n-message-provider>
             <nuxt-loading-indicator />
             <nuxt-layout>
                 <nuxt-page></nuxt-page>
             </nuxt-layout>
         </n-message-provider>
+    </n-notification-provider>
     </n-config-provider>
 </template>
 <script lang="ts" setup>
-import { NConfigProvider, NMessageProvider } from "naive-ui";
+import { NConfigProvider, NMessageProvider, NNotificationProvider } from "naive-ui";
 
 const themeOverrides = {
     common: {

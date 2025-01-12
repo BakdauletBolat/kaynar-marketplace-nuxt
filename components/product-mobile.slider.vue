@@ -1,19 +1,16 @@
 <template>
-    <div v-if="pictures.length > 0" class="w-full flex flex-col gap-3">
+    <div class="relative">
+        <div v-if="pictures.length > 0" class="w-full flex flex-col gap-3">
         <div class="w-full relative">
             <Flicking @changed="onChange" class="rounded" ref="flicking" :options="{
                 preventClickOnDrag: true,
                 duration: 100
             }">
-                    <div :key="picture.id" v-for="picture in pictures" class="pointer-events-none panel h-[300px] w-full" >
-                      <n-image class="object-cover h-full" width="100%" :src="picture.image" />
+                    <div :key="picture.id" v-for="picture in pictures" class="pointer-events-none object-cover panel h-[300px] w-full" >
+                      <n-image object-fit="cover" class="object-cover h-full w-full" width="100%" :src="picture.image" />
                     </div>
             </Flicking>
-            <div>
-                <ChevronLeftIcon @click="prev" class="absolute z-10 -translate-y-1/2 top-1/2 cursor-pointer w-7 h-7"></ChevronLeftIcon>
-                <ChevronRightIcon  @click="next" class="absolute z-10 -translate-y-1/2 top-1/2 right-0 w-7 h-7 cursor-pointer"></ChevronRightIcon>
-            </div>
-            <div class="flex justify-center items-center py-3 gap-1">
+            <div class="flex absolute bottom-0 z-20 left-1/2 -translate-x-1/2 justify-center items-center py-3 gap-1">
                 <div v-for="(_, index) in pictures.length" :class="{
                 '!bg-primary w-3 h-3': index == currentValue
             }" class="w-2 h-2 rounded-full bg-slate-100" ></div>
@@ -23,11 +20,13 @@
     <div v-else>
         Нету фотографий
     </div>
+    </div>
+    
 </template>
 <script setup lang="ts">
 import Flicking from "@egjs/vue3-flicking";
 import { ref, watchEffect } from 'vue';
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/vue/24/outline";
+import { ChevronLeftIcon, ChevronRightIcon, ArrowLeftIcon } from "@heroicons/vue/24/outline";
 import {NImage} from 'naive-ui';
 import { type Picture } from "@/api/products";
 

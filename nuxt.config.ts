@@ -47,6 +47,9 @@ export default defineNuxtConfig({
   },
   compatibilityDate: "2024-07-11",
   modules: ["@pinia/nuxt", "@bg-dev/nuxt-naiveui"],
+  pinia: {
+    storesDirs: ['./storages/**'],
+  },
   devtools: { enabled: true },
   css: ["~/assets/css/main.css"],
   postcss: {

@@ -20,6 +20,7 @@ const navigation = [
     { name: "Автозапчасти", to: "index" },
     { name: "Колеса и шины", to: "catalog-kolesa-and-shin" },
     { name: "Купить онлайн", to: "pay" },
+    { name: "Помощь", to: 'feadback'}
 ];
 
 function searchAndNavigateCatalog() {

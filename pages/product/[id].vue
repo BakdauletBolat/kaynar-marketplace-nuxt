@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TruckIcon, CheckBadgeIcon, StarIcon } from "@heroicons/vue/24/outline";
+import { TruckIcon, CheckBadgeIcon, StarIcon, ArrowLeftIcon } from "@heroicons/vue/24/outline";
 import { ref } from "vue";
 import ProductSlider from "@/components/product-slider.vue";
 import { useRoute } from "vue-router";
@@ -16,17 +16,16 @@ function getProduct(id: number) {
 }
 
 const route = useRoute();
+const router = useRouter();
+const notification = useNotification()
+
 const {
     data: product,
-    status,
-    error,
 } = await useAsyncData("product-detail", () =>
     getProduct(parseInt(route.params.id.toString())),
 );
 
 const cardStorage = CardStorage.getInstance();
-
-const countryId = ref<any | undefined>(null);
 
 const breadcrumbs = ref<{ text: string; link: any }[]>([
     {
@@ -97,6 +96,25 @@ function addGoods() {
                 : null,
     });
     cardStorage.isActive.value = true;
+    const n = notification.create({
+          title: 'Товар добавлен в корзину! 🛒',
+          content: `Вы можете продолжить покупки или перейти в корзину для оформления заказа.`,
+          action: () =>
+            h(
+              NButton,
+              {
+                text: true,
+                type: 'primary',
+                onClick: () => {
+                  isOpenCart.value = true;
+                  n.destroy()
+                }
+              },
+              {
+                default: () => 'Перейти в корзину'
+              }
+            ),
+        })
 }
 
 const title = `${ product.value?.eav_attributes?.modelCar?.name } (${ product.value?.eav_attributes?.modelCar?.startDate } - ${ product.value?.eav_attributes?.modelCar?.endDate } )${ product.value?.name }`
@@ -109,13 +127,23 @@ useHead({
 })
 </script>
 <template>
-    <div class="mx-auto container px-4 mt-4">
+    <div class="relative lg:hidden">
+        <div @click="router.back" class="w-full cursor-pointer flex gap-2 p-2 absolute top-0 z-10">
+            <ArrowLeftIcon class="w-7 h-7"></ArrowLeftIcon>
+        </div>
+        <ProductMobileSlider :pictures="product?.pictures"
+                       >
+        </ProductMobileSlider>
+    </div>
+
+    <div class="mx-auto hidden lg:block container px-4 mt-4">
         <n-breadcrumb class="!whitespace-normal"  >
             <n-breadcrumb-item v-for="option in breadcrumbs">
                 <nuxt-link :to="option.link">{{ option.text }}</nuxt-link>
             </n-breadcrumb-item>
         </n-breadcrumb>
     </div>
+
     <div class="mx-auto relative container px-4">
         <div
             v-if="product"
@@ -244,10 +272,7 @@ useHead({
                             {{ product.eav_attributes?.modelCar?.endDate }} )
                             {{ product.name }}
                         </h1>
-                        <ProductMobileSlider
-                            :pictures="product?.pictures"
-                            class="lg:hidden mt-3"
-                        ></ProductMobileSlider>
+                      
                         <h1
                             class="text-lg hidden lg:block lg:text-2xl font-bold"
                         >
@@ -331,42 +356,13 @@ useHead({
                             </div>
                         </div>
                     </n-card>
-<!--                    <n-card>-->
-<!--                        <h2 class="text-xl font-bold">-->
-<!--                            Расчетная время доставки*-->
-<!--                        </h2>-->
-<!--                        <n-select-->
-<!--                            class="mt-5"-->
-<!--                            v-model:value="countryId"-->
-<!--                            :options="countryOptions"-->
-<!--                            placeholder="Выберите страну"-->
-<!--                        ></n-select>-->
-<!--                        <table class="table-auto text-sm mt-5 w-full">-->
-<!--                            <thead>-->
-<!--                                <tr-->
-<!--                                    class="text-left -b text-gray-500 font-light"-->
-<!--                                >-->
-<!--                                    <th class="font-light py-2">Курьер</th>-->
-<!--                                    <th class="font-light py-2">Цена от</th>-->
-<!--                                    <th class="font-light py-2">Доставка</th>-->
-<!--                                </tr>-->
-<!--                            </thead>-->
-<!--                            <tbody class="font-light">-->
-<!--                                <tr>-->
-<!--                                    <td class="py-2">FedEx Plus</td>-->
-<!--                                    <td class="py-2">1290 ₸</td>-->
-<!--                                    <td class="py-2">26 Февраля</td>-->
-<!--                                </tr>-->
-<!--                                <tr>-->
-<!--                                    <td class="py-2">FedEx Priority</td>-->
-<!--                                    <td class="py-2">1400 ₸</td>-->
-<!--                                    <td class="py-2">2 Марта</td>-->
-<!--                                </tr>-->
-<!--                            </tbody>-->
-<!--                        </table>-->
-<!--                    </n-card>-->
                 </div>
             </div>
         </div>
     </div>
 </template>
+<style>
+.black-bg {
+    background-color: #0000002c;
+}
+</style>
