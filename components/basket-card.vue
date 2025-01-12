@@ -13,7 +13,7 @@
                         id: item.id
                     }
                 }" class="text-lg">{{ item.name }}</RouterLink>
-                <span class=" ">{{ item.price }} ₸</span>
+                <span class=" ">{{ getPrice(item.price) }}</span>
                 <div class="flex items-center mt-3 gap-2">
                     <div><add-icon @click="cardStorage.increaseGood(item.id)" class="w-[24px] text-slate-600 cursor-pointer"></add-icon></div>
                     <div>{{ item.quantity }}</div>

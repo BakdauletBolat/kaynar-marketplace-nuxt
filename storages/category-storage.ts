@@ -37,7 +37,7 @@ export const useCategoryStore = defineStore('category', {
         categoriesOptions: (state) => {
             return state.categories.map<ISelectOption>(item=>{
                 return {label: item.name,value:item.id}
-            })
+            });
         },
         categoriesTreeOptions: (state) => {
             const options: TreeSelectOption[] = []

@@ -1,12 +1,9 @@
 <template>
     <div class="">
-        <div
-            class="grid py-[100px] lg:grid-cols-[3fr_2fr] gap-4 items-start justify-center"
-        >
+        <div class="grid py-[100px] lg:grid-cols-[3fr_2fr] gap-4 items-start justify-center">
             <div class="flex justify-center text-white w-full h-full flex-col">
                 <h1 class="text-2xl">
-                    <strong class="text-primary">Б/у автозапчасти </strong
-                    >Онлайн
+                    <strong class="text-primary">Б/у автозапчасти </strong>Онлайн
                 </h1>
                 <p class="mt-2">
                     Выбирайте из 70 000 б/у запчастей по доступным ценам в одном
@@ -18,29 +15,14 @@
                     <h2 class="text-xl font-bold mb-3">
                         Запчасти для вашего автомобиля
                     </h2>
-                    <n-select
-                        v-model:value="selectedManufacturer"
-                        filterable
-                        clearable
-                        placeholder="Марка"
-                        :on-update:value="onChangeManufacturer"
-                        :options="manufacturersOptions"
-                    ></n-select>
-                    <n-select
-                        filterable
-                        clearable
-                        v-model:value="selectedModel"
-                        :disabled="!selectedManufacturer"
-                        placeholder="Модель"
-                        :options="carModelsOptions"
-                    ></n-select>
-                    <n-select
-                        filterable
-                        clearable
-                        v-model:value="selectedCategory"
-                        placeholder="Название детали"
-                        :options="categoryStore.categoriesOptions"
-                    >
+                    <n-select v-model:value="filterStore.filterValues.manufacturer" filterable clearable
+                        placeholder="Марка" :on-update:value="onChangeManufacturer"
+                        :options="manufacturersOptions"></n-select>
+                    <n-select filterable clearable v-model:value="filterStore.filterValues.modelCar"
+                        :disabled="!filterStore.filterValues.manufacturer" placeholder="Модель"
+                        :options="carModelsOptions"></n-select>
+                    <n-select filterable clearable v-model:value="filterStore.filterValues.category"
+                        placeholder="Название детали" :options="categoryStore.categoriesOptions">
                     </n-select>
                     <n-button type="primary" @click="search">
                         <template #icon>
@@ -61,14 +43,12 @@ import axiosInstance, { customFetch } from "@/api";
 import { useRouter } from "vue-router";
 import { type IDefaultAPI, type ISelectOption } from "@/api/interfaces";
 import { useCategoryStore } from "~/storages/category-storage";
+import { useFilterStore } from "~/storages/filter-store";
 
 const router = useRouter();
 
-let selectedManufacturer = ref<number>();
-let selectedModel = ref<number>();
-let selectedCategory = ref<number>();
-
 const categoryStore = useCategoryStore();
+const filterStore = useFilterStore();
 
 const { data: manufacturers } = useAsyncData("manufacturers", () =>
     getManufacturers(),
@@ -93,30 +73,28 @@ onMounted(() => {
 });
 
 function clearModelCar() {
-    selectedModel.value = undefined;
+    filterStore.filterValues.modelCar = null;
 }
 
 function onChangeManufacturer(value: number) {
     clearModelCar();
-    selectedManufacturer.value = value;
+    filterStore.filterValues.manufacturer = value;
     getCarModels(value);
 }
 
 function search() {
     router.push({
-        name:
-            selectedManufacturer.value != null
-                ? "catalog-manufacturerId"
-                : "catalog",
+        name: filterStore.filterValues.manufacturer != null
+            ? "catalog-manufacturerId"
+            : "catalog",
         query: {
-            category: selectedCategory.value?.toString(),
-            modelCar: selectedModel.value?.toString(),
+            category: filterStore.filterValues.category?.toString(),
+            modelCar: filterStore.filterValues.modelCar?.toString(),
         },
         params: {
-            manufacturerId:
-                selectedManufacturer.value != undefined
-                    ? selectedManufacturer?.value
-                    : null,
+            manufacturerId: filterStore.filterValues.manufacturer != undefined
+                ? filterStore.filterValues.manufacturer
+                : null,
         },
     });
 }

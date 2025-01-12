@@ -7,7 +7,8 @@ import { type ProductDetail } from "@/api/products";
 import ProductMobileSlider from "@/components/product-mobile.slider.vue";
 import { customFetch } from "~/api";
 import { CardStorage, isOpenCart } from "@/storages/storage";
-import { NSelect, NButton, NBreadcrumb, NBreadcrumbItem } from "naive-ui";
+import { NButton, NBreadcrumb, NBreadcrumbItem } from "naive-ui";
+import { getPrice } from "#imports";
 
 
 function getProduct(id: number) {
@@ -266,7 +267,7 @@ useHead({
                             class="flex justify-between flex-col lg:flex-row gap-2 lg:gap-0 lg:items-center mt-3"
                         >
                             <div class="text-2xl font-bold">
-                                {{ product.price }} ₸
+                                {{ getPrice(product.price) }}
                             </div>
                             <n-button
                                 size="large"

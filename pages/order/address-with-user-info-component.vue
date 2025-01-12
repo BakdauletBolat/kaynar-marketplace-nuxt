@@ -68,7 +68,6 @@ const message = useMessage();
 onMounted(() => {
     authStore.loadUser().then((user) => {
         if (user != undefined) {
-            console.log("a");
             orderStore.updateUserInfo({
                 first_name: user.first_name,
                 last_name: user.last_name,
@@ -95,7 +94,7 @@ const { handleSubmit, meta } = useForm({
     }),
 });
 
-const onSubmit = handleSubmit((values: any) => {
+const onSubmit = handleSubmit(async (values: any) => {
     try {
         orderStore.updateUserInfo({
             first_name: values.first_name,
@@ -109,12 +108,11 @@ const onSubmit = handleSubmit((values: any) => {
             building: values.building,
             address: values.address,
         });
-        orderStore.createOrder();
+        await orderStore.createOrder();
         orderStore.changeTab(1);
-        message.success("Поздравляем с покупкой");
+        message.success("Поздравляем с оформлением заказа!");
     } catch (e: any) {
-        console.log(e);
-        message.success("Что то пошло не так +" + e.toString());
+        message.error("Что то пошло не так + " + e.toString());
     }
 });
 </script>

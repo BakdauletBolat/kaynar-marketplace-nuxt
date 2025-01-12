@@ -5,10 +5,10 @@
                 :item="item"></basket-card>
             </div>
             <div v-else class="text-center p-2">Пока что пусто</div>
-            <div class="border-t bg-white w-full py-5 mt-5 text-lg font-medium">
+            <div v-if="cardStorage.goods.value.length > 0" class="border-t bg-white w-full py-5 mt-5 text-lg font-medium">
                 <div class="flex w-full justify-between">
                     <div>Общая стоимость</div>
-                    <div>{{ cardStorage.totalCost }} ₸</div>
+                    <div>{{ getPrice(cardStorage.totalCost)}}</div>
                 </div>
             </div>
         </div>

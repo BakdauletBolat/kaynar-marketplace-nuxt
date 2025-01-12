@@ -131,18 +131,18 @@ const mobileFiltersOpen = ref(false);
                         class="w-full container px-4 mx-auto"
                         @back="handleBack"
                     >
-                        <template #title> Поиск запчастей </template>
-                        <template #header>
+                        <template #title><span class="text-base">Поиск запчастей</span></template>
+                        <!-- <template #header>
                             <n-breadcrumb>
                                 <n-breadcrumb-item
                                     v-for="option in breadcrumbs"
                                     >{{ option.text }}</n-breadcrumb-item
                                 >
                             </n-breadcrumb>
-                        </template>
+                        </template> -->
                         <template #extra>
                             <div class="flex gap-2">
-                                <n-dropdown
+                                <!-- <n-dropdown
                                     trigger="hover"
                                     :options="sortOptions"
                                     placement="bottom-start"
@@ -153,7 +153,7 @@ const mobileFiltersOpen = ref(false);
                                     >
                                         Сортировка
                                     </n-button>
-                                </n-dropdown>
+                                </n-dropdown> -->
                                 <n-button
                                     tertiary
                                     round
@@ -175,7 +175,7 @@ const mobileFiltersOpen = ref(false);
                 </div>
             </div>
             <div class="mx-auto container px-4">
-                <section aria-labelledby="products-heading" class="pb-24 mt-4">
+                <section aria-labelledby="products-heading" class="pb-24">
                     <div
                         class="grid grid-cols-1 relative gap-3 lg:mt-3 items-start lg:grid-cols-[450px_1fr]"
                     >

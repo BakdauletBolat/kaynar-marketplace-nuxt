@@ -33,7 +33,7 @@ export const useOrderStore = defineStore("order-store", {
       userForm: null as IDefaultAPI | null,
       paymentTypeId: 2 as number | undefined,
       deliveryTypeId: 1 as number | undefined,
-      order: undefined,
+      order: undefined
     };
   },
   actions: {
@@ -51,7 +51,7 @@ export const useOrderStore = defineStore("order-store", {
           this.isLoadingAddressCreate = false;
         });
     },
-    createOrder() {
+    async createOrder() {
       this.isOrderCreateLoading = true;
       const cardStorage = CardStorage.getInstance();
       const body = {
@@ -73,18 +73,17 @@ export const useOrderStore = defineStore("order-store", {
           };
         }),
       };
-      axiosInstance
-        .post("/api/orders/", body)
-        .then((res) => {
-          this.order = res.data;
-          cardStorage.resetCard();
-        })
-        .catch((e) => {
-          console.log(e);
-        })
-        .finally(() => {
-          this.isOrderCreateLoading = false;
-        });
+      try {
+       const result = await axiosInstance.post("/api/orders/", body);
+       this.order = result.data;
+       cardStorage.resetCard();
+      }
+      catch (e) {
+        throw e;
+      }
+      finally {
+        this.isOrderCreateLoading = false;
+      }
     },
     changeTab(tab: number) {
       window.scrollTo({

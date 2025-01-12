@@ -111,6 +111,9 @@ export interface ProductList {
     }
     modelCar: {
         name: string;
+        manufacturer: {
+            name: string
+        }
     };
     code:         any[];
     detail:       null;
