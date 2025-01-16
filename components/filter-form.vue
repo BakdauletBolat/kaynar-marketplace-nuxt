@@ -16,6 +16,7 @@
             <n-select
                 placeholder="Выберите варианты"
                 filterable
+                multiple
                 :options="modelCarStore.modelCarOptions"
                 v-model:value="filterStore.filterValues.modelCar"
             />
@@ -109,7 +110,7 @@ function handleOnChangeManufacturer(
 }
 
 onMounted(async () => {
-    filterStore.loadFilters();
+    await filterStore.loadFilters();
     categoryStore.loadCategoriesTree();
     manufacturerStore.loadManufacturers();
 });

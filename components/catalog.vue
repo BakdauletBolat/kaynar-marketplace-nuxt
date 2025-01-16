@@ -54,7 +54,7 @@ onMounted(() => {
         filterStore.filterValues.category = route.query.category.toString();
     }
     if (route.query.modelCar != null) {
-      filterStore.filterValues.modelCar = parseInt(route.query.modelCar.toString());
+      filterStore.filterValues.modelCar = route.query.modelCar.toString().split(',')
     }
     if (route.query.search != null) {
         filterStore.filterValues.search = route.query.search.toString();
@@ -121,36 +121,16 @@ const mobileFiltersOpen = ref(false);
         </n-drawer>
         <main>
             <div
-                class="z-[99] bg-white shadow sticky top-0 place-items-center p-4 w-full"
+                class="z-[99] bg-white shadow sticky top-0 place-items-center w-full"
             >
                 <div class="w-full">
                     <n-page-header
-                        class="w-full container px-4 mx-auto"
+                        class="w-full container px-4 py-2 mx-auto"
                         @back="handleBack"
                     >
                         <template #title><span class="text-base">Поиск запчастей</span></template>
-                        <!-- <template #header>
-                            <n-breadcrumb>
-                                <n-breadcrumb-item
-                                    v-for="option in breadcrumbs"
-                                    >{{ option.text }}</n-breadcrumb-item
-                                >
-                            </n-breadcrumb>
-                        </template> -->
                         <template #extra>
                             <div class="flex gap-2">
-                                <!-- <n-dropdown
-                                    trigger="hover"
-                                    :options="sortOptions"
-                                    placement="bottom-start"
-                                >
-                                    <n-button
-                                        :bordered="false"
-                                        style="padding: 0 4px"
-                                    >
-                                        Сортировка
-                                    </n-button>
-                                </n-dropdown> -->
                                 <n-button
                                     tertiary
                                     round
@@ -176,16 +156,15 @@ const mobileFiltersOpen = ref(false);
                     <div
                         class="grid grid-cols-1 relative gap-3 lg:mt-3 items-start lg:grid-cols-[450px_1fr]"
                     >
-                      <div class="sticky top-[120px]">
-                        <div class="bottom-6 justify-center w-full z-50 absolute flex gap-2">
-                          <n-button @click="submitFilter" type="primary">Применить филтры</n-button>
-                          <n-button @click="clearFilter" class="!bg-white">Очистить</n-button>
-                        </div>
-                        <n-card class="hidden lg:block h-[600px] overflow-scroll ">
+                      <div class="sticky top-[70px]">
+                        <n-card class="hidden lg:block h-[600px] overflow-y-scroll ">
                           <filter-form></filter-form>
                         </n-card>
+                        <div class="lg:flex w-full mt-4 hidden gap-2 flex-col">
+                          <n-button @click="submitFilter" class="w-full" type="primary" size="large">Показать результаты</n-button>
+                          <n-button @click="clearFilter" class="!bg-white" size="large">Очистить</n-button>
+                        </div>
                       </div>
-
                         <div>
                             <div
                                 class="grid gap-3"

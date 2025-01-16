@@ -16,6 +16,7 @@
     "@pinia/nuxt": "^0.5.1",
     "@vueuse/core": "^11.0.0",
     "axios": "^1.7.2",
+    "cupertino-pane": "^1.4.22",
     "imask": "^7.6.1",
     "nuxt": "^3.12.3",
     "nuxtjs-naive-ui": "^1.0.2",

@@ -3,7 +3,7 @@ import {NSkeleton} from 'naive-ui';
 </script>
 
 <template>
-  <div class="flex gap-3 p-4">
+  <div class="flex gap-3">
     <n-skeleton :width="129" :height="120"></n-skeleton>
     <div class="flex flex-col gap-2">
       <n-skeleton :width="200" :height="20"></n-skeleton>

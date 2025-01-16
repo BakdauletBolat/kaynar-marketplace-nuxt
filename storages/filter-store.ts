@@ -1,5 +1,6 @@
 import {defineStore} from "pinia";
 import axiosInstance from "~/api";
+import {loadWithCache} from "~/api/loadWithCache";
 
 interface AxleConfiguration {
     id: number;
@@ -60,7 +61,7 @@ export const useFilterStore = defineStore("filter-products", {
             filterValues: {
                 search: null as string | null,
                 category: null as string | null,
-                modelCar: null as number | null,
+                modelCar: [] as number[],
                 manufacturer: null as number | null,
                 axleConfiguration: null as number | null,
                 bodyType: null as number | null,
@@ -73,22 +74,27 @@ export const useFilterStore = defineStore("filter-products", {
                 numberOfValves: null as number | null,
                 power: null as number | null,
                 steeringType: null as number | null,
-                vinCode: null as number | null
+                vinCode: null as number | null,
+                year_start: null as string | null,
+                year_end: null as string | null,
             },
             filterData: {} as CarFilterData
         }
     },
     actions:  {
-        loadFilters() {
-            axiosInstance.get<CarFilterData>("/api/car/filters/").then((res) => {
-                this.filterData = res.data;
-            });
+        async loadFilters() {
+            const response = await loadWithCache(axiosInstance, "/api/car/filters/")
+            this.filterData = response.data;
+        },
+        clearManufacturerValues() {
+            this.filterValues.manufacturer = null;
+            this.filterValues.modelCar = [];
         },
         clearValues() {
             this.filterValues = {
                 search: null,
                 category: null,
-                modelCar: null,
+                modelCar: [],
                 manufacturer: null,
                 axleConfiguration: null,
                 bodyType: null,
@@ -102,6 +108,8 @@ export const useFilterStore = defineStore("filter-products", {
                 power: null,
                 steeringType: null,
                 vinCode: null,
+                year_start: null,
+                year_end: null,
             }
         }
     },

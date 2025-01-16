@@ -1,6 +1,6 @@
 <template>
     <n-config-provider :theme-overrides="themeOverrides">
-        <n-notification-provider placement="bottom">
+        <n-notification-provider placement="top">
         <n-message-provider>
             <nuxt-loading-indicator />
             <nuxt-layout>
@@ -31,3 +31,8 @@ const themeOverrides = {
     },
 };
 </script>
+<style>
+.n-base-select-option.n-base-select-option--selected {
+  color: black!important;
+}
+</style>

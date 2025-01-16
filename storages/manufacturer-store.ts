@@ -1,13 +1,15 @@
 import {defineStore} from "pinia";
 import axiosInstance from "~/api";
 import type {IDefaultAPI} from "~/api/interfaces";
-import type {SelectOption} from "naive-ui";
+import {loadWithCache} from "~/api/loadWithCache";
 
 export const useManufacturerStore = defineStore("manufacturer-store", {
     state: () => {
         return {
             manufacturers: [] as IDefaultAPI[],
-            manufacturer: null as IDefaultAPI | null
+            manufacturer: null as IDefaultAPI | null,
+            rawManufacturers: [] as IDefaultAPI[],
+            searchTermManufacturer: '' as string
          }
     },
     getters: {
@@ -40,17 +42,27 @@ export const useManufacturerStore = defineStore("manufacturer-store", {
         }
     },
     actions: {
-        loadManufacturers() {
-            axiosInstance.get("/api/car/manufacturers/")
-                .then((res) => {
-                    this.manufacturers = res.data.results;
-                })
+        async loadManufacturers() {
+            const response = await loadWithCache(axiosInstance, '/api/car/manufacturers/')
+            this.manufacturers = response.data.results;
+            this.rawManufacturers = this.manufacturers;
         },
-        loadManufacturerById(id: number) {
-            axiosInstance.get(`/api/car/manufacturers/${id}`)
-                .then((res) => {
-                    this.manufacturer = res.data;
-                })
-        }
+        searchManufacturers(searchTerm: string = '') {
+            if (searchTerm.length === 0) {
+                this.manufacturers = this.rawManufacturers;
+            }
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            this.manufacturers = this.rawManufacturers.filter(item => regex.test(item.name));
+        },
+        getManufacturerById(id: string) {
+            const value = this.manufacturers.findIndex((item: any) => item.id === id);
+            if (value != -1) {
+                return {
+                    label: this.manufacturers[value].name,
+                    value: this.manufacturers[value].id
+                }
+            }
+            return null;
+        },
     }
 })

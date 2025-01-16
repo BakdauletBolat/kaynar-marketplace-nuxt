@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="grid lg:grid-cols-2 w-full gap-3">
     <card :item="item" v-for="item in items"></card>
   </div>
 </template>

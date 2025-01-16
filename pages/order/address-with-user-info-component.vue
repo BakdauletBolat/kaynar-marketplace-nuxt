@@ -1,7 +1,6 @@
 <template>
-    <form class="flex rounded-lg p-4 bg-white flex-col gap-3">
-        <div class="text-2xl font-bold">Адрес доставки</div>
-        <div class="flex flex-col lg:flex-row gap-3">
+    <form class="flex rounded-lg bg-white flex-col gap-3">
+        <div class="flex flex-col lg:flex-row gap-3 mt-4">
             <custom-n-input
                 :defaultValue="orderStore.userInfo.first_name"
                 name="first_name"

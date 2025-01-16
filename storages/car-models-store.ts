@@ -1,5 +1,6 @@
 import {defineStore} from "pinia";
 import axiosInstance from "~/api";
+import {loadWithCache} from "~/api/loadWithCache";
 
 export interface CarModel {
     id: number;
@@ -13,6 +14,8 @@ export const useCarModelsStore = defineStore("car-models-store", {
     state: () => {
         return {
             carModels: [] as CarModel[],
+            rawCarModels: [] as CarModel[],
+            searchTermModelCar: '' as string
         }
     },
     getters: {
@@ -26,27 +29,34 @@ export const useCarModelsStore = defineStore("car-models-store", {
         }
     },
     actions: {
-        loadCarModels(options: object) {
-            axiosInstance.get("/api/car/models/")
-                .then((res) => {
-                    this.carModels = res.data.results;
-                })
+        async loadCarModels() {
+            const response = await loadWithCache(axiosInstance, "/api/car/models/?page_size=10000");
+            this.carModels = response.data.results;
+            this.rawCarModels = response.data.results;
         },
-        getOptionValueById(id: string) {
-            const value = this.carModels.findIndex((item: any) => item.id === id);
-            if (value != -1) {
-                return {
-                    label: this.carModels[value].name,
-                    value: this.carModels[value].id
-                }
+        searchCarModels(searchTerm: string = '') {
+            if (searchTerm.length === 0) {
+                this.carModels = this.rawCarModels;
             }
-            return null;
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            this.carModels = this.rawCarModels.filter(item => regex.test(item.name));
+        },
+        getModelLabelsByIds(ids: string[]) {
+            console.log(ids)
+            const modelsForReturn = []
+            ids.forEach((id)=>{
+                const value = this.carModels.findIndex((item: any) => item.id === id);
+                if (value != -1) {
+                    modelsForReturn.push(this.carModels[value].name)
+                }
+            })
+
+            return modelsForReturn.join(', ');
         },
         async loadCarModelsByManufacturer(value: number | null) {
-            await axiosInstance.get(`/api/car/models/?manufacturer=${value}`)
-                .then((res) => {
-                    this.carModels = res.data.results;
-                })
+            const response = await loadWithCache(axiosInstance, `/api/car/models/?manufacturer=${value}&page_size=10000`);
+            this.carModels = response.data.results;
+            this.rawCarModels = response.data.results;
         },
 
     }

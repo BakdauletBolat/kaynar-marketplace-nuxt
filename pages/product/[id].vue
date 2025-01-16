@@ -103,10 +103,10 @@ function addGoods() {
             h(
               NButton,
               {
-                text: true,
-                type: 'primary',
                 onClick: () => {
-                  isOpenCart.value = true;
+                  router.push({
+                    name: 'auth-cart'
+                  })
                   n.destroy()
                 }
               },
@@ -128,11 +128,10 @@ useHead({
 </script>
 <template>
     <div class="relative lg:hidden">
-        <div @click="router.back" class="w-full cursor-pointer flex gap-2 p-2 absolute top-0 z-10">
-            <ArrowLeftIcon class="w-7 h-7"></ArrowLeftIcon>
+        <div @click="router.back" class="w-full cursor-pointer flex gap-2 p-4 absolute top-0 z-10">
+            <ArrowLeftIcon class="w-6 h-6"></ArrowLeftIcon>
         </div>
-        <ProductMobileSlider :pictures="product?.pictures"
-                       >
+        <ProductMobileSlider :pictures="product?.pictures">
         </ProductMobileSlider>
     </div>
 

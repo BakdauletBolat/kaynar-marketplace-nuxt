@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { isOpenCart, isOpenSidebar } from "~/storages/storage";
 import UserCard from "~/components/user-card.vue";
-import AppHeader from "~/components/header.vue";
 import AppFooter from "~/components/footer.vue";
+import AppHeader from '~/components/header.vue';
 import { NDrawer, NDrawerContent, NButton, NDivider } from "naive-ui";
 import {
     HelpCircle,
@@ -11,6 +11,10 @@ import {
 } from "@vicons/ionicons5";
 const widthRef = ref(0);
 const router = useRouter();
+
+const deliveryRoute = {
+  name: 'delivery'
+}
 
 const isMobile = computed<boolean>(() => {
     return widthRef.value <= 500;
@@ -21,6 +25,10 @@ function navigateToOrder() {
     router.push({
         name: "order-create",
     });
+}
+
+function closeCart() {
+  isOpenCart.value = false;
 }
 
 onMounted(() => {
@@ -46,21 +54,22 @@ onMounted(() => {
             >
         </n-drawer-content>
     </n-drawer>
+    <div>
+      <bottom-app-bar></bottom-app-bar>
+    </div>
     <n-drawer :width="isMobile ? '80%' : '400px'" v-model:show="isOpenSidebar">
         <n-drawer-content title="Меню" closable>
             <div>
                 <div class="mb-4">
                     <ul class="flex gap-2 flex-col text-xs cursor-pointer">
                         <nuxt-link
-                            @click="() => (isOpenSidebar = false)"
-                            :to="{
-                                name: 'delivery',
-                            }"
-                            class="hover:underline"
-                            >Доставка</nuxt-link
-                        >
+                            @click="closeCart"
+                            :to="deliveryRoute"
+                            class="hover:underline">
+                          Доставка
+                        </nuxt-link>
                         <nuxt-link
-                            @click="() => (isOpenSidebar = false)"
+                            @click="closeCart"
                             :to="{
                                 name: 'refund',
                             }"
@@ -68,7 +77,7 @@ onMounted(() => {
                             >Возврат</nuxt-link
                         >
                         <nuxt-link
-                            @click="() => (isOpenSidebar = false)"
+                            @click="closeCart"
                             :to="{
                                 name: 'pay',
                             }"
@@ -76,7 +85,7 @@ onMounted(() => {
                             >Оплата</nuxt-link
                         >
                         <nuxt-link
-                            @click="() => (isOpenSidebar = false)"
+                            @click="closeCart"
                             :to="{ name: 'contacts' }"
                             class="hover:underline"
                             >Контакты</nuxt-link
@@ -86,7 +95,7 @@ onMounted(() => {
                 <n-divider></n-divider>
                 <div class="flex flex-col gap-2">
                     <nuxt-link
-                        @click="() => (isOpenSidebar = false)"
+                        @click="closeCart"
                         :to="{
                             name: 'auth-profile',
                         }"
@@ -98,7 +107,7 @@ onMounted(() => {
                         <div>Профиль</div>
                     </nuxt-link>
                     <nuxt-link
-                        @click="() => (isOpenSidebar = false)"
+                        @click="closeCart"
                         :to="{
                             name: 'auth-favorites',
                         }"
@@ -108,7 +117,7 @@ onMounted(() => {
                         <div>Избранные</div>
                     </nuxt-link>
                     <nuxt-link
-                        @click="() => (isOpenSidebar = false)"
+                        @click="closeCart"
                         :to="{
                             name: 'feadback',
                         }"
@@ -130,4 +139,5 @@ onMounted(() => {
     </div>
 </template>
 
-<style scoped></style>
+<style>
+</style>

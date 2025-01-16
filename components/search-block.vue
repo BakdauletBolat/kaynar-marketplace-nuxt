@@ -15,15 +15,74 @@
                     <h2 class="text-xl font-bold mb-3">
                         Запчасти для вашего автомобиля
                     </h2>
-                    <n-select v-model:value="filterStore.filterValues.manufacturer" filterable clearable
-                        placeholder="Марка" :on-update:value="onChangeManufacturer"
-                        :options="manufacturersOptions"></n-select>
-                    <n-select filterable clearable v-model:value="filterStore.filterValues.modelCar"
-                        :disabled="!filterStore.filterValues.manufacturer" placeholder="Модель"
-                        :options="carModelsOptions"></n-select>
-                    <n-select filterable clearable v-model:value="filterStore.filterValues.category"
-                        placeholder="Название детали" :options="categoryStore.categoriesOptions">
-                    </n-select>
+                    <div class="lg:flex hidden gap-2 flex-col ">
+                      <n-select v-model:value="filterStore.filterValues.manufacturer"
+                                filterable
+                                clearable
+                                placeholder="Марка"
+                                :on-update:value="onChangeManufacturer"
+                                :options="manufacturerStore.manufacturerOptions"></n-select>
+                      <n-select v-model:value="filterStore.filterValues.modelCar"
+                                filterable
+                                clearable
+                                multiple
+                                :disabled="!filterStore.filterValues.manufacturer"
+                                placeholder="Модель"
+                                :options="carModelStore.modelCarOptions"></n-select>
+                      <n-select
+                          v-model:value="filterStore.filterValues.category"
+                          filterable
+                          clearable
+                          placeholder="Название детали"
+                          :options="categoryStore.categoriesOptions">
+                      </n-select>
+                    </div>
+                    <div class="lg:hidden">
+                      <div v-if="filterStore.filterValues.manufacturer">
+                        <div class="flex w-full justify-between px-4 py-2">
+                          <div class="cursor-pointer" @click="navigatePickManufacturer">
+                            <span class="text-lg">{{manufacturerStore.getManufacturerById(filterStore.filterValues.manufacturer).label}}</span>
+                            <div class="flex text-sm text-gray-600">
+                              <span>{{carModelStore.getModelLabelsByIds(filterStore.filterValues.modelCar)}}</span>
+                            </div>
+                          </div>
+                          <n-button text @click="filterStore.clearManufacturerValues">
+                            <template #icon>
+                              <n-icon size="26">
+                                <XCircleIcon></XCircleIcon>
+                              </n-icon>
+                            </template>
+                          </n-button>
+                        </div>
+                      </div>
+                      <n-button v-else @click="navigatePickManufacturer" size="large" class="w-full">
+                        Добавить марку
+                        <template #icon>
+                          <n-icon>
+                            <PlusIcon />
+                          </n-icon>
+                        </template>
+                      </n-button>
+                      <div>
+                        <div class="text-gray-400 my-2">Год Выпуска</div>
+                        <div class="grid grid-cols-2 gap-2">
+                          <n-input-number
+                              size="large"
+                              v-model:value="filterStore.filterValues.year_start"
+                              placeholder="c"
+                              :min="1900"
+                              :max="2030"
+                          />
+                          <n-input-number
+                              size="large"
+                              v-model:value="filterStore.filterValues.year_end"
+                              placeholder="По"
+                              :min="1900"
+                              :max="2030"
+                          />
+                        </div>
+                      </div>
+                    </div>
                     <n-button type="primary" @click="search">
                         <template #icon>
                             <magnifying-glass-icon></magnifying-glass-icon>
@@ -37,49 +96,39 @@
 </template>
 <script lang="ts" setup>
 import { NSelect, NButton } from "naive-ui";
-import { ref, computed } from "vue";
-import { MagnifyingGlassIcon } from "@heroicons/vue/24/outline";
-import axiosInstance, { customFetch } from "@/api";
+import { XCircleIcon, MagnifyingGlassIcon, PlusIcon } from "@heroicons/vue/24/outline";
 import { useRouter } from "vue-router";
-import { type IDefaultAPI, type ISelectOption } from "@/api/interfaces";
 import { useCategoryStore } from "~/storages/category-storage";
 import { useFilterStore } from "~/storages/filter-store";
+import {useManufacturerStore} from "~/storages/manufacturer-store";
+import {useCarModelsStore} from "~/storages/car-models-store";
 
 const router = useRouter();
 
 const categoryStore = useCategoryStore();
 const filterStore = useFilterStore();
+const manufacturerStore = useManufacturerStore();
+const carModelStore = useCarModelsStore();
 
-const { data: manufacturers } = useAsyncData("manufacturers", () =>
-    getManufacturers(),
-);
 
-const manufacturersOptions = computed(() => {
-    if (manufacturers.value != null) {
-        return manufacturers.value!.results.map((item) => {
-            return {
-                label: item.name,
-                value: item.id,
-            };
-        });
-    }
-    return [];
-});
-
-const carModelsOptions = ref<ISelectOption[]>([]);
+function navigatePickManufacturer() {
+  router.push({
+    name: 'search-brand'
+  });
+}
 
 onMounted(() => {
     categoryStore.loadCategories();
 });
 
 function clearModelCar() {
-    filterStore.filterValues.modelCar = null;
+    filterStore.filterValues.modelCar = [];
 }
 
 function onChangeManufacturer(value: number) {
     clearModelCar();
     filterStore.filterValues.manufacturer = value;
-    getCarModels(value);
+    carModelStore.loadCarModelsByManufacturer(value);
 }
 
 function search() {
@@ -89,7 +138,7 @@ function search() {
             : "catalog",
         query: {
             category: filterStore.filterValues.category?.toString(),
-            modelCar: filterStore.filterValues.modelCar?.toString(),
+            modelCar: filterStore.filterValues.modelCar!.join(',')
         },
         params: {
             manufacturerId: filterStore.filterValues.manufacturer != undefined
@@ -97,29 +146,5 @@ function search() {
                 : null,
         },
     });
-}
-
-function getManufacturers() {
-    return customFetch<{
-        results: IDefaultAPI[];
-    }>("/api/car/manufacturers/");
-}
-
-function getCarModels(value: number) {
-    axiosInstance
-        .get<{
-            results: IDefaultAPI[];
-        }>(`/api/car/models/?manufacturer=${value}`)
-        .then((res) => {
-            carModelsOptions.value = res.data.results.map((item) => {
-                return {
-                    label: item.name,
-                    value: item.id,
-                };
-            });
-        })
-        .catch((e) => {
-            console.log(e);
-        });
 }
 </script>

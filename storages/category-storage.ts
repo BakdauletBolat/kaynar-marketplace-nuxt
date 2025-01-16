@@ -2,6 +2,7 @@ import {defineStore} from 'pinia'
 import axiosInstance from "~/api";
 import type {ISelectOption} from "~/api/interfaces";
 import type {TreeSelectOption} from "naive-ui";
+import {loadWithCache} from "~/api/loadWithCache";
 
 
 export interface Category {
@@ -35,9 +36,13 @@ export const useCategoryStore = defineStore('category', {
     },
     getters: {
         categoriesOptions: (state) => {
-            return state.categories.map<ISelectOption>(item=>{
-                return {label: item.name,value:item.id}
-            });
+            if (state.categories != undefined) {
+                return state.categories.map<ISelectOption>(item=>{
+                    return {label: item.name,value:item.id}
+                });
+            }
+            return []
+
         },
         categoriesTreeOptions: (state) => {
             const options: TreeSelectOption[] = []
@@ -53,19 +58,13 @@ export const useCategoryStore = defineStore('category', {
               }
           )
         },
-        loadCategories() {
-            axiosInstance.get(`/api/category?page_size=2000`).then(
-                (res) => {
-                    this.categories = res.data.results
-                }
-            ).catch(e => console.log(e));
+        async loadCategories() {
+            const response = await loadWithCache(axiosInstance, `/api/category?page_size=10000`)
+            this.categories = response.data.results;
         },
-        loadCategoriesTree() {
-            axiosInstance.get(`/api/category/tree`).then(
-                (res) => {
-                    this.categoriesTree = res.data;
-                }
-            ).catch(e => console.log(e));
+        async loadCategoriesTree() {
+            const response = await loadWithCache(axiosInstance, `/api/category/tree`)
+            this.categories = response.data.results;
         },
     },
 })

@@ -1,8 +1,17 @@
 <template>
     <client-only>
-        <main class="container px-4 mx-auto p-3">
+      <mobile-only-component>
+        <n-page-header class="fixed w-full z-10 top-0 bg-white px-4 py-2 shadow">
+          <template #title>
+      <span style="text-decoration: none; color: inherit">
+        Оформление заказа
+      </span>
+          </template>
+        </n-page-header>
+      </mobile-only-component>
+        <main class="container px-4 mx-auto mt-[60px]">
             <tab-group :selected-index="orderStore.activeTab" @change="orderStore.changeTab">
-                <tab-list class="grid grid-cols-2 lg:grid-cols-4 p-3 justify-center gap-2">
+                <tab-list class="grid grid-cols-2 lg:grid-cols-4 justify-center gap-2">
                     <tab v-slot="{ selected }">
                         <n-button class="w-full" :type="selected ? 'primary' : 'default'">
                             <template #icon>
@@ -28,14 +37,15 @@
                             </tab-panel>
                             <tab-panel>
                                 <div v-if="orderStore.order != undefined || orderStore.order != null"
-                                    class="flex p-4 bg-white rounded-lg flex-col gap-3">
+                                    class="flex mt-4 bg-white rounded-lg flex-col gap-3">
                                     <h1 class="font-bold text-2xl"> Спасибо за ваш заказ! 🎉 </h1>
                                     <p>Ваш заказ успешно оформлен.</p>
                                     <p>Номер вашего заказа: <span class="font-bold">#{{ orderStore.order.id }}</span></p>
                                     <p>Ожидайте звонка от нашего менеджера в ближайшее время.</p>
                                 </div>
-                                <section class="mx-auto container px-4">
-                                    <h3 class="mt-4 md:px-0 text-base">
+                                <n-divider></n-divider>
+                                <section class="mx-auto container">
+                                    <h3 class="mt-4 md:px-0 text-lg font-bold">
                                         Вам может понадобиться
                                     </h3>
                                     <div v-if="productStore.popularProducts"
@@ -62,7 +72,7 @@
 </template>
 <script lang="ts" setup>
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/vue";
-import { NButton } from "naive-ui";
+import {NButton, NPageHeader} from "naive-ui";
 import { MapIcon, CheckBadgeIcon } from "@heroicons/vue/24/outline";
 import UserCard from "~/components/user-card.vue";
 import AddressWithUserInfoComponent from "./address-with-user-info-component.vue";
