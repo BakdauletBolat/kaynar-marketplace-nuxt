@@ -3,7 +3,6 @@ import SearchBlock from "~/components/search-block.vue";
 import Card from "~/components/card.vue";
 import {useProductStore} from "@/storages/product-store";
 import ManufacturersList from "~/components/manufacturers-list.vue";
-import MobileOnlyComponent from '~/components/mobile-only-component.vue';
 import {NImage, NPageHeader} from "naive-ui";
 import Logo from "assets/images/logo.png";
 import {useCarModelsStore} from "~/storages/car-models-store";

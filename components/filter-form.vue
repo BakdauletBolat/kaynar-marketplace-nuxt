@@ -17,6 +17,7 @@
                 placeholder="Выберите варианты"
                 filterable
                 multiple
+                :fallback-option="trimModelCar"
                 :options="modelCarStore.modelCarOptions"
                 v-model:value="filterStore.filterValues.modelCar"
             />
@@ -33,10 +34,8 @@
                     :check-strategy="'all'"
                     :options="categoryStore.categoriesTreeOptions"
                     :value="
-                        filterStore.filterValues.category != null
-                            ? filterStore.filterValues
-                                  .category!.split(',')
-                                  .map((item) => parseInt(item))
+                        filterStore.filterValues.category.length > 0
+                            ? filterStore.filterValues.category.map((item)=>parseInt(item))
                             : []
                     "
                     @update:value="handleUpdateValue"
@@ -73,7 +72,7 @@
 <script setup lang="ts">
 import { useFilterStore } from "@/storages/filter-store";
 import { onMounted, ref } from "vue";
-import type { TreeSelectOption } from "naive-ui";
+import type {SelectOption, TreeSelectOption} from "naive-ui";
 import {
     NSelect,
     NRadio,
@@ -101,7 +100,6 @@ function handleUpdateValue(
     //@ts-ignore
     filterStore.filterValues.category = value
         .filter((item) => !Number.isNaN(item))
-        .join(",");
 }
 
 function handleOnChangeManufacturer(
@@ -110,10 +108,15 @@ function handleOnChangeManufacturer(
 }
 
 onMounted(async () => {
-    await filterStore.loadFilters();
-    categoryStore.loadCategoriesTree();
-    manufacturerStore.loadManufacturers();
+  await filterStore.loadFilters();
+    await categoryStore.loadCategoriesTree();
+   await manufacturerStore.loadManufacturers();
 });
 
-
+function trimModelCar(value: string): SelectOption {
+  return {
+    label: modelCarStore.getModelCarById(value)?.label,
+    value
+  }
+}
 </script>

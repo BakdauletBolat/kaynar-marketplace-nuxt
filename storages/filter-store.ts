@@ -60,8 +60,8 @@ export const useFilterStore = defineStore("filter-products", {
         return {
             filterValues: {
                 search: null as string | null,
-                category: null as string | null,
-                modelCar: [] as number[],
+                category: [] as string[],
+                modelCar: [] as string[],
                 manufacturer: null as number | null,
                 axleConfiguration: null as number | null,
                 bodyType: null as number | null,
@@ -75,8 +75,8 @@ export const useFilterStore = defineStore("filter-products", {
                 power: null as number | null,
                 steeringType: null as number | null,
                 vinCode: null as number | null,
-                year_start: null as string | null,
-                year_end: null as string | null,
+                year_start: null as number | null,
+                year_end: null as number | null,
             },
             filterData: {} as CarFilterData
         }
@@ -93,7 +93,7 @@ export const useFilterStore = defineStore("filter-products", {
         clearValues() {
             this.filterValues = {
                 search: null,
-                category: null,
+                category: [],
                 modelCar: [],
                 manufacturer: null,
                 axleConfiguration: null,

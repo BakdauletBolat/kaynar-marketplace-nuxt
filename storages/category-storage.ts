@@ -58,13 +58,20 @@ export const useCategoryStore = defineStore('category', {
               }
           )
         },
+        getCategoryById(value: string) {
+          const findIndex = this.categories.findIndex((item)=>item.id === parseInt(value));
+          if (findIndex != -1) {
+              return this.categories[findIndex].name;
+          }
+          return undefined;
+        },
         async loadCategories() {
             const response = await loadWithCache(axiosInstance, `/api/category?page_size=10000`)
             this.categories = response.data.results;
         },
         async loadCategoriesTree() {
             const response = await loadWithCache(axiosInstance, `/api/category/tree`)
-            this.categories = response.data.results;
+            this.categoriesTree = response.data;
         },
     },
 })

@@ -1,5 +1,5 @@
 <template>
-  <main class="w-full">
+  <main class="container mx-auto">
     <mobile-only-component>
       <n-page-header class="fixed w-full z-10 top-0 bg-white px-4 py-2 shadow">
         <template #title>
@@ -9,9 +9,22 @@
         </template>
       </n-page-header>
     </mobile-only-component>
-    <section class="container mx-auto px-4 pt-[60px]">
+    <desktop-only-component>
+      <div class="mt-4">
+        <n-breadcrumb>
+          <n-breadcrumb-item><nuxt-link :to="{
+            name: 'index'
+          }">Главная
+          </nuxt-link></n-breadcrumb-item>
+          <n-breadcrumb-item>
+            Избранные
+          </n-breadcrumb-item>
+        </n-breadcrumb>
+      </div>
+    </desktop-only-component>
+    <section class="pt-[60px] lg:pt-4 px-4">
       <favorites-list v-if="favoritesStore.favorites.length > 0" :items="favoritesStore.favorites"></favorites-list>
-      <section v-else class="w-full flex flex-col mt-8">
+      <section v-else class="w-full flex  max-w-[400px] mx-auto flex-col mt-8">
         <!-- Сообщение -->
         <h1 class="text-lg text-center font-semibold">Нет избранных товаров</h1>
         <p class="text-center mb-6">
@@ -45,7 +58,4 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.container {
-  max-width: 800px;
-}
 </style>

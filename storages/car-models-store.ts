@@ -30,6 +30,11 @@ export const useCarModelsStore = defineStore("car-models-store", {
     },
     actions: {
         async loadCarModels() {
+            console.log("Load CarModels");
+            if (this.carModels.length <= 0) {
+                console.debug("Loading car models");
+                return;
+            }
             const response = await loadWithCache(axiosInstance, "/api/car/models/?page_size=10000");
             this.carModels = response.data.results;
             this.rawCarModels = response.data.results;
@@ -42,8 +47,7 @@ export const useCarModelsStore = defineStore("car-models-store", {
             this.carModels = this.rawCarModels.filter(item => regex.test(item.name));
         },
         getModelLabelsByIds(ids: string[]) {
-            console.log(ids)
-            const modelsForReturn = []
+            const modelsForReturn: any = []
             ids.forEach((id)=>{
                 const value = this.carModels.findIndex((item: any) => item.id === id);
                 if (value != -1) {
@@ -51,7 +55,19 @@ export const useCarModelsStore = defineStore("car-models-store", {
                 }
             })
 
-            return modelsForReturn.join(', ');
+            return {
+                value: modelsForReturn.join(', ')
+            }
+        },
+        getModelCarById(id: string) {
+            const value = this.carModels.findIndex((item) => item.id === parseInt(id));
+            if (value !== -1) {
+                return {
+                    value: id,
+                    label: this.carModels[value].name
+                }
+            }
+            return undefined;
         },
         async loadCarModelsByManufacturer(value: number | null) {
             const response = await loadWithCache(axiosInstance, `/api/car/models/?manufacturer=${value}&page_size=10000`);

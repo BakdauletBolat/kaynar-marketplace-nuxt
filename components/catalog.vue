@@ -46,12 +46,12 @@ const router = useRouter();
 const props = defineProps(["category"]);
 
 onMounted(() => {
-    filterStore.clearValues();
+    filterStore.clearValues()
     if (props.category != null) {
         filterStore.filterValues.category = props.category;
     }
     if (route.query.category != null) {
-        filterStore.filterValues.category = route.query.category.toString();
+        filterStore.filterValues.category = route.query.category.toString().split(',')
     }
     if (route.query.modelCar != null) {
       filterStore.filterValues.modelCar = route.query.modelCar.toString().split(',')
@@ -90,6 +90,7 @@ watch(page, (newState, _) => {
 
 function submitFilter() {
   productStore.loadProducts(filterStore.filterValues);
+  mobileFiltersOpen.value = false;
   window.scrollTo({
     top: 0,
     behavior: "smooth"
@@ -107,12 +108,14 @@ const mobileFiltersOpen = ref(false);
 
 <template>
     <div>
-        <n-drawer :z-index="10000" v-model:show="mobileFiltersOpen" width="90%">
+        <n-drawer :z-index="10000" v-model:show="mobileFiltersOpen" width="100%">
             <n-drawer-content title="Поиск запчестей" closable>
               <div class="relative">
-                <div class="bottom-6 justify-center z-50 fixed flex gap-2">
-                  <n-button @click="submitFilter" type="primary">Применить филтры</n-button>
-                  <n-button @click="clearFilter" class="!bg-white">Очистить</n-button>
+                <div class="bottom-0 w-full left-0  border-t !bg-white z-50 fixed">
+                  <div class="p-4 w-full flex flex-col gap-2">
+                    <n-button @click="submitFilter" type="primary">Показать результаты</n-button>
+                    <n-button @click="clearFilter" class="!bg-white">Очистить</n-button>
+                  </div>
                 </div>
                 <filter-form></filter-form>
               </div>

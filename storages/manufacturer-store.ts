@@ -55,7 +55,7 @@ export const useManufacturerStore = defineStore("manufacturer-store", {
             this.manufacturers = this.rawManufacturers.filter(item => regex.test(item.name));
         },
         getManufacturerById(id: string) {
-            const value = this.manufacturers.findIndex((item: any) => item.id === id);
+            const value = this.manufacturers.findIndex((item: any) => item.id === parseInt(id));
             if (value != -1) {
                 return {
                     label: this.manufacturers[value].name,

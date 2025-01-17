@@ -26,6 +26,7 @@
                                 filterable
                                 clearable
                                 multiple
+                                :fallback-option="trimModelCar"
                                 :disabled="!filterStore.filterValues.manufacturer"
                                 placeholder="Модель"
                                 :options="carModelStore.modelCarOptions"></n-select>
@@ -33,6 +34,8 @@
                           v-model:value="filterStore.filterValues.category"
                           filterable
                           clearable
+                          multiple
+                          :fallback-option="trimCategory"
                           placeholder="Название детали"
                           :options="categoryStore.categoriesOptions">
                       </n-select>
@@ -41,9 +44,9 @@
                       <div v-if="filterStore.filterValues.manufacturer">
                         <div class="flex w-full justify-between px-4 py-2">
                           <div class="cursor-pointer" @click="navigatePickManufacturer">
-                            <span class="text-lg">{{manufacturerStore.getManufacturerById(filterStore.filterValues.manufacturer).label}}</span>
+                            <span class="text-lg">{{manufacturerStore.getManufacturerById(filterStore.filterValues.manufacturer.toString())?.label}}</span>
                             <div class="flex text-sm text-gray-600">
-                              <span>{{carModelStore.getModelLabelsByIds(filterStore.filterValues.modelCar)}}</span>
+                              <span>{{textForModelCarMobile}}</span>
                             </div>
                           </div>
                           <n-button text @click="filterStore.clearManufacturerValues">
@@ -95,7 +98,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { NSelect, NButton } from "naive-ui";
+import {NSelect, NButton, type SelectOption} from "naive-ui";
 import { XCircleIcon, MagnifyingGlassIcon, PlusIcon } from "@heroicons/vue/24/outline";
 import { useRouter } from "vue-router";
 import { useCategoryStore } from "~/storages/category-storage";
@@ -109,6 +112,10 @@ const categoryStore = useCategoryStore();
 const filterStore = useFilterStore();
 const manufacturerStore = useManufacturerStore();
 const carModelStore = useCarModelsStore();
+
+const textForModelCarMobile = computed(()=>{
+  return carModelStore.getModelLabelsByIds(filterStore.filterValues.modelCar).value;
+})
 
 
 function navigatePickManufacturer() {
@@ -132,19 +139,41 @@ function onChangeManufacturer(value: number) {
 }
 
 function search() {
+  const query: {
+    modelCar?: string,
+    category?: string
+  } = {}
+
+  if (filterStore.filterValues.modelCar.length > 0) {
+    query['modelCar'] = filterStore.filterValues.modelCar!.join(',')
+  }
+  if (filterStore.filterValues.category.length > 0) {
+    query['category'] = filterStore.filterValues.category!.join(',')
+  }
     router.push({
         name: filterStore.filterValues.manufacturer != null
             ? "catalog-manufacturerId"
             : "catalog",
-        query: {
-            category: filterStore.filterValues.category?.toString(),
-            modelCar: filterStore.filterValues.modelCar!.join(',')
-        },
+        query: query,
         params: {
             manufacturerId: filterStore.filterValues.manufacturer != undefined
                 ? filterStore.filterValues.manufacturer
                 : null,
         },
     });
+}
+
+function trimModelCar(value: string): SelectOption {
+  return {
+    label: carModelStore.getModelCarById(value)?.label,
+    value
+  }
+}
+
+function trimCategory(value: string): SelectOption {
+  return {
+    label: categoryStore.getCategoryById(value),
+    value
+  }
 }
 </script>

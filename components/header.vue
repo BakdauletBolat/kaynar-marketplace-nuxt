@@ -46,7 +46,7 @@ const route = useRoute();
 </script>
 
 <template>
-  <div class="w-full hidden lg:block fixed lg:relative z-20" ref="containerRef">
+  <div class="w-full hidden lg:block fixed border-b lg:relative z-20" ref="containerRef">
     <section
         id="testHeader"
         class="w-full bg-black z-[9999] lg:border-b border-b-slate-100"

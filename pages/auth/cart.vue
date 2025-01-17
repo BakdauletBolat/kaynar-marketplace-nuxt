@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <main class="container mx-auto">
     <mobile-only-component>
       <n-page-header class="fixed w-full z-10 top-0 bg-white px-4 py-2 shadow">
         <template #title>
@@ -9,7 +9,20 @@
         </template>
       </n-page-header>
     </mobile-only-component>
-    <section class="container mx-auto px-4 mt-[60px]">
+    <desktop-only-component>
+      <div class="mt-4">
+        <n-breadcrumb>
+          <n-breadcrumb-item><nuxt-link :to="{
+            name: 'index'
+          }">Главная
+          </nuxt-link></n-breadcrumb-item>
+          <n-breadcrumb-item>
+            Избранные
+          </n-breadcrumb-item>
+        </n-breadcrumb>
+      </div>
+    </desktop-only-component>
+    <section class="mt-[60px] px-4 lg:mt-4 max-w-[800px] mx-auto">
       <div v-if="cardStorage.goods.value.length > 0">
         <user-card></user-card>
         <n-button
@@ -18,10 +31,9 @@
             class="w-full"
             @click="navigateToOrder"
             type="primary"
-        >Оформить заказ</n-button
-        >
+        >Оформить заказ</n-button>
       </div>
-      <section v-else class="w-full flex flex-col mt-8">
+      <section v-else class="w-full max-w-[400px] mx-auto flex flex-col mt-8">
         <!-- Сообщение -->
         <h1 class="text-lg text-center font-semibold">Ваша корзина пуста</h1>
         <p class="text-center mb-6">
@@ -40,6 +52,12 @@ import {NButton, NPageHeader} from "naive-ui";
 
 const router = useRouter();
 const cardStorage = CardStorage.getInstance();
+
+function routeToCatalog() {
+  router.push({
+    name: "catalog",
+  })
+}
 
 function navigateToOrder() {
   router.push({
