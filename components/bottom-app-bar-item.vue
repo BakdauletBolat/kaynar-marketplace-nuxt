@@ -13,7 +13,9 @@ const props = defineProps(['baseIcon', 'activeIcon', 'routeName', 'isActive', 't
 const router = useRouter();
 
 function routeTo() {
-  navigator.vibrate(40);
+  if ("vibrate" in navigator) {
+    navigator.vibrate(40);
+  }
   router.push({
     name: props.routeName
   })
