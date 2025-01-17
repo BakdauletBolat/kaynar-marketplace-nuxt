@@ -81,13 +81,12 @@ const { handleSubmit, meta } = useForm({
     validationSchema: yup.object({
         first_name: yup.string().required("Имя обязательно"),
         last_name: yup.string().required("Фамилия обязательно"),
-        address: yup.string().required("Адрес обязательно"),
+        address: yup.string(),
         apartment: yup.string(),
         building: yup.string(),
-        postal_code: yup.string().required("Почтовой индекс обязательно"),
+        postal_code: yup.string(),
         email: yup
             .string()
-            .required("Почта обязательно")
             .email("Почта неправильный"),
         phone_number: yup.string().required("Телефон обязательно"),
     }),

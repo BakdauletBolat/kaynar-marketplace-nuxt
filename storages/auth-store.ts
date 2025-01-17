@@ -48,6 +48,12 @@ export const useAuthStore = defineStore("auth-store", {
     authenticated: false,
   }),
   actions: {
+    async register(phone: string): Promise<void> {
+      return axiosInstance.post('/api/users/otp/', {phone})
+    },
+    async confirm(phone: string, otp: string): Promise<void> {
+      return axiosInstance.post('/api/users/otp/token/', {phone, otp})
+    },
     async loadUser() {
       const token = useCookie("token");
       if (!token.value) {
@@ -65,6 +71,10 @@ export const useAuthStore = defineStore("auth-store", {
           this.$state.isLoadingUser = false;
         });
     },
+    async logout() {
+      const token = useCookie("token");
+      token.value = undefined;
+    }
   },
 });
 

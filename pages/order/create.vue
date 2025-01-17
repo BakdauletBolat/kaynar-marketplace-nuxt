@@ -104,4 +104,8 @@ onMounted(() => {
   productStore.loadPopularProducts({});
 });
 
+definePageMeta({
+  middleware: "auth",
+});
+
 </script>

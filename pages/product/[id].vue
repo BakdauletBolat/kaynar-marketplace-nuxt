@@ -295,7 +295,9 @@ useHead({
                             </div>
                             <n-button
                                 size="large"
-                                @click="isOpenCart = true"
+                                @click="()=>router.push({
+                                name: 'auth-cart'
+                                })"
                                 v-if="cardStorage.checkInGoods(product.id)"
                             >
                                 Товар в корзине
