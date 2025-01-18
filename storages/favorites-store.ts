@@ -1,6 +1,6 @@
 // stores/userStore.ts
 import { defineStore } from "pinia";
-import {ProductList} from '@/api/products';
+import {type ProductList} from '@/api/products';
 
 
 interface FavoritesStore {
@@ -15,12 +15,12 @@ export const useFavoritesStore = defineStore("favorites-store", {
     }),
     actions: {
         loadState() {
-            if (localStorage.getItem("favorites") != undefined) {
-                this.favorites = JSON.parse(localStorage.getItem("favorites"));
+            if (localStorage.getItem("favorites") != null) {
+                this.favorites = JSON.parse(localStorage.getItem("favorites")!);
             }
         },
         updateState() {
-            if (localStorage.getItem("favorites") != undefined) {
+            if (localStorage.getItem("favorites") != null) {
                 localStorage.setItem("favorites", JSON.stringify(this.favorites));
             } else {
                 localStorage.setItem("favorites", JSON.stringify(this.favorites));
@@ -48,35 +48,3 @@ export const useFavoritesStore = defineStore("favorites-store", {
         },
     },
 });
-
-export const rules = {
-    password: {
-        required: true,
-        type: "string",
-        min: 1,
-        max: 128,
-        message: "Password is required",
-        trigger: "blur",
-    },
-    phone: {
-        required: true,
-        message: "Invalid phone number",
-        trigger: "blur",
-    },
-    first_name: {
-        required: true,
-        type: "string",
-        min: 1,
-        max: 255,
-        message: "First name is required",
-        trigger: "blur",
-    },
-    last_name: {
-        required: true,
-        type: "string",
-        min: 1,
-        max: 255,
-        message: "Last name is required",
-        trigger: "blur",
-    },
-};

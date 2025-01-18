@@ -17,13 +17,13 @@
         <div class="w-full">
             <div class="flex justify-between flex-col w-full">
                 <div class="w-full flex items-center justify-between">
-                    <nuxt-link :to="{
+                    <nuxt-link class="text-blue-900" :to="{
                         name: 'product-id',
                         params: {
                             id: item.id
                         }
                     }">
-                        {{ item.name ?? 'Навзание' }}
+                        {{ getPrice(item.price) }}
                     </nuxt-link>
                     <div class="flex justify-center items-center" @click="handleFavorite">
                         <n-icon size="24" color="red"
@@ -36,7 +36,7 @@
                         id: item.id
                     }
                 }">
-                    <span class="text-2xl">{{ getPrice(item.price) }}</span>
+                    <span class="text-2xl">{{ item.name ?? 'Навзание' }}</span>
                 </nuxt-link>
             </div>
             <p class="text-sm mt-2">{{ item.modelCar.manufacturer.name }}, {{ item.modelCar.name }}</p>

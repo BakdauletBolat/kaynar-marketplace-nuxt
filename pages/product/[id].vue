@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { TruckIcon, CheckBadgeIcon, StarIcon, ArrowLeftIcon } from "@heroicons/vue/24/outline";
+import { TruckIcon, CheckBadgeIcon, StarIcon, ArrowLeftIcon, ShoppingCartIcon } from "@heroicons/vue/24/outline";
 import { ref } from "vue";
 import ProductSlider from "@/components/product-slider.vue";
 import { useRoute } from "vue-router";
 import { type ProductDetail } from "@/api/products";
 import ProductMobileSlider from "@/components/product-mobile.slider.vue";
 import { customFetch } from "~/api";
-import { CardStorage, isOpenCart } from "@/storages/storage";
+import { CardStorage } from "@/storages/storage";
 import { NButton, NBreadcrumb, NBreadcrumbItem } from "naive-ui";
 import { getPrice } from "#imports";
 
@@ -308,7 +308,10 @@ useHead({
                                 v-else
                                 @click="addGoods"
                             >
-                                Купить
+                                <template #icon>
+                                  <n-icon size="20"><ShoppingCartIcon></ShoppingCartIcon></n-icon>
+                                </template>
+                                Добавить в корзину
                             </n-button>
                         </div>
                     </n-card>
