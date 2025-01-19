@@ -13,7 +13,11 @@
               v-model:value="phone"
               placeholder="+7 (___) ___-__-__"
           />
-          <n-button type="primary" @click="userRegisterOTP">Продолжить</n-button>
+          <div class="flex gap-2 flex-col">
+            <n-button type="primary" @click="userRegisterOTP">Продолжить через SMS</n-button>
+            <div class="mt-4">У вас уже есть аккаунт?</div>
+            <n-button @click="navigateLogin">Войти</n-button>
+          </div>
         </div>
       <div v-if="tab == 'verify'" class="mt-3 w-full flex flex-col gap-2">
         <div class="text-xl">Введите код из SMS, который мы отправили на ваш номер:</div>
@@ -97,10 +101,14 @@ function userRegisterOTP() {
         duration: 5000
       })
     }
-    console.log(res);
   })
 }
 
+function navigateLogin() {
+  router.push({
+    name: "auth-login",
+  });
+}
 
 const otpInput = ref<InstanceType<typeof VOtpInput> | null>(null);
 const bindValue = ref("");

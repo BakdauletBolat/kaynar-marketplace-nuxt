@@ -41,22 +41,9 @@ onMounted(() => {
 </script>
 
 <template>
-    <n-drawer :width="isMobile ? '80%' : '400px'" v-model:show="isOpenCart">
-        <n-drawer-content title="Ваша корзина" closable>
-            <user-card></user-card>
-            <n-button
-                size="large"
-                round
-                class="w-full"
-                @click="navigateToOrder"
-                type="primary"
-                >Оформить заказ</n-button
-            >
-        </n-drawer-content>
-    </n-drawer>
-    <div>
+    <client-only>
       <bottom-app-bar></bottom-app-bar>
-    </div>
+    </client-only>
     <n-drawer :width="isMobile ? '80%' : '400px'" v-model:show="isOpenSidebar">
         <n-drawer-content title="Меню" closable>
             <div>

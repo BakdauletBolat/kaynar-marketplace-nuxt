@@ -42,21 +42,6 @@ const breadcrumbs = ref<{ text: string; link: any }[]>([
     },
 ]);
 
-const countryOptions: any[] = [
-    {
-        value: 1,
-        label: "Казахстан",
-    },
-    {
-        value: 2,
-        label: "Россия",
-    },
-
-    {
-        value: 3,
-        label: "Грузия",
-    },
-];
 
 onMounted(() => {
     if (product.value != null) {
@@ -271,7 +256,7 @@ useHead({
                             {{ product.eav_attributes?.modelCar?.endDate }} )
                             {{ product.name }}
                         </h1>
-                      
+
                         <h1
                             class="text-lg hidden lg:block lg:text-2xl font-bold"
                         >
@@ -293,26 +278,43 @@ useHead({
                             <div class="text-2xl font-bold">
                                 {{ getPrice(product.price) }}
                             </div>
-                            <n-button
-                                size="large"
-                                @click="()=>router.push({
+                          <client-only>
+                            <div>
+                              <div class="w-full" v-if="product.status == 'В наличии'">
+                                <n-button
+                                    size="large"
+                                    class="w-full"
+                                    @click="()=>router.push({
                                 name: 'auth-cart'
                                 })"
-                                v-if="cardStorage.checkInGoods(product.id)"
-                            >
-                                Товар в корзине
-                            </n-button>
-                            <n-button
-                                size="large"
-                                type="primary"
-                                v-else
-                                @click="addGoods"
-                            >
-                                <template #icon>
-                                  <n-icon size="20"><ShoppingCartIcon></ShoppingCartIcon></n-icon>
-                                </template>
-                                Добавить в корзину
-                            </n-button>
+                                    v-if="cardStorage.checkInGoods(product.id)"
+                                >
+                                  Товар в корзине
+                                </n-button>
+                                <n-button
+                                    size="large"
+                                    type="primary"
+                                    class="w-full"
+                                    v-else
+                                    @click="addGoods"
+                                >
+                                  <template #icon>
+                                    <n-icon size="20"><ShoppingCartIcon></ShoppingCartIcon></n-icon>
+                                  </template>
+                                  Добавить в корзину
+                                </n-button>
+                              </div>
+                              <div v-else-if="product.status == 'Зарезервирован'">
+                                <n-tag type="error">Товар {{product.status.toLowerCase()}}</n-tag>
+                              </div>
+                              <div v-else-if="product.status == 'Зарезервирован'">
+                                <n-tag type="warning">Товар {{product.status.toLowerCase()}}</n-tag>
+                              </div>
+                              <div v-else-if="product.status == 'Продан'">
+                                <n-tag type="error">Товар {{product.status.toLowerCase()}}</n-tag>
+                              </div>
+                            </div>
+                          </client-only>
                         </div>
                     </n-card>
                     <n-card class="my-4 gap-5">

@@ -29,6 +29,8 @@ interface AuthStore {
   user?: User;
   authenticated: boolean;
   isLoadingUser: boolean;
+  orders: any[];
+  isLoadingOrders: boolean;
 }
 
 export const useAuthStore = defineStore("auth-store", {
@@ -44,7 +46,9 @@ export const useAuthStore = defineStore("auth-store", {
       profile_type: 1,
       postcode: undefined,
     },
+    orders: [],
     isLoadingUser: false,
+    isLoadingOrders: false,
     authenticated: false,
   }),
   actions: {
@@ -53,6 +57,22 @@ export const useAuthStore = defineStore("auth-store", {
     },
     async confirm(phone: string, otp: string): Promise<void> {
       return axiosInstance.post('/api/users/otp/token/', {phone, otp})
+    },
+    async loadOrders() {
+      const token = useCookie("token");
+      if (!token.value) {
+        return;
+      }
+      this.$state.isLoadingOrders = true;
+      return await axiosInstance
+          .get("/api/users/orders/")
+          .then((res) => {
+            this.$state.orders = res.data.results;
+          })
+          .catch((e) => {})
+          .finally(() => {
+            this.$state.isLoadingOrders = false;
+          });
     },
     async loadUser() {
       const token = useCookie("token");

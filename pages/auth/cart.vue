@@ -17,7 +17,7 @@
           }">Главная
           </nuxt-link></n-breadcrumb-item>
           <n-breadcrumb-item>
-            Избранные
+            Корзина
           </n-breadcrumb-item>
         </n-breadcrumb>
       </div>

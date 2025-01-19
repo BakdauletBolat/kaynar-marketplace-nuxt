@@ -39,30 +39,11 @@
           </div>
           <div>
           </div>
-          <div class="bg-white rounded">
-            <n-popconfirm
-                @positive-click="handlePositiveClick"
-                @negative-click="handleNegativeClick"
-            >
-              <template #trigger>
-                <n-button type="error">
-                  Выйти из аккаунта
-                </n-button>
-              </template>
-              <template #action>
-                <n-button @click="handlePositiveClick" type="error">Выйти</n-button>
-                <n-button @click="handleNegativeClick">Отмена</n-button>
-              </template>
-              <div>
-                    <div class="font-bold text-lg">
-                Вы уверены, что хотите выйти?
-              </div>
-                Если вы выйдете, потребуется повторный вход для доступа к вашему аккаунту.
-              </div>
-
-            </n-popconfirm>
-
-          </div>
+          <n-list>
+            <n-list-item class="cursor-pointer" @click="navigateOrders">Мой заказы</n-list-item>
+            <n-list-item class="cursor-pointer" @click="navigateFeedback">Помощь</n-list-item>
+            <n-list-item class="cursor-pointer" @click="handlePositiveClick">Выйти с аккаунта</n-list-item>
+          </n-list>
         </div>
       </section>
     </main>
@@ -90,8 +71,16 @@ function handlePositiveClick() {
   })
 }
 
-function handleNegativeClick() {
+function navigateFeedback() {
+  router.push({
+    name: "feadback"
+  })
+}
 
+function navigateOrders() {
+  router.push({
+    name: "auth-orders"
+  })
 }
 
 definePageMeta({

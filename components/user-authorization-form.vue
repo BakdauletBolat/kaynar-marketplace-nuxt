@@ -1,5 +1,5 @@
 <template>
-    <div class="max-w-[400px] w-full">
+    <div class="w-full">
         <div v-if="user" class="flex w-full justify-center items-center">
             <n-form class="w-full" :model="user" ref="formRef" :rules="rules">
                 <n-form-item label="Телефон" path="phone">
@@ -24,7 +24,7 @@
                     :loading="isLoading"
                     type="primary"
                     @click="handleSubmit"
-                    >Авторизация</n-button
+                    >Войти</n-button
                 >
             </n-form>
         </div>
