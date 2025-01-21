@@ -17,6 +17,7 @@
             <n-button type="primary" @click="userRegisterOTP">Продолжить через SMS</n-button>
             <div class="mt-4">У вас уже есть аккаунт?</div>
             <n-button @click="navigateLogin">Войти</n-button>
+            <n-button class="mt-2" text @click="navigateRegister">Регистрация</n-button>
           </div>
         </div>
       <div v-if="tab == 'verify'" class="mt-3 w-full flex flex-col gap-2">
@@ -26,6 +27,7 @@
               ref="otpInput"
               class="w-full justify-center mt-4"
               input-classes="otp-input"
+              inputmode="numeric"
               :conditionalClass="['one', 'two', 'three', 'four']"
               separator="-"
               inputType="letter-numeric"
@@ -107,6 +109,12 @@ function userRegisterOTP() {
 function navigateLogin() {
   router.push({
     name: "auth-login",
+  });
+}
+
+function navigateRegister() {
+  router.push({
+    name: "auth-register",
   });
 }
 

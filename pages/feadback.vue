@@ -4,7 +4,7 @@
     <n-page-header :on-back="handleBack" class="fixed w-full z-10 top-0 bg-white px-4 py-2 shadow">
       <template #title>
       <span style="text-decoration: none; color: inherit">
-        Помощь
+        Покупка в один клик
       </span>
       </template>
     </n-page-header>
@@ -17,7 +17,7 @@
           }">Главная
         </nuxt-link></n-breadcrumb-item>
         <n-breadcrumb-item>
-          Помощь
+          Покупка в один клик
         </n-breadcrumb-item>
       </n-breadcrumb>
     </div>

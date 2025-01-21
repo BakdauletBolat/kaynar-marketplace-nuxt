@@ -111,7 +111,7 @@ onMounted(() => {
                         class="cursor-pointer flex gap-2"
                     >
                         <HelpCircle class="w-6 text-black h-6"></HelpCircle>
-                        <div>Помощь</div>
+                        <div>Покупка в один клик</div>
                     </nuxt-link>
                 </div>
             </div>

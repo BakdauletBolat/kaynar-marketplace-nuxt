@@ -41,6 +41,7 @@
           </div>
           <n-list>
             <n-list-item class="cursor-pointer" @click="navigateOrders">Мой заказы</n-list-item>
+            <n-list-item class="cursor-pointer" @click="navigateSettings">Настройки профиля</n-list-item>
             <n-list-item class="cursor-pointer" @click="navigateFeedback">Помощь</n-list-item>
             <n-list-item class="cursor-pointer" @click="handlePositiveClick">Выйти с аккаунта</n-list-item>
           </n-list>
@@ -68,6 +69,12 @@ function handlePositiveClick() {
   authStore.logout()
   router.push({
     name: 'auth-selection'
+  })
+}
+
+function navigateSettings() {
+  router.push({
+    name: 'auth-settings',
   })
 }
 

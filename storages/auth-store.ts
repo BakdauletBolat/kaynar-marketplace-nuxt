@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 import axiosInstance from "~/api";
 
 export interface User {
+  id?: number;
   city: number;
   password: string;
   password2?: string;
@@ -74,6 +75,9 @@ export const useAuthStore = defineStore("auth-store", {
             this.$state.isLoadingOrders = false;
           });
     },
+    async cancelOrder(orderId: number): Promise<void> {
+      return await axiosInstance.post(`/api/users/orders/${orderId}/cancel/`, {})
+    },
     async loadUser() {
       const token = useCookie("token");
       if (!token.value) {
@@ -90,6 +94,9 @@ export const useAuthStore = defineStore("auth-store", {
         .finally(() => {
           this.$state.isLoadingUser = false;
         });
+    },
+    async updateInfo(id:number, updateInfoBody: any) {
+      return await axiosInstance.patch(`/api/users/${id}/`, updateInfoBody);
     },
     async logout() {
       const token = useCookie("token");

@@ -7,31 +7,56 @@ import {NImage, NPageHeader} from "naive-ui";
 import Logo from "assets/images/logo.png";
 import {useCarModelsStore} from "~/storages/car-models-store";
 import {useManufacturerStore} from "~/storages/manufacturer-store";
+import {HelpCircle} from "@vicons/ionicons5";
 
 const productStore = useProductStore();
 const modelCarStore = useCarModelsStore();
 const manufacturerStore = useManufacturerStore();
+const router = useRouter();
 
 onMounted(() => {
   productStore.loadPopularProducts({});
   manufacturerStore.loadManufacturers();
   modelCarStore.loadCarModels();
 });
+
+function toTopScroll() {
+  window.scrollTo(0, 0);
+}
+
+function routeToFeedback() {
+  router.push({
+    name: 'feadback'
+  })
+}
+
 </script>
 
 <template>
   <main>
     <mobile-only-component>
-      <n-page-header class="fixed w-full z-10 top-0 bg-black px-4 py-2 shadow">
+      <n-page-header class="fixed w-full z-10 top-0 bg-black px-4 py-1 shadow">
         <template #title>
-      <span class="flex items-center text-white gap-2">
-          <n-image
-              preview-disabled
-              class="w-10 h-10 rounded"
-              alt="Лого"
-              :src="Logo"
-          />
-      </span>
+          <span class="flex items-center text-white gap-2">
+                <n-image
+                    @click="toTopScroll"
+                    preview-disabled
+                    class="w-10 h-10 rounded"
+                    alt="Лого"
+                    :src="Logo"
+                />
+          </span>
+        </template>
+        <template #extra>
+          <n-button @click="routeToFeedback" class="rounded-full p-2 text-white" text>
+            Покупка в один клик
+            <template #icon>
+              <n-icon size="25" class="text-white">
+                <HelpCircle></HelpCircle>
+              </n-icon>
+            </template>
+
+          </n-button>
         </template>
       </n-page-header>
     </mobile-only-component>
