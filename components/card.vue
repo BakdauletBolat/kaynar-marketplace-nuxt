@@ -9,9 +9,13 @@
                 },
                 name: 'product-id'
             }">
-                <img loading="lazy" class="rounded border lg:h-[120px] h-[200px] object-cover w-full lg:w-[160px]"
-                    :src="item.pictures.length != 0 ? item.pictures[0].image : 'https://demofree.sirv.com/nope-not-here.jpg'"
-                    alt="">
+              <n-carousel class="lg:w-[160px]" :space-between="20" draggable>
+                <img loading="lazy" v-for="picture in item.pictures"
+                     class="rounded border lg:h-[120px] h-[200px] object-cover w-full"
+                     :alt="picture.product.toString()"
+                     :src="picture.image"/>
+              </n-carousel>
+
             </nuxt-link>
         </div>
         <div class="w-full">
@@ -53,7 +57,7 @@ import type { ProductList } from "~/api/products";
 import { useFavoritesStore } from "~/storages/favorites-store";
 import { Heart, HeartOutline } from "@vicons/ionicons5";
 import { getPrice } from '~/utils/getPrice';
-
+import {NCarousel} from "naive-ui";
 const favoritesStore = useFavoritesStore();
 const message = useMessage();
 const props = defineProps<{
