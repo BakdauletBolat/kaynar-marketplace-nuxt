@@ -58,6 +58,8 @@ interface CarFilterData {
 export const useFilterStore = defineStore("filter-products", {
     state: () => {
         return {
+            brandDrawerOpen: false,
+            modelDrawerOpen: false,
             filterValues: {
                 search: null as string | null,
                 category: [] as string[],
@@ -82,6 +84,16 @@ export const useFilterStore = defineStore("filter-products", {
         }
     },
     actions:  {
+        openBrandDrawer() {
+            this.brandDrawerOpen = true;
+        },
+        openModelDrawer() {
+            this.modelDrawerOpen = true;
+        },
+        closeDrawers() {
+            this.modelDrawerOpen = false;
+            this.brandDrawerOpen = false;
+        },
         async loadFilters() {
             const response = await loadWithCache(axiosInstance, "/api/car/filters/")
             this.filterData = response.data;

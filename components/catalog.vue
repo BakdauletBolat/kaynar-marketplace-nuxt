@@ -126,9 +126,9 @@ const mobileFiltersOpen = ref(false);
             <div
                 class="z-[99] bg-white shadow sticky top-0 place-items-center w-full"
             >
-                <div class="w-full">
+                <div class="w-full h-[50px] flex items-center">
                     <n-page-header
-                        class="w-full container px-4 py-2 mx-auto"
+                        class="w-full    container px-4 py-2 mx-auto"
                         @back="handleBack"
                     >
                         <template #title><span class="text-base">Поиск запчастей</span></template>

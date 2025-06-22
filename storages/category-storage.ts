@@ -3,12 +3,9 @@ import axiosInstance from "~/api";
 import type {ISelectOption} from "~/api/interfaces";
 import type {TreeSelectOption} from "naive-ui";
 import {loadWithCache} from "~/api/loadWithCache";
+import {type Category} from '@/api/interfaces';
 
 
-export interface Category {
-    id: number;
-    name: string;
-}
 
 function recursiveCategory(children: any, options: TreeSelectOption[]) {
     for (let i = 0; i<children.length; i++) {

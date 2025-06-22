@@ -11,10 +11,10 @@
                 </p>
             </div>
             <div class="w-full justify-center flex h-full items-center">
-                <div class="flex w-full gap-2 flex-col bg-white p-4 rounded-lg">
-                    <h2 class="text-xl font-bold mb-3">
-                        Запчасти для вашего автомобиля
-                    </h2>
+                <div class="flex w-full gap-2 flex-col  p-4 rounded-lg">
+<!--                    <h2 class="text-xl font-bold mb-3">-->
+<!--                        Запчасти для вашего автомобиля-->
+<!--                    </h2>-->
                     <div class="lg:flex hidden gap-2 flex-col ">
                       <n-select v-model:value="filterStore.filterValues.manufacturer"
                                 filterable
@@ -58,39 +58,39 @@
                           </n-button>
                         </div>
                       </div>
-                      <n-button v-else @click="navigatePickManufacturer" size="large" class="w-full">
-                        Добавить марку
-                        <template #icon>
-                          <n-icon>
-                            <PlusIcon />
-                          </n-icon>
-                        </template>
-                      </n-button>
-                      <div>
-                        <div class="text-gray-400 my-2">Год Выпуска</div>
-                        <div class="grid grid-cols-2 gap-2">
-                          <n-input-number
-                              size="large"
-                              v-model:value="filterStore.filterValues.year_start"
-                              placeholder="c"
-                              :min="1900"
-                              :max="2030"
-                          />
-                          <n-input-number
-                              size="large"
-                              v-model:value="filterStore.filterValues.year_end"
-                              placeholder="По"
-                              :min="1900"
-                              :max="2030"
-                          />
-                        </div>
-                      </div>
+<!--                      <n-button v-else @click="navigatePickManufacturer" size="large" class="w-full">-->
+<!--                        Добавить марку-->
+<!--                        <template #icon>-->
+<!--                          <n-icon>-->
+<!--                            <PlusIcon />-->
+<!--                          </n-icon>-->
+<!--                        </template>-->
+<!--                      </n-button>-->
+<!--                      <div>-->
+<!--                        <div class="text-gray-400 my-2">Год Выпуска</div>-->
+<!--                        <div class="grid grid-cols-2 gap-2">-->
+<!--                          <n-input-number-->
+<!--                              size="large"-->
+<!--                              v-model:value="filterStore.filterValues.year_start"-->
+<!--                              placeholder="c"-->
+<!--                              :min="1900"-->
+<!--                              :max="2030"-->
+<!--                          />-->
+<!--                          <n-input-number-->
+<!--                              size="large"-->
+<!--                              v-model:value="filterStore.filterValues.year_end"-->
+<!--                              placeholder="По"-->
+<!--                              :min="1900"-->
+<!--                              :max="2030"-->
+<!--                          />-->
+<!--                        </div>-->
+<!--                      </div>-->
                     </div>
-                    <n-button type="primary" @click="search">
+                    <n-button type="primary" @click="() => search('mobile')">
                         <template #icon>
-                            <magnifying-glass-icon></magnifying-glass-icon>
+                            <wrench-screwdriver-icon></wrench-screwdriver-icon>
                         </template>
-                        Искать
+                      Найти Запчастей (71 200)
                     </n-button>
                 </div>
             </div>
@@ -99,7 +99,7 @@
 </template>
 <script lang="ts" setup>
 import {NSelect, NButton, type SelectOption} from "naive-ui";
-import { XCircleIcon, MagnifyingGlassIcon, PlusIcon } from "@heroicons/vue/24/outline";
+import { XCircleIcon, WrenchScrewdriverIcon } from "@heroicons/vue/24/outline";
 import { useRouter } from "vue-router";
 import { useCategoryStore } from "~/storages/category-storage";
 import { useFilterStore } from "~/storages/filter-store";
@@ -138,7 +138,13 @@ function onChangeManufacturer(value: number) {
     carModelStore.loadCarModelsByManufacturer(value);
 }
 
-function search() {
+function search(type: string) {
+  if (type === 'mobile') {
+    router.push({
+      name: 'search-by-category',
+    })
+    return;
+  }
   const query: {
     modelCar?: string,
     category?: string

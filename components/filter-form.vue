@@ -1,48 +1,26 @@
 <template>
+    <div>
+      <n-drawer :z-index="10000" v-model:show="filterStore.brandDrawerOpen" width="100%">
+        <n-drawer-content title="Поиск бренда" closable>
+          <brand></brand>
+        </n-drawer-content>
+      </n-drawer>
+      <n-drawer :z-index="10001" v-model:show="filterStore.modelDrawerOpen" width="100%">
+        <n-drawer-content title="Поиск модели" closable>
+          <model></model>
+        </n-drawer-content>
+      </n-drawer>
+    </div>
     <n-form :model="filterStore.filterValues" class="relative" ref="formRef">
-        <div>
-            <n-form-item label="Искать по производителю" path="manufacturer">
-                <n-select
-                    placeholder="Выберите варианты"
-                    filterable
-                    :options="manufacturerStore.manufacturerOptions"
-                    v-model:value="filterStore.filterValues.manufacturer"
-                    @update:value="handleOnChangeManufacturer"
-                />
-            </n-form-item>
-        </div>
-        <div>
-          <n-form-item label="Искать по модели" path="modelCar">
-            <n-select
-                placeholder="Выберите варианты"
-                filterable
-                multiple
-                :fallback-option="trimModelCar"
-                :options="modelCarStore.modelCarOptions"
-                v-model:value="filterStore.filterValues.modelCar"
-            />
-          </n-form-item>
-        </div>
-        <div>
-            <n-form-item label="Искать по категории" path="category">
-                <n-tree-select
-                    placeholder="Выберите варианты"
-                    multiple
-                    cascade
-                    filterable
-                    checkable
-                    :check-strategy="'all'"
-                    :options="categoryStore.categoriesTreeOptions"
-                    :value="
-                        filterStore.filterValues.category.length > 0
-                            ? filterStore.filterValues.category.map((item)=>parseInt(item))
-                            : []
-                    "
-                    @update:value="handleUpdateValue"
-                />
-            </n-form-item>
-        </div>
-        <div v-for="fields in filterStore.filtersForm">
+      <n-button @click="filterStore.openBrandDrawer" size="large" class="w-full">
+        Добавить марку
+        <template #icon>
+          <n-icon>
+            <PlusIcon />
+          </n-icon>
+        </template>
+      </n-button>
+        <div class="mt-4" v-for="fields in filterStore.filtersForm">
             <n-form-item :label="fields.title" :path="fields.key">
                 <n-select
                     v-if="fields.type == 'select'"
@@ -72,26 +50,30 @@
 <script setup lang="ts">
 import { useFilterStore } from "@/storages/filter-store";
 import { onMounted, ref } from "vue";
-import type {SelectOption, TreeSelectOption} from "naive-ui";
+import {NButton, NDrawer, NDrawerContent, type SelectOption, type TreeSelectOption} from "naive-ui";
 import {
     NSelect,
     NRadio,
     NForm,
     NFormItem,
-    NTreeSelect,
     NRadioGroup,
 } from "naive-ui";
-import { useCategoryStore } from "~/storages/category-storage";
+import { PlusIcon } from "@heroicons/vue/24/outline";
 import { useManufacturerStore } from "~/storages/manufacturer-store";
 import {useCarModelsStore} from "~/storages/car-models-store";
+import Brand from "~/pages/search/brand.vue";
+import Model from "~/pages/search/model.vue";
 
 const modelCarStore = useCarModelsStore();
 const filterStore = useFilterStore();
-const categoryStore = useCategoryStore();
 const manufacturerStore = useManufacturerStore();
 
 
+
 const formRef = ref();
+const brandOpen = ref(false);
+
+const router = useRouter();
 
 function handleUpdateValue(
     value: string | number | Array<string | number> | null,
@@ -102,14 +84,15 @@ function handleUpdateValue(
         .filter((item) => !Number.isNaN(item))
 }
 
-function handleOnChangeManufacturer(
-    value: number | null) {
-  modelCarStore.loadCarModelsByManufacturer(value);
+function navigatePickManufacturer() {
+  router.push({
+    name: 'search-brand'
+  });
 }
+
 
 onMounted(async () => {
   await filterStore.loadFilters();
-    await categoryStore.loadCategoriesTree();
    await manufacturerStore.loadManufacturers();
 });
 

@@ -1,14 +1,8 @@
 <template>
   <main >
-    <n-page-header @back="handleBack" class="fixed w-full z-10 top-0 bg-primary px-4 py-2 shadow">
-      <template #title>
-      <span style="text-decoration: none; color: inherit">
-        Поиск по марке
-      </span>
-      </template>
-    </n-page-header>
+
     <section class="content">
-      <div class="mt-[60px] px-4">
+      <div>
         <n-input type="text" size="large"
                  v-model:value="carModelsStore.searchTermModelCar"
                  placeholder="Поиск по маркам">
@@ -17,7 +11,7 @@
           </template>
         </n-input>
       </div>
-      <div class="mt-4" @click="navigateMainMenu">
+      <div class="mt-4" @click="closeDrawers">
         <div class="px-4 py-2 text-blue-500 cursor-pointer w-full">Выбрать все модели</div>
       </div>
       <div class="mt-2">
@@ -41,8 +35,8 @@
     </section>
     <section class="footer">
       <transition name="slide-up">
-        <div v-if="canShowConfirmButton()" class="component w-full px-4 flex justify-center fixed z-30 bottom-[80px]">
-          <n-button @click="navigateMainMenu" type="primary" round class="w-full" size="large">Выбрать {{filterStore.filterValues.modelCar.length}} моделей</n-button>
+        <div v-if="canShowConfirmButton()" class="component w-full px-4 flex justify-center fixed left-0 z-30 bottom-[80px]">
+          <n-button @click="closeDrawers" type="primary" round class="w-full" size="large">Выбрать {{filterStore.filterValues.modelCar.length}} моделей</n-button>
         </div>
       </transition>
     </section>
@@ -54,15 +48,14 @@ import { Search, ChevronForward, Checkbox} from '@vicons/ionicons5'
 import NotFoundBannerComponent from "~/components/not-found-banner-component.vue";
 import {useCarModelsStore} from "~/storages/car-models-store";
 import {useFilterStore} from "~/storages/filter-store";
+import type {IDefaultAPI} from "~/api/interfaces";
 
 const carModelsStore = useCarModelsStore();
+const manufacturerStore = useManufacturerStore();
+
 const filterStore = useFilterStore();
 const route = useRoute()
-const router = useRouter()
 
-function handleBack() {
-  router.back();
-}
 
 function canShowConfirmButton() {
   return filterStore.filterValues.modelCar.length > 0;
@@ -77,8 +70,8 @@ function pickModelCar(value: number) {
     }
 }
 
-function navigateMainMenu() {
-  router.push('/')
+function closeDrawers() {
+  filterStore.closeDrawers();
 }
 
 function isSelected(carModelId: number) {
@@ -89,13 +82,6 @@ watch(()=>carModelsStore.searchTermModelCar, (searchTerm: string, _: string)=>{
   carModelsStore.searchCarModels(searchTerm);
 })
 
-onMounted(()=>{
-  if (route.query.manufacturerId !== undefined) {
-    carModelsStore.loadCarModelsByManufacturer(parseInt(route.query.manufacturerId!.toString()));
-  }
-  else {
-    carModelsStore.loadCarModels();
-  }
-})
+
 
 </script>
