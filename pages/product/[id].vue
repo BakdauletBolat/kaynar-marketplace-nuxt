@@ -102,7 +102,7 @@ function addGoods() {
         })
 }
 
-const title = `${ product.value?.eav_attributes?.modelCar?.name } (${ product.value?.eav_attributes?.modelCar?.startDate } - ${ product.value?.eav_attributes?.modelCar?.endDate } )${ product.value?.name }`
+const title = `${ product.value?.eav_attributes?.modelCar?.name } (${ product.value?.eav_attributes?.modelCar?.startDate } - ${ product.value?.eav_attributes?.modelCar?.endDate } ) ${ product.value?.name } Объем ${product.value?.eav_attributes?.capacity || ''}`
 
 useHead({
   title: title || 'Загрузка...',
@@ -249,21 +249,15 @@ useHead({
                 <div class="lg:sticky z-10">
                     <n-card>
                         <h1
-                            class="text-lg block lg:hidden lg:text-2xl font-bold"
+                            class="text-lg  max-w-[350px] block lg:hidden lg:text-2xl font-bold"
                         >
-                            {{ product.eav_attributes?.modelCar?.name }} (
-                            {{ product.eav_attributes?.modelCar?.startDate }} -
-                            {{ product.eav_attributes?.modelCar?.endDate }} )
-                            {{ product.name }}
+                            {{ title }}
                         </h1>
 
                         <h1
-                            class="text-lg hidden lg:block lg:text-2xl font-bold"
+                            class="text-lg max-w-[350px] hidden lg:block lg:text-2xl font-bold"
                         >
-                            {{ product.eav_attributes?.modelCar?.name }} (
-                            {{ product.eav_attributes?.modelCar?.startDate }} -
-                            {{ product.eav_attributes?.modelCar?.endDate }} )
-                            {{ product.name }}
+                            {{ title }}
                         </h1>
                         <div class="mt-2">
                             <span>Код товара в системе: </span
