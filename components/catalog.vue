@@ -1,210 +1,175 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import { FunnelIcon } from "@heroicons/vue/20/solid";
-import { useRoute } from "vue-router";
-import {
-    NDrawer,
-    NCard,
-    NDrawerContent,
-    NPageHeader,
-    NButton,
-    NIcon,
-} from "naive-ui";
-import FilterForm from "./filter-form.vue";
-import Card from "./card.vue";
-import { useProductStore } from "~/storages/product-store";
-import { useFilterStore } from "~/storages/filter-store";
-import {useCarModelsStore} from "~/storages/car-models-store";
+import { ref, watch, computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { NDrawer, NDrawerContent, NPageHeader, NButton, NIcon, NPagination } from 'naive-ui';
+import { FunnelIcon } from '@heroicons/vue/20/solid';
+import FilterSidebar from './filter-sidebar.vue'; // <-- Наш новый компонент
+import Card from './card.vue';
+import ProductLoadingSkeleton from './product-loading-skeleton.vue';
+import { useProductStore } from '~/storages/product-store';
+import { useFilterStore } from '~/storages/filter-store';
+import { useCarModelsStore } from '~/storages/car-models-store';
 
+// --- STORES & ROUTER ---
 const productStore = useProductStore();
 const filterStore = useFilterStore();
 const modelCarStore = useCarModelsStore();
-
-const page = ref(1);
-
-const breadcrumbs = ref([
-    {
-        text: "Главная",
-        link: null,
-    },
-    {
-        text: "Каталог автомобилей",
-        link: null,
-    },
-]);
-
-const sortOptions = [
-    { label: "Самые популярные", key: 1 },
-    { label: "Лучший рейтинг", key: 2 },
-    { label: "Новинки", key: 3 },
-    { label: "Цена: по возрастанию", key: 4 },
-    { label: "Цена: по убыванию", key: 5 },
-];
-
 const route = useRoute();
 const router = useRouter();
-const props = defineProps(["category"]);
 
-onMounted(() => {
-    filterStore.clearValues()
-    if (props.category != null) {
-        filterStore.filterValues.category = props.category;
+// --- PROPS ---
+const props = defineProps<{
+  category?: any; // Уточните тип, если возможно
+}>();
+
+// --- STATE ---
+const page = ref(1);
+const mobileFiltersOpen = ref(false);
+
+// --- COMPUTED (для чистоты шаблона) ---
+const products = computed(() => productStore.products);
+const isInitialLoading = computed(() => productStore.isLoadingProducts && products.value.length === 0);
+const isListVisible = computed(() => products.value.length > 0);
+const isListEmpty = computed(() => !productStore.isLoadingProducts && products.value.length === 0);
+const isUpdating = computed(() => productStore.isLoadingProducts && products.value.length > 0);
+
+// --- METHODS ---
+function handleBack() {
+  router.back();
+}
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function onFilterSubmit() {
+  mobileFiltersOpen.value = false;
+  scrollToTop();
+}
+
+function onFilterClear() {
+  mobileFiltersOpen.value = false;
+  scrollToTop();
+}
+
+// --- WATCHERS & LIFECYCLE ---
+
+// Этот watcher заменяет логику из onMounted и старый watch(route)
+// Он отслеживает ИЗМЕНЕНИЯ в URL и сразу же синхронизирует состояние фильтров,
+// а затем загружает продукты.
+watch(
+  () => route.query,
+  (query) => {
+    filterStore.clearValues();
+    
+    if (props.category) {
+      filterStore.filterValues.category = props.category;
     }
-    if (route.query.category != null) {
-        filterStore.filterValues.category = route.query.category.toString().split(',')
+    if (query.category) {
+      filterStore.filterValues.category = query.category.toString().split(',');
     }
-    if (route.query.modelCar != null) {
-      filterStore.filterValues.modelCar = route.query.modelCar.toString().split(',')
+    if (query.modelCar) {
+      filterStore.filterValues.modelCar = query.modelCar.toString().split(',');
     }
-    if (route.query.search != null) {
-        filterStore.filterValues.search = route.query.search.toString();
+    if (query.search) {
+      filterStore.filterValues.search = query.search.toString();
     }
     if (route.params.manufacturerId) {
-        filterStore.filterValues.manufacturer = parseInt(
-            route.params.manufacturerId.toString(),
-        );
-        modelCarStore.loadCarModelsByManufacturer(filterStore.filterValues.manufacturer);
+      const manufId = parseInt(route.params.manufacturerId.toString());
+      filterStore.filterValues.manufacturer = manufId;
+      modelCarStore.loadCarModelsByManufacturer(manufId);
     }
+    
     productStore.loadProducts(filterStore.filterValues);
+  },
+  { deep: true, immediate: true } // immediate: true запускает его сразу при загрузке компонента
+);
+
+
+// Отслеживаем только изменение страницы
+watch(page, (newPage) => {
+  productStore.loadProducts({ ...filterStore.filterValues, page: newPage });
+  scrollToTop();
 });
 
-function handleBack() {
-    router.back();
-}
-
-
-watch(route, (state) => {
-  if (route.query.search != null) {
-    filterStore.filterValues.search = route.query.search.toString();
-  }
-    productStore.loadProducts(filterStore.filterValues);
-});
-
-watch(page, (newState, _) => {
-  productStore.loadProducts({...filterStore.filterValues, page: newState});
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
-})
-
-function submitFilter() {
-  productStore.loadProducts(filterStore.filterValues);
-  mobileFiltersOpen.value = false;
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
-}
-
-function clearFilter() {
-  filterStore.clearValues();
-  productStore.loadProducts(filterStore.filterValues);
-}
-
-
-const mobileFiltersOpen = ref(false);
 </script>
 
 <template>
-    <div>
-        <n-drawer :z-index="10000" v-model:show="mobileFiltersOpen" width="100%">
-            <n-drawer-content title="Поиск запчестей" closable>
-              <div class="relative">
-                <div class="bottom-0 w-full left-0  border-t !bg-white z-50 fixed">
-                  <div class="p-4 w-full flex flex-col gap-2">
-                    <n-button @click="submitFilter" type="primary">Показать результаты</n-button>
-                    <n-button @click="clearFilter" class="!bg-white">Очистить</n-button>
-                  </div>
-                </div>
-                <filter-form></filter-form>
+  <div>
+    <!-- Мобильная шторка с фильтрами -->
+    <n-drawer v-model:show="mobileFiltersOpen" width="100%" :z-index="10000">
+      <n-drawer-content title="Фильтры и поиск" closable>
+        <!-- Используем наш новый компонент. Кнопки теперь его часть. -->
+        <filter-sidebar @submit="onFilterSubmit" @clear="onFilterClear" />
+      </n-drawer-content>
+    </n-drawer>
+
+    <main>
+      <!-- Шапка страницы -->
+      <div class="sticky top-0 z-10 bg-white shadow-sm">
+        <div class="container w-full px-4 py-2 mx-auto">
+          <n-page-header @back="handleBack">
+            <template #title>
+              <span class="text-base">Поиск запчастей</span>
+            </template>
+            <template #extra>
+              <n-button tertiary round @click="mobileFiltersOpen = true">
+                <template #icon>
+                  <n-icon><FunnelIcon class="w-5 h-5" /></n-icon>
+                </template>
+                Фильтры
+              </n-button>
+            </template>
+          </n-page-header>
+        </div>
+      </div>
+
+      <div>
+        <selected-filters></selected-filters>
+      </div>
+
+      <!-- Основной контент -->
+      <div class="container px-4 mx-auto">
+        <section class="pb-24">
+          <div class="grid grid-cols-1 gap-x-8 items-start lg:grid-cols-[320px_1fr] mt-4">
+            
+            <!-- Левая колонка (Фильтры для десктопа) -->
+            <aside class="hidden lg:block sticky top-[80px]">
+              <!-- И снова используем наш компонент -->
+              <filter-sidebar @submit="onFilterSubmit" @clear="onFilterClear" />
+            </aside>
+
+            <!-- Правая колонка (Список товаров) -->
+            <div class="relative">
+              <!-- Состояние начальной загрузки -->
+              <div v-if="isInitialLoading" class="grid gap-3">
+                <product-loading-skeleton v-for="i in 10" :key="i" />
               </div>
 
-            </n-drawer-content>
-        </n-drawer>
-        <main>
-            <div
-                class="z-[99] bg-white shadow sticky top-0 place-items-center w-full"
-            >
-                <div class="w-full">
-                    <n-page-header
-                        class="w-full container px-4 py-2 mx-auto"
-                        @back="handleBack"
-                    >
-                        <template #title><span class="text-base">Поиск запчастей</span></template>
-                        <template #extra>
-                            <div class="flex gap-2">
-                                <n-button
-                                    tertiary
-                                    round
-                                    @click="
-                                        mobileFiltersOpen = !mobileFiltersOpen
-                                    "
-                                >
-                                    <template #icon>
-                                        <n-icon
-                                            ><FunnelIcon
-                                                class="h-5 w-5"
-                                                aria-hidden="true"
-                                        /></n-icon>
-                                    </template>
-                                </n-button>
-                            </div>
-                        </template>
-                    </n-page-header>
-                </div>
-            </div>
-            <div class="mx-auto container px-4">
-                <section aria-labelledby="products-heading" class="pb-24">
-                    <div
-                        class="grid grid-cols-1 relative gap-3 lg:mt-3 items-start lg:grid-cols-[450px_1fr]"
-                    >
-                      <div class="sticky top-[70px]">
-                        <n-card class="hidden lg:block h-[600px] overflow-y-scroll ">
-                          <filter-form></filter-form>
-                        </n-card>
-                        <div class="lg:flex w-full mt-4 hidden gap-2 flex-col">
-                          <n-button @click="submitFilter" class="w-full" type="primary" size="large">Показать результаты</n-button>
-                          <n-button @click="clearFilter" class="!bg-white" size="large">Очистить</n-button>
-                        </div>
-                      </div>
-                        <div>
-                            <div
-                                class="grid gap-3"
-                                v-if="
-                                    productStore.isLoadingProducts &&
-                                    productStore.products.length == 0
-                                "
-                            >
-                                <product-loading-skeleton
-                                    v-for="_ in Array.from(
-                                        { length: 10 },
-                                        (_, i) => i + 1,
-                                    )"
-                                ></product-loading-skeleton>
-                            </div>
-                            <div
-                                :class="{
-                                    'opacity-40':
-                                        productStore.isLoadingProducts,
-                                }"
-                                v-if="productStore.products.length > 0"
-                                class="relative grid gap-3"
-                            >
-                                <card
-                                    :item="item"
-                                    v-for="item in productStore.products"
-                                ></card>
-                            </div>
-                            <div v-else>Запчастей не найдено</div>
-                            <n-pagination :item-count="productStore.pageCount" size="small" class="mt-6 w-full"
-                                          v-model:page="page"/>
-                        </div>
-                    </div>
-                </section>
-            </div>
-        </main>
-    </div>
-</template>
+              <!-- Список товаров -->
+              <div v-if="isListVisible" 
+                   class="grid gap-3 transition-opacity"
+                   :class="{ 'opacity-50': isUpdating }">
+                <card v-for="item in products" :key="item.id" :item="item" />
+              </div>
 
-<style scoped></style>
+              <!-- Состояние "Ничего не найдено" -->
+              <div v-if="isListEmpty">
+                <p>Запчастей по вашему запросу не найдено.</p>
+                <p>Попробуйте изменить параметры фильтра.</p>
+              </div>
+
+              <!-- Пагинация -->
+              <n-pagination
+                v-if="isListVisible"
+                v-model:page="page"
+                :item-count="productStore.pageCount"
+                class="w-full mt-6"
+              />
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</template>
