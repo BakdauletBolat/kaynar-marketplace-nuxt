@@ -52,6 +52,8 @@
       manufacturer: 'Производитель',
       modelCar: 'Модель',
       category: 'Категория',
+      year_start: 'Год с',
+      year_end: 'Год по',
       // Динамические фильтры
       ...Object.fromEntries(
           filterStore.filtersForm.map(f => [f.key, f.title])
@@ -63,7 +65,7 @@
       const label = labelMap[key];
   
       // Пропускаем пустые значения
-      if (!label || value === null || (Array.isArray(value) && value.length === 0)) {
+      if (!label || value == null || value === '' || (Array.isArray(value) && value.length === 0)) {
         continue;
       }
   
@@ -78,13 +80,13 @@
           displayValue = manufacturerStore.getManufacturerById(value as number)?.label ?? 'Неизвестно';
           break;
         case 'modelCar':
-          displayValue = (value as string[])
-            .map(id => modelCarStore.getModelCarById(id)?.label ?? id)
+          displayValue = (Array.isArray(value) ? value : [String(value)])
+            .map((id) => modelCarStore.getModelCarById(id)?.label ?? id)
             .join(', ');
           break;
         case 'category':
-          displayValue = (value as string[])
-            .map(id => categoryStore.getCategoryLabelById(parseInt(id, 10)) ?? id)
+          displayValue = (Array.isArray(value) ? value : [String(value)])
+            .map((id) => categoryStore.getCategoryById(String(id)) ?? String(id))
             .join(', ');
           break;
         default:

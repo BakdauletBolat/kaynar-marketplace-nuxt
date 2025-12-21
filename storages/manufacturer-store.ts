@@ -3,6 +3,42 @@ import axiosInstance from "~/api";
 import type {IDefaultAPI} from "~/api/interfaces";
 import {loadWithCache} from "~/api/loadWithCache";
 
+const POPULAR_MANUFACTURERS = [
+    "AUDI",
+    "BMW",
+    "DAEWOO",
+    "KIA",
+    "LADA",
+    "MERCEDES-BENZ",
+    "MERCEDES BENZ",
+    "TOYOTA",
+    "VOLVO",
+    "MAZDA",
+    "FORD",
+];
+
+function normalizeManufacturerName(name: string) {
+    return name
+        .toUpperCase()
+        .replace(/[-_]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+const POPULAR_MANUFACTURER_KEYS = POPULAR_MANUFACTURERS.map(normalizeManufacturerName);
+const POPULAR_MANUFACTURER_KEY_SET = new Set(POPULAR_MANUFACTURER_KEYS);
+const POPULAR_MANUFACTURER_ORDER_INDEX = new Map(
+    POPULAR_MANUFACTURER_KEYS.map((key, index) => [key, index] as const),
+);
+
+function isPopularManufacturer(name: string) {
+    return POPULAR_MANUFACTURER_KEY_SET.has(normalizeManufacturerName(name));
+}
+
+function popularManufacturerOrderIndex(name: string) {
+    return POPULAR_MANUFACTURER_ORDER_INDEX.get(normalizeManufacturerName(name)) ?? Number.MAX_SAFE_INTEGER;
+}
+
 export const useManufacturerStore = defineStore("manufacturer-store", {
     state: () => {
         return {
@@ -32,13 +68,58 @@ export const useManufacturerStore = defineStore("manufacturer-store", {
                 return accumulator;
             }, {});
         },
+        popularManufacturers: (state) => {
+            return state.manufacturers
+                .filter((m) => isPopularManufacturer(m.name))
+                .slice()
+                .sort((a, b) => {
+                    return (
+                        popularManufacturerOrderIndex(a.name) - popularManufacturerOrderIndex(b.name) ||
+                        a.name.localeCompare(b.name)
+                    );
+                });
+        },
+        otherManufacturers: (state) => {
+            return state.manufacturers
+                .filter((m) => !isPopularManufacturer(m.name))
+                .slice()
+                .sort((a, b) => a.name.localeCompare(b.name));
+        },
         manufacturerOptions: (state) => {
-            return state.manufacturers.map(option=>{
-                return {
-                    label: option.name,
-                    value: option.id
-                }
-            })
+            const popular = state.manufacturers
+                .filter((m) => isPopularManufacturer(m.name))
+                .slice()
+                .sort((a, b) => {
+                    return (
+                        popularManufacturerOrderIndex(a.name) - popularManufacturerOrderIndex(b.name) ||
+                        a.name.localeCompare(b.name)
+                    );
+                });
+            const other = state.manufacturers
+                .filter((m) => !isPopularManufacturer(m.name))
+                .slice()
+                .sort((a, b) => a.name.localeCompare(b.name));
+
+            const toOption = (m: IDefaultAPI) => ({ label: m.name, value: m.id });
+
+            const options: any[] = [];
+            if (popular.length) {
+                options.push({
+                    type: "group",
+                    key: "popular",
+                    label: "Популярные",
+                    children: popular.map(toOption),
+                });
+            }
+            if (other.length) {
+                options.push({
+                    type: "group",
+                    key: "all",
+                    label: "Все производители",
+                    children: other.map(toOption),
+                });
+            }
+            return options;
         }
     },
     actions: {

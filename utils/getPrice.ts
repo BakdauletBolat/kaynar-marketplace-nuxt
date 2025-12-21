@@ -1,6 +1,6 @@
 export function getPrice(price: number | null) {
-    if (price == 0) {
+    if (price === null || price === 0 || !Number.isFinite(price)) {
         return 'Цена по запросу';
     }
-    return `${price} ₸`;
+    return `${new Intl.NumberFormat('ru-RU').format(price)} ₸`;
 }

@@ -19,7 +19,7 @@ const router = useRouter();
 
 // --- PROPS ---
 const props = defineProps<{
-  category?: any; // Уточните тип, если возможно
+  category?: string | number | Array<string | number>;
 }>();
 
 // --- STATE ---
@@ -62,8 +62,11 @@ watch(
   (query) => {
     filterStore.clearValues();
     
-    if (props.category) {
-      filterStore.filterValues.category = props.category;
+    if (props.category !== undefined && props.category !== null && props.category !== '') {
+      const category = props.category;
+      filterStore.filterValues.category = Array.isArray(category)
+        ? category.map(String)
+        : [String(category)];
     }
     if (query.category) {
       filterStore.filterValues.category = query.category.toString().split(',');
@@ -73,6 +76,14 @@ watch(
     }
     if (query.search) {
       filterStore.filterValues.search = query.search.toString();
+    }
+    if (query.year_start) {
+      const parsed = parseInt(query.year_start.toString(), 10);
+      filterStore.filterValues.year_start = Number.isFinite(parsed) ? parsed : null;
+    }
+    if (query.year_end) {
+      const parsed = parseInt(query.year_end.toString(), 10);
+      filterStore.filterValues.year_end = Number.isFinite(parsed) ? parsed : null;
     }
     if (route.params.manufacturerId) {
       const manufId = parseInt(route.params.manufacturerId.toString());
@@ -148,7 +159,7 @@ watch(page, (newPage) => {
 
               <!-- Список товаров -->
               <div v-if="isListVisible" 
-                   class="grid gap-3 transition-opacity"
+                   class="grid lg:grid-cols-2 gap-3 transition-opacity"
                    :class="{ 'opacity-50': isUpdating }">
                 <card v-for="item in products" :key="item.id" :item="item" />
               </div>

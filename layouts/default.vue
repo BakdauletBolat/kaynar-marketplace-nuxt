@@ -11,6 +11,7 @@ import {
 } from "@vicons/ionicons5";
 const widthRef = ref(0);
 const router = useRouter();
+const route = useRoute();
 
 const deliveryRoute = {
   name: 'delivery'
@@ -30,6 +31,8 @@ function navigateToOrder() {
 function closeCart() {
   isOpenCart.value = false;
 }
+
+const showFooter = computed(() => String(route.name ?? '') === 'index');
 
 onMounted(() => {
     widthRef.value = window.innerWidth;
@@ -122,7 +125,7 @@ onMounted(() => {
         <div>
             <slot></slot>
         </div>
-        <app-footer></app-footer>
+        <app-footer v-if="showFooter"></app-footer>
     </div>
 </template>
 
