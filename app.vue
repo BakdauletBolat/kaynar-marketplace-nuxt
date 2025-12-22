@@ -68,10 +68,23 @@ const themeOverrides = computed(() => {
       borderColor: isDark ? '#333' : '#d1d5db',
     },
     Input: {
+      fontSizeSmall: '16px',
+      fontSizeMedium: '16px',
+      fontSizeLarge: '16px',
       borderRadius: '8px',
       borderHover: `1px solid ${primaryColor}`,
       borderFocus: `1px solid ${primaryColor}`,
       boxShadowFocus: `0 0 0 2px ${primaryColor}33`, // Soft yellow glow
+    },
+    Select: {
+      fontSizeSmall: '16px',
+      fontSizeMedium: '16px',
+      fontSizeLarge: '16px',
+    },
+    TreeSelect: {
+      fontSizeSmall: '16px',
+      fontSizeMedium: '16px',
+      fontSizeLarge: '16px',
     },
     Checkbox: {
       checkMarkColor: '#ffffff',
