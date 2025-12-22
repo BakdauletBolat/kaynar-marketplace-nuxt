@@ -26,7 +26,7 @@
                 v-model="searchQuery"
                 type="text" 
                 placeholder="Поиск по категориям..." 
-                class="w-full h-10 bg-gray-100 dark:bg-white/5 border-none rounded-xl px-4 pl-10 text-sm font-medium focus:ring-2 focus:ring-primary/20 dark:text-white"
+                class="w-full h-10 bg-gray-100 dark:bg-white/5 border-none rounded-xl px-4 pl-10 text-base font-medium focus:ring-2 focus:ring-primary/20 dark:text-white"
              />
              <div class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">

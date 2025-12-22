@@ -8,13 +8,13 @@
           <p>
             Чтобы оформлять заказы и добавлять товары в избранное, пожалуйста, зарегистрируйтесь или войдите в аккаунт.
           </p>
-          <n-input
+          <!-- <n-input
               class="w-full imask-elem"
               v-model:value="phone"
               placeholder="+7 (___) ___-__-__"
-          />
+          /> -->
           <div class="flex gap-2 flex-col">
-            <n-button type="primary" @click="userRegisterOTP">Продолжить через SMS</n-button>
+            <!-- <n-button type="primary" @click="userRegisterOTP">Продолжить через SMS</n-button> -->
             <div class="mt-4">У вас уже есть аккаунт?</div>
             <n-button @click="navigateLogin">Войти</n-button>
             <n-button class="mt-2" text @click="navigateRegister">Регистрация</n-button>

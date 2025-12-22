@@ -109,15 +109,15 @@
              <div class="grid grid-cols-1 gap-3">
                  <div class="bg-gray-50 dark:bg-white/5 rounded-xl px-3 py-2 border border-transparent focus-within:border-primary/50 transition-colors">
                      <label class="text-[10px] text-gray-400 block uppercase tracking-wide">Имя</label>
-                     <input v-model="orderStore.userInfo.first_name" type="text" class="bg-transparent w-full text-sm font-medium outline-none text-black dark:text-white placeholder-gray-300" placeholder="Введите имя">
+                     <input v-model="orderStore.userInfo.first_name" type="text" class="bg-transparent w-full text-base font-medium outline-none text-black dark:text-white placeholder-gray-300" placeholder="Введите имя">
                  </div>
                  <div class="bg-gray-50 dark:bg-white/5 rounded-xl px-3 py-2 border border-transparent focus-within:border-primary/50 transition-colors">
                      <label class="text-[10px] text-gray-400 block uppercase tracking-wide">Фамилия</label>
-                     <input v-model="orderStore.userInfo.last_name" type="text" class="bg-transparent w-full text-sm font-medium outline-none text-black dark:text-white placeholder-gray-300" placeholder="Введите фамилию">
+                     <input v-model="orderStore.userInfo.last_name" type="text" class="bg-transparent w-full text-base font-medium outline-none text-black dark:text-white placeholder-gray-300" placeholder="Введите фамилию">
                  </div>
                  <div class="bg-gray-50 dark:bg-white/5 rounded-xl px-3 py-2 border border-transparent focus-within:border-primary/50 transition-colors">
                      <label class="text-[10px] text-gray-400 block uppercase tracking-wide">Телефон</label>
-                     <input v-model="orderStore.userInfo.phone_number" type="tel" class="bg-transparent w-full text-sm font-medium outline-none text-black dark:text-white placeholder-gray-300" placeholder="+7 (___) ___-__-__">
+                     <input v-model="orderStore.userInfo.phone_number" type="tel" class="bg-transparent w-full text-base font-medium outline-none text-black dark:text-white placeholder-gray-300" placeholder="+7 (___) ___-__-__">
                  </div>
              </div>
         </div>
@@ -181,11 +181,11 @@
                          <h4 class="font-bold text-sm">Новый адрес</h4>
                          <button @click="isCreatingAddress = false" class="text-xs text-red-500">Отмена</button>
                      </div>
-                     <input v-model="newAddress.address" placeholder="Город, улица" class="w-full p-2 rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-black text-sm outline-none focus:border-primary">
+                     <input v-model="newAddress.address" placeholder="Город, улица" class="w-full p-2 rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-black text-base outline-none focus:border-primary">
                      <div class="grid grid-cols-3 gap-2">
-                         <input v-model="newAddress.building" placeholder="Дом" class="w-full p-2 rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-black text-sm outline-none focus:border-primary">
-                         <input v-model="newAddress.apartment" placeholder="Кв." class="w-full p-2 rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-black text-sm outline-none focus:border-primary">
-                         <input v-model="newAddress.postal_code" placeholder="Индекс" class="w-full p-2 rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-black text-sm outline-none focus:border-primary">
+                         <input v-model="newAddress.building" placeholder="Дом" class="w-full p-2 rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-black text-base outline-none focus:border-primary">
+                         <input v-model="newAddress.apartment" placeholder="Кв." class="w-full p-2 rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-black text-base outline-none focus:border-primary">
+                         <input v-model="newAddress.postal_code" placeholder="Индекс" class="w-full p-2 rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-black text-base outline-none focus:border-primary">
                      </div>
                      <button @click="createNewAddress" :disabled="!newAddress.address" class="w-full bg-primary text-white py-2 rounded-lg font-bold text-sm disabled:opacity-50">
                          Сохранить

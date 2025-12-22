@@ -55,7 +55,7 @@ function selectCategory(cat: any) {
            <input 
              v-model="searchWord"
              type="text"
-             class="w-full h-full px-2 text-sm text-black placeholder-gray-400 outline-none"
+             class="w-full h-full px-2 text-base text-black placeholder-gray-400 outline-none"
              placeholder="Поиск на Kaynar"
              @focus="isFocused = true"
              @blur="setTimeout(() => isFocused = false, 200)"
