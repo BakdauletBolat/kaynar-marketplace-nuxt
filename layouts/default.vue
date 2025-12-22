@@ -1,133 +1,61 @@
 <script setup lang="ts">
-import { isOpenCart, isOpenSidebar } from "~/storages/storage";
-import UserCard from "~/components/user-card.vue";
+import { isOpenSidebar } from "~/storages/storage";
 import AppFooter from "~/components/footer.vue";
 import AppHeader from '~/components/header.vue';
-import { NDrawer, NDrawerContent, NButton, NDivider } from "naive-ui";
-import {
-    HelpCircle,
-    PersonOutline,
-    HeartOutline,
-} from "@vicons/ionicons5";
-const widthRef = ref(0);
-const router = useRouter();
+import MobileHeader from "~/components/mobile-header.vue";
+import BottomAppBar from "~/components/bottom-app-bar.vue";
+import AppDrawerContent from "~/components/app-drawer-content.vue";
+import { NDrawer, NDrawerContent } from "naive-ui";
+import { useBreakpoints, breakpointsTailwind } from '@vueuse/core';
+
 const route = useRoute();
+const breakpoints = useBreakpoints(breakpointsTailwind);
 
-const deliveryRoute = {
-  name: 'delivery'
-}
+// Используем lg (1024px) как границу, так же как в header.vue
+const isMobile = breakpoints.smaller('lg');
 
-const isMobile = computed<boolean>(() => {
-    return widthRef.value <= 500;
-});
-
-function navigateToOrder() {
-    isOpenCart.value = false;
-    router.push({
-        name: "order-create",
-    });
-}
-
-function closeCart() {
-  isOpenCart.value = false;
-}
-
-const showFooter = computed(() => String(route.name ?? '') === 'index');
-
-onMounted(() => {
-    widthRef.value = window.innerWidth;
-    function reportWindowSize() {
-        widthRef.value = window.innerWidth;
-    }
-    window.onresize = reportWindowSize;
-});
+// Футер показываем только на главной (сохранение старой логики)
+const showFooter = computed(() => route.name === 'index');
+// Хедер показываем только на главной, так как на других страницах свои заголовки
+const showHeader = computed(() => route.name === 'index');
 </script>
 
 <template>
-    <client-only>
-      <bottom-app-bar></bottom-app-bar>
-    </client-only>
-    <n-drawer :width="isMobile ? '80%' : '400px'" v-model:show="isOpenSidebar">
+    <!-- Нижняя навигация (Скрыта на Desktop через CSS внутри компонента) -->
+    <bottom-app-bar />
+
+    <!-- Боковое меню (Drawer) -->
+    <n-drawer 
+        v-model:show="isOpenSidebar" 
+        :width="isMobile ? '85%' : '400px'" 
+        placement="right"
+        :trap-focus="false"
+        :block-scroll="isMobile"
+    >
         <n-drawer-content title="Меню" closable>
-            <div>
-                <div class="mb-4">
-                    <ul class="flex gap-2 flex-col text-xs cursor-pointer">
-                        <nuxt-link
-                            @click="closeCart"
-                            :to="deliveryRoute"
-                            class="hover:underline">
-                          Доставка
-                        </nuxt-link>
-                        <nuxt-link
-                            @click="closeCart"
-                            :to="{
-                                name: 'refund',
-                            }"
-                            class="hover:underline"
-                            >Возврат</nuxt-link
-                        >
-                        <nuxt-link
-                            @click="closeCart"
-                            :to="{
-                                name: 'pay',
-                            }"
-                            class="hover:underline"
-                            >Оплата</nuxt-link
-                        >
-                        <nuxt-link
-                            @click="closeCart"
-                            :to="{ name: 'contacts' }"
-                            class="hover:underline"
-                            >Контакты</nuxt-link
-                        >
-                    </ul>
-                </div>
-                <n-divider></n-divider>
-                <div class="flex flex-col gap-2">
-                    <nuxt-link
-                        @click="closeCart"
-                        :to="{
-                            name: 'auth-profile',
-                        }"
-                        class="cursor-pointer flex gap-2"
-                    >
-                        <PersonOutline
-                            class="w-6 text-black h-6"
-                        ></PersonOutline>
-                        <div>Профиль</div>
-                    </nuxt-link>
-                    <nuxt-link
-                        @click="closeCart"
-                        :to="{
-                            name: 'auth-favorites',
-                        }"
-                        class="cursor-pointer flex gap-2"
-                    >
-                        <HeartOutline class="w-6 text-black h-6"></HeartOutline>
-                        <div>Избранные</div>
-                    </nuxt-link>
-                    <nuxt-link
-                        @click="closeCart"
-                        :to="{
-                            name: 'feadback',
-                        }"
-                        class="cursor-pointer flex gap-2"
-                    >
-                        <HelpCircle class="w-6 text-black h-6"></HelpCircle>
-                        <div>Покупка в один клик</div>
-                    </nuxt-link>
-                </div>
-            </div>
+            <app-drawer-content />
         </n-drawer-content>
     </n-drawer>
-    <div class="relative min-h-full">
-        <app-header></app-header>
-        <div>
+
+    <div class="relative min-h-screen flex flex-col font-sans text-slate-900 bg-slate-50 pb-[80px] lg:pb-0">
+        <!-- Desktop Header (Скрыт на Mobile через CSS внутри компонента) -->
+        <app-header/>
+
+        <!-- Mobile Header (Скрыт на Desktop через CSS внутри компонента) -->
+        <mobile-header v-if="showHeader" />
+
+        <!-- Main Content -->
+        <main class="flex-grow w-full">
             <slot></slot>
-        </div>
+        </main>
+
+        <global-request-button />
+
+        <!-- Footer -->
         <app-footer v-if="showFooter"></app-footer>
     </div>
 </template>
 
 <style>
+/* Глобальные стили если нужны, но стараемся использовать Tailwind */
 </style>

@@ -67,20 +67,22 @@ watchEffect(() => {
     }
 });
 
-const props =defineProps<{
-    pictures: Picture[]
-}>();
+const props = withDefaults(defineProps<{
+    pictures?: Picture[]
+}>(), {
+    pictures: () => []
+});
 
 function next() {
     
-    if (currentValue.value >= props.pictures.length - 1) {
+    if (currentValue.value >= (props.pictures?.length ?? 0) - 1) {
         return;
     }
     currentValue.value += 1;
 }
 
 function prev() {
-    console.log(currentValue.value, props.pictures.length)
+    console.log(currentValue.value, props.pictures?.length)
     if (currentValue.value <= 0) {
         return;
     }

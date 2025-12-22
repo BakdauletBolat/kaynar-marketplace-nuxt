@@ -15,7 +15,8 @@
           :loading="productStore.isLoadingProducts"
           block
         >
-          Показать
+          <span v-if="!productStore.isLoadingProducts">Показать {{ productStore.pageCount }}</span>
+          <span v-else>Загрузка...</span>
         </n-button>
         <n-button
           @click="handleClear"
@@ -161,12 +162,16 @@
           type="primary"
           :loading="productStore.isLoadingProducts"
           block
+          size="large"
+          class="font-bold"
         >
-          Показать
+          <span v-if="!productStore.isLoadingProducts">Показать {{ productStore.pageCount }} товаров</span>
+          <span v-else>Поиск...</span>
         </n-button>
         <n-button
           @click="handleClear"
           tertiary
+          size="large"
           :disabled="!hasActiveFilters"
           block
         >
@@ -178,8 +183,7 @@
   </template>
   
   <script setup lang="ts">
-  // ... весь <script setup> остается без изменений с прошлого раза
-  import { ref, onMounted, computed } from "vue";
+  import { ref, onMounted, computed, watch } from "vue";
   import { NForm, NFormItem, NSelect, NRadioGroup, NRadio, NTreeSelect, NButton, NInput } from "naive-ui";
   import type { SelectOption, TreeSelectOption } from "naive-ui";
   import { useFilterStore } from "@/storages/filter-store";
@@ -237,13 +241,14 @@
   });
   
   function handleSubmit() {
-    productStore.loadProducts(filterStore.filterValues);
+    // Just emit submit, data is already loaded via watcher or we can load one last time
+    // productStore.loadProducts(filterStore.filterValues); 
     emit('submit');
   }
   
   function handleClear() {
     filterStore.clearValues();
-    productStore.loadProducts(filterStore.filterValues);
+    // Watcher will handle reload
     emit('clear');
   }
   
@@ -264,6 +269,23 @@
   function resolveModelCarFallback(value: string): SelectOption {
     return { label: modelCarStore.getModelCarById(value)?.label ?? value, value };
   }
+
+  // --- REACTIVE LOADING ---
+  let debounceTimer: any = null;
+  function debouncedLoad() {
+    if (debounceTimer) clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      productStore.loadProducts(filterStore.filterValues);
+    }, 500);
+  }
+
+  watch(
+    () => filterStore.filterValues,
+    () => {
+      debouncedLoad();
+    },
+    { deep: true }
+  );
   
   onMounted(() => {
     Promise.all([

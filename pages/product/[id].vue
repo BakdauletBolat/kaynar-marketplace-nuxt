@@ -5,170 +5,71 @@ import {
   StarIcon,
   ArrowLeftIcon,
   ShoppingCartIcon,
+  HeartIcon,
+  ShareIcon,
+  PhoneIcon
 } from "@heroicons/vue/24/outline";
-import { computed, h } from "vue";
+import { HeartIcon as HeartIconSolid } from "@heroicons/vue/24/solid";
+import { computed, h, ref } from "vue"; // Added ref
 import ProductSlider from "@/components/product-slider.vue";
 import ProductMobileSlider from "@/components/product-mobile.slider.vue";
-import { customFetch } from "~/api";
+import BuyOneClickModal from "@/components/modals/buy-one-click-modal.vue"; // Import modal
 import { CardStorage } from "@/storages/storage";
-import type { ProductDetail } from "@/api/products";
-import { NButton } from "naive-ui";
-import { getPrice } from "#imports";
-
-function getProduct(id: number) {
-  return customFetch<ProductDetail>(`/api/v2/product/${id}/`);
-}
+import { useFavoritesStore } from "@/storages/favorites-store";
+import { NButton, NTag, NIcon, NCard, NBreadcrumb, NBreadcrumbItem, NResult, useNotification, useMessage } from "naive-ui";
+import { useProductPage } from "~/composables/useProductPage";
 
 const route = useRoute();
 const router = useRouter();
 const notification = useNotification();
+const message = useMessage();
+const cardStorage = CardStorage.getInstance();
+const favoritesStore = useFavoritesStore();
+
+const showBuyOneClick = ref(false); // Modal state
 
 const productId = computed(() => parseInt(route.params.id.toString(), 10));
-const { data: product } = await useAsyncData(`product-detail-${route.params.id}`, () =>
-  getProduct(productId.value)
-);
 
-const cardStorage = CardStorage.getInstance();
-
-function formatYear(value?: string | null) {
-  if (!value) return null;
-  const match = String(value).match(/^(\d{4})/);
-  return match ? match[1] : String(value);
-}
-
-const productName = computed(() => product.value?.name ?? "");
-
-const carModelName = computed(() => product.value?.eav_attributes?.modelCar?.name ?? "");
-const carYearRange = computed(() => {
-  const start = formatYear(product.value?.eav_attributes?.modelCar?.startDate);
-  const end = formatYear(product.value?.eav_attributes?.modelCar?.endDate);
-  if (start && end) return `${start}–${end}`;
-  return start ?? end ?? "";
-});
-
-const carSubtitle = computed(() => {
-  const parts: string[] = [];
-  if (carModelName.value) parts.push(carModelName.value);
-  if (carYearRange.value) parts.push(carYearRange.value);
-
-  const volume =
-    product.value?.eav_attributes?.capacity ?? product.value?.eav_attributes?.engineDisplacement;
-  if (volume) parts.push(`${volume} л`);
-
-  return parts.join(" • ");
-});
-
-const statusMeta = computed(() => {
-  const raw = product.value?.status ?? "";
-  const normalized = raw.toLowerCase();
-  if (!raw) return { label: "Статус неизвестен", type: "default" as const, canBuy: false };
-  if (normalized.includes("в наличии"))
-    return { label: "В наличии", type: "success" as const, canBuy: true };
-  if (normalized.includes("зарезерв"))
-    return { label: "Зарезервирован", type: "warning" as const, canBuy: false };
-  if (normalized.includes("продан"))
-    return { label: "Продан", type: "error" as const, canBuy: false };
-  return { label: raw, type: "info" as const, canBuy: false };
-});
-
-const breadcrumbs = computed(() => {
-  const base: { text: string; link: any }[] = [
-    { text: "Главная", link: { name: "index" } },
-    { text: "Каталог", link: { name: "catalog" } },
-  ];
-
-  if (!product.value) return base;
-
-  return [
-    ...base,
-    {
-      text: product.value.category?.name ?? "Категория",
-      link: {
-        name: "catalog",
-        query: { category: product.value.category?.id },
-      },
-    },
-  ];
-});
-
-const categoryLink = computed(() => {
-  if (!product.value?.category?.id) return { name: "catalog" };
-  return { name: "catalog", query: { category: product.value.category.id } };
-});
-
-const warehouseCity = computed(() => product.value?.warehouse?.city?.name ?? "");
-const warehouseName = computed(() => product.value?.warehouse?.name ?? "");
-
-const createdAtText = computed(() => {
-  const raw = product.value?.created_at;
-  if (!raw) return "";
-  try {
-    return new Date(raw).toLocaleDateString("ru-RU");
-  } catch {
-    return String(raw);
-  }
-});
-
-const updatedAtText = computed(() => {
-  const raw = product.value?.updated_at;
-  if (!raw) return "";
-  try {
-    return new Date(raw).toLocaleDateString("ru-RU");
-  } catch {
-    return String(raw);
-  }
-});
-
-const codes = computed(() => {
-  const list: string[] = [];
-  const rawCodes = (product.value?.code ?? []) as any[];
-
-  for (const item of rawCodes) {
-    if (item == null) continue;
-    if (typeof item === "string" || typeof item === "number") list.push(String(item));
-    else if (typeof item === "object" && "code" in item) list.push(String((item as any).code));
-  }
-
-  const vin = product.value?.eav_attributes?.vinCode;
-  if (vin) list.push(String(vin));
-
-  return Array.from(new Set(list.map((s) => s.trim()).filter(Boolean)));
-});
-
-const descriptionText = computed(() => {
-  const parts: string[] = [];
-  if (product.value?.comment) parts.push(String(product.value.comment));
-  if (product.value?.defect) parts.push(`Дефект: ${String(product.value.defect)}`);
-  return parts.join("\n\n");
-});
-
-const showDimensions = computed(() => {
-  const d = product.value?.detail;
-  return Boolean(d && (d.weight || d.length || d.width || d.height));
-});
-
-const showCodes = computed(() => codes.value.length > 0);
-const showDescription = computed(() => descriptionText.value.trim().length > 0);
+const {
+  product,
+  pending,
+  error,
+  productName,
+  productPrice,
+  categoryName,
+  carSubtitle,
+  statusMeta,
+  breadcrumbs,
+  createdAtText,
+  updatedAtText,
+  warehouseInfo,
+  codes,
+  descriptionText,
+  specifications,
+  dimensions,
+  showDimensions,
+  showCodes,
+  showDescription
+} = useProductPage(productId);
 
 const isInCart = computed(() => {
   if (!product.value) return false;
   return cardStorage.checkInGoods(product.value.id);
 });
 
-const showBuyButton = computed(() => statusMeta.value.canBuy);
-const mobileCanInteract = computed(() => showBuyButton.value || isInCart.value);
-const mobileCtaType = computed(() =>
-  showBuyButton.value && !isInCart.value ? "primary" : "default"
-);
-
-const mobileCtaText = computed(() => {
-  if (isInCart.value) return "Товар в корзине";
-  if (!showBuyButton.value) return statusMeta.value.label;
-  return "Добавить в корзину";
+const isFavorite = computed(() => {
+    if (!product.value) return false;
+    // Assuming checkInFavorites takes ID
+    return favoritesStore.checkInFavorites(product.value.id);
 });
 
-const bottomBarPrice = computed(() => (product.value ? getPrice(product.value.price) : ""));
-const bottomBarSubtitle = computed(() => statusMeta.value.label);
+const showBuyButton = computed(() => statusMeta.value.canBuy);
+const mobileCanInteract = computed(() => showBuyButton.value || isInCart.value);
+
+const mobileCtaText = computed(() => {
+  if (isInCart.value) return "В корзине";
+  return "В корзину";
+});
 
 function goBack() {
   router.back();
@@ -194,8 +95,9 @@ function addGoods() {
   cardStorage.isActive.value = true;
 
   const n = notification.create({
-    title: "Товар добавлен в корзину",
-    content: "Вы можете продолжить покупки или перейти в корзину для оформления заказа.",
+    title: "Товар добавлен",
+    content: "Перейти к оформлению?",
+    duration: 3000,
     action: () =>
       h(
         NButton,
@@ -204,8 +106,10 @@ function addGoods() {
             goToCart();
             n.destroy();
           },
+          type: 'primary',
+          size: 'small'
         },
-        { default: () => "Перейти в корзину" }
+        { default: () => "В корзину" }
       ),
   });
 }
@@ -219,323 +123,293 @@ function addOrGoToCart() {
   addGoods();
 }
 
-const pageTitle = computed(() => {
-  const parts: string[] = [];
-  if (productName.value) parts.push(productName.value);
-  if (carSubtitle.value) parts.push(carSubtitle.value);
-  return parts.join(" — ");
-});
+function openBuyOneClick() {
+    showBuyOneClick.value = true;
+}
+
+function toggleFavorite() {
+    if (!product.value) return;
+    const action = favoritesStore.addToFavorite(product.value as any);
+    if (action === 'added') {
+        message.success('Добавлено в избранное');
+    } else {
+        message.info('Удалено из избранного');
+    }
+}
+
+function shareProduct() {
+  const url = window.location.href;
+  navigator.clipboard.writeText(url).then(() => {
+    message.success('Ссылка скопирована');
+  }).catch(() => {
+    message.error('Ошибка копирования');
+  });
+}
 
 useHead({
-  title: pageTitle,
-  meta: [{ name: "description", content: pageTitle }],
+  title: computed(() => `${productName.value} ${carSubtitle.value ? '— ' + carSubtitle.value : ''}`),
 });
 </script>
 
 <template>
-  <main>
-    <!-- MOBILE: галерея сверху -->
-    <div class="relative lg:hidden">
-      <button
-        type="button"
-        @click="goBack"
-        class="absolute left-3 top-3 z-20 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur"
-        aria-label="Назад"
-      >
-        <ArrowLeftIcon class="h-5 w-5" />
-      </button>
+  <main class="bg-light-bg dark:bg-dark-bg min-h-screen font-sans pb-24 lg:pb-12">
+    <!-- Modal -->
+    <BuyOneClickModal 
+        v-if="product"
+        v-model:show="showBuyOneClick" 
+        :product-name="productName" 
+        :product-id="productId" 
+    />
+
+    <!-- MOBILE: Header & Gallery -->
+    <div class="relative lg:hidden bg-white dark:bg-dark-card">
+      <div class="absolute top-4 left-4 z-20 flex gap-4 w-full pr-8 justify-between pointer-events-none">
+         <button
+          type="button"
+          @click="goBack"
+          class="pointer-events-auto inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/80 dark:bg-black/50 shadow-sm backdrop-blur active:scale-90 transition-transform"
+          aria-label="Назад"
+        >
+          <ArrowLeftIcon class="h-6 w-6 text-slate-700 dark:text-white" />
+        </button>
+         <button
+          type="button"
+          @click="shareProduct"
+          class="pointer-events-auto inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/80 dark:bg-black/50 shadow-sm backdrop-blur active:scale-90 transition-transform"
+          aria-label="Поделиться"
+        >
+          <ShareIcon class="h-6 w-6 text-slate-700 dark:text-white" />
+        </button>
+      </div>
+     
       <ProductMobileSlider :pictures="product?.pictures" />
     </div>
 
-    <div class="container mx-auto px-4 pb-36 lg:pb-10">
-      <!-- DESKTOP: хлебные крошки -->
-      <div class="mx-auto hidden lg:block mt-4">
-        <n-breadcrumb class="!whitespace-normal">
+    <div class="container mx-auto px-4 pt-4 lg:pt-8">
+      <!-- DESKTOP: Breadcrumbs -->
+      <div class="hidden lg:block mb-6">
+        <n-breadcrumb>
           <n-breadcrumb-item v-for="option in breadcrumbs" :key="option.text">
-            <nuxt-link :to="option.link">{{ option.text }}</nuxt-link>
+            <nuxt-link :to="option.link" class="text-gray-500 hover:text-primary transition-colors">{{ option.text }}</nuxt-link>
           </n-breadcrumb-item>
         </n-breadcrumb>
       </div>
 
-      <!-- Пустое состояние -->
-      <div v-if="!product" class="py-10">
+      <!-- Loading / Error -->
+      <div v-if="pending" class="py-20 text-center">
+        <div class="text-xl text-primary animate-pulse">Загрузка...</div>
+      </div>
+      
+      <div v-else-if="!product" class="py-10">
         <n-result
           status="404"
           title="Товар не найден"
-          description="Попробуйте вернуться в каталог и выбрать другой товар."
-        />
-        <div class="mt-4">
-          <n-button @click="router.push({ name: 'catalog' })" type="primary">
-            Перейти в каталог
-          </n-button>
-        </div>
+          description="Похоже, этот товар закончился или был удален."
+        >
+          <template #footer>
+            <n-button @click="router.push({ name: 'catalog' })" type="primary">
+              Вернуться в каталог
+            </n-button>
+          </template>
+        </n-result>
       </div>
 
-      <!-- Контент -->
+      <!-- Content Grid -->
       <div
         v-else
-        class="mt-4 grid w-full grid-cols-1 gap-6 lg:grid-cols-[560px_1fr] lg:items-start"
+        class="grid w-full grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start"
       >
-        <!-- Галерея (desktop) -->
-        <div class="hidden lg:block">
-          <n-card class="overflow-hidden">
+        <!-- LEFT COLUMN: Gallery & Specs -->
+        <div class="space-y-8 min-w-0">
+          
+          <!-- Desktop Gallery -->
+          <div class="hidden lg:block bg-white dark:bg-dark-card rounded-2xl overflow-hidden shadow-sm p-4">
             <ProductSlider :pictures="product.pictures" />
-          </n-card>
+          </div>
+
+          <!-- Description & Specs (Both Mobile & Desktop) -->
+          <div class="bg-white dark:bg-dark-card rounded-2xl p-4 lg:p-8 shadow-sm">
+             <h2 class="text-xl font-bold mb-6 text-light-text-main dark:text-dark-text-main">О товаре</h2>
+             
+             <div class="mb-8">
+               <h3 class="font-semibold text-gray-900 dark:text-gray-100 mb-3">Описание</h3>
+               <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed whitespace-pre-line">
+                 {{ descriptionText || 'Описание отсутствует.' }}
+               </p>
+             </div>
+
+             <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                   <h3 class="font-semibold text-gray-900 dark:text-gray-100 mb-4">Характеристики</h3>
+                   <dl class="space-y-3">
+                      <div v-for="spec in specifications" :key="spec.label" class="flex justify-between text-sm border-b border-gray-100 dark:border-gray-800 pb-2">
+                        <dt class="text-gray-500 dark:text-gray-400">{{ spec.label }}</dt>
+                        <dd class="text-gray-900 dark:text-gray-200 font-medium">{{ spec.value }}</dd>
+                      </div>
+                   </dl>
+                </div>
+                <div>
+                   <h3 class="font-semibold text-gray-900 dark:text-gray-100 mb-4">Габариты</h3>
+                   <dl class="space-y-3">
+                      <div v-for="dim in dimensions" :key="dim.label" class="flex justify-between text-sm border-b border-gray-100 dark:border-gray-800 pb-2">
+                        <dt class="text-gray-500 dark:text-gray-400">{{ dim.label }}</dt>
+                        <dd class="text-gray-900 dark:text-gray-200 font-medium">{{ dim.value }}</dd>
+                      </div>
+                      <div class="flex justify-between text-sm border-b border-gray-100 dark:border-gray-800 pb-2">
+                        <dt class="text-gray-500 dark:text-gray-400">Состояние</dt>
+                        <dd class="text-gray-900 dark:text-gray-200 font-medium">Б/у</dd>
+                      </div>
+                   </dl>
+                </div>
+             </div>
+
+             <div v-if="codes.length > 0" class="mt-8">
+                <h3 class="font-semibold text-gray-900 dark:text-gray-100 mb-3">Коды детали</h3>
+                <div class="flex flex-wrap gap-2">
+                  <span v-for="code in codes" :key="code" class="px-3 py-1 bg-gray-100 dark:bg-white/10 rounded-md text-sm text-gray-700 dark:text-gray-300">
+                    {{ code }}
+                  </span>
+                </div>
+             </div>
+          </div>
         </div>
 
-        <!-- Карточка покупки -->
-        <div class="space-y-4 lg:sticky lg:top-6 z-[1000]">
-          <n-card>
-            <div class="flex items-start justify-between gap-3">
-              <div class="min-w-0">
-                <h1 class="text-xl lg:text-2xl font-bold leading-snug break-words">
-                  {{ productName }}
-                </h1>
-                <div v-if="carSubtitle" class="mt-1 text-sm text-slate-500">
-                  {{ carSubtitle }}
+        <!-- RIGHT COLUMN: Buy Block (Sticky) -->
+        <div class="lg:sticky lg:top-24 space-y-4">
+          
+          <div class="bg-white dark:bg-dark-card rounded-2xl p-5 shadow-lg border border-transparent dark:border-white/5">
+             <!-- Header Info -->
+             <div class="flex items-center gap-2 mb-2 text-sm text-gray-500">
+                <span class="text-gray-400">Арт: {{ product.id }}</span>
+             </div>
+
+             <h1 class="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white leading-tight mb-4">
+               {{ productName }}
+               <span v-if="carSubtitle" class="block text-base font-normal text-gray-500 mt-1">{{ carSubtitle }}</span>
+             </h1>
+
+             <!-- Price Block -->
+             <div class="mb-6">
+                <div class="flex items-center justify-between">
+                   <span class="text-4xl font-black text-gray-900 dark:text-white">{{ getPrice(productPrice) }}</span>
+                   <div v-if="statusMeta.label">
+                      <n-tag :type="statusMeta.type" round size="small" :bordered="false" class="font-bold">
+                         {{ statusMeta.label }}
+                      </n-tag>
+                   </div>
                 </div>
-              </div>
-              <n-tag size="small" :type="statusMeta.type">{{ statusMeta.label }}</n-tag>
-            </div>
+             </div>
 
-            <div class="mt-4 flex items-end justify-between gap-3">
-              <div class="text-2xl font-bold">
-                {{ getPrice(product.price) }}
-              </div>
-              <div class="text-xs text-slate-500">
-                ID: <span class="font-semibold text-slate-700">{{ product.id }}</span>
-              </div>
-            </div>
-
-            <client-only>
-              <div class="mt-4 hidden lg:block">
-                <n-button
-                  size="large"
-                  class="w-full"
-                  :type="mobileCtaType"
-                  :disabled="!mobileCanInteract"
+             <!-- Actions -->
+             <div class="space-y-3">
+                 <!-- Primary Action: Buy in 1 Click -->
+                <button 
+                  @click="openBuyOneClick"
+                  class="hidden lg:block w-full bg-primary hover:bg-primary-dark text-white font-bold py-4 rounded-xl text-lg shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
+                >
+                  Купить в 1 клик
+                </button>
+                
+                <!-- Secondary Action: Add to Cart -->
+                <button 
                   @click="addOrGoToCart"
+                  class="hidden lg:block w-full bg-white dark:bg-white/5 border-2 border-primary/20 hover:border-primary text-primary dark:text-white font-bold py-3 rounded-xl transition-all active:scale-[0.98] disabled:opacity-50"
+                  :class="{'!bg-emerald-50 !border-emerald-500 !text-emerald-700': isInCart}"
+                  :disabled="!mobileCanInteract"
                 >
-                  <template #icon v-if="showBuyButton && !isInCart">
-                    <n-icon size="20"><ShoppingCartIcon /></n-icon>
-                  </template>
                   {{ mobileCtaText }}
-                </n-button>
-              </div>
-            </client-only>
-
-            <div class="mt-4 grid grid-cols-2 gap-3">
-              <div class="product-kpi">
-                <div class="product-kpi__label">Категория</div>
-                <nuxt-link
-                  :to="categoryLink"
-                  class="product-kpi__value text-primary hover:underline"
-                >
-                  {{ product.category?.name }}
-                </nuxt-link>
-              </div>
-              <div class="product-kpi">
-                <div class="product-kpi__label">Город</div>
-                <div class="product-kpi__value">{{ warehouseCity || "—" }}</div>
-              </div>
-              <div class="product-kpi">
-                <div class="product-kpi__label">Склад</div>
-                <div class="product-kpi__value">{{ warehouseName || "—" }}</div>
-              </div>
-              <div class="product-kpi">
-                <div class="product-kpi__label">Состояние</div>
-                <div class="product-kpi__value">Б/у</div>
-              </div>
-            </div>
-          </n-card>
-
-          <!-- Доверие/доставка -->
-          <n-card>
-            <div class="grid grid-cols-3 gap-2">
-              <div class="flex flex-col items-center text-center gap-2">
-                <TruckIcon class="h-10 w-10 text-sky-500" />
-                <div>
-                  <div class="font-semibold">1–2 дня</div>
-                  <div class="text-xs text-slate-500">доставка</div>
+                </button>
+                
+                <!-- Secondary Actions -->
+                <div class="grid grid-cols-2 gap-3">
+                   <button 
+                    @click="toggleFavorite"
+                    class="flex items-center justify-center gap-2 py-3 rounded-xl bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 transition-colors text-sm font-medium"
+                    :class="{'!text-wb-red': isFavorite}"
+                   >
+                      <component :is="isFavorite ? HeartIconSolid : HeartIcon" class="w-5 h-5" />
+                      В избранное
+                   </button>
+                   <button 
+                    @click="shareProduct"
+                    class="flex items-center justify-center gap-2 py-3 rounded-xl bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 transition-colors text-sm font-medium"
+                   >
+                      <ShareIcon class="w-5 h-5" />
+                      Поделиться
+                   </button>
                 </div>
-              </div>
-              <div class="flex flex-col items-center text-center gap-2">
-                <CheckBadgeIcon class="h-10 w-10 text-sky-500" />
-                <div>
-                  <div class="font-semibold">14 дней</div>
-                  <div class="text-xs text-slate-500">возврат</div>
+             </div>
+
+             <!-- Delivery Info -->
+             <div class="mt-6 space-y-4 pt-6 border-t border-gray-100 dark:border-white/5">
+                <div class="flex items-start gap-3">
+                   <div class="mt-1"><TruckIcon class="w-5 h-5 text-gray-400" /></div>
+                   <div>
+                      <div class="text-sm font-bold text-gray-900 dark:text-white">Доставка завтра</div>
+                      <div class="text-xs text-gray-500">Курьером или в пункт выдачи</div>
+                   </div>
                 </div>
-              </div>
-              <div class="flex flex-col items-center text-center gap-2">
-                <StarIcon class="h-10 w-10 text-sky-500" />
-                <div>
-                  <div class="font-semibold">4.6/5</div>
-                  <div class="text-xs text-slate-500">оценка</div>
+                <div class="flex items-start gap-3">
+                   <div class="mt-1"><CheckBadgeIcon class="w-5 h-5 text-gray-400" /></div>
+                   <div>
+                      <div class="text-sm font-bold text-gray-900 dark:text-white">Гарантия возврата</div>
+                      <div class="text-xs text-gray-500">14 дней на проверку товара</div>
+                   </div>
                 </div>
-              </div>
-            </div>
-          </n-card>
-        </div>
+             </div>
+          </div>
+          
+          <!-- Seller Info (Optional) -->
+          <div class="bg-white dark:bg-dark-card rounded-2xl p-4 shadow-sm border border-transparent dark:border-white/5 flex items-center justify-between">
+             <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-xl">🏢</div>
+                <div>
+                   <div class="text-sm font-bold">Kaynar Warehouse</div>
+                   <div class="text-xs text-gray-500">Продавец</div>
+                </div>
+             </div>
+             <div class="text-xs font-bold text-gray-400">4.9 ★</div>
+          </div>
 
-        <!-- Детали -->
-        <div class="lg:col-span-2 grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <!-- О товаре -->
-          <n-card>
-            <div class="product-card__title">О товаре</div>
-            <dl class="product-dl">
-              <div class="product-row">
-                <dt>Категория</dt>
-                <dd class="text-right">
-                  <nuxt-link :to="categoryLink" class="text-primary hover:underline">
-                    {{ product.category?.name }}
-                  </nuxt-link>
-                </dd>
-              </div>
-              <div class="product-row" v-if="warehouseCity">
-                <dt>Город</dt>
-                <dd class="text-right">{{ warehouseCity }}</dd>
-              </div>
-              <div class="product-row" v-if="warehouseName">
-                <dt>Склад</dt>
-                <dd class="text-right">{{ warehouseName }}</dd>
-              </div>
-              <div class="product-row" v-if="product.color">
-                <dt>Цвет</dt>
-                <dd class="text-right break-words">{{ product.color }}</dd>
-              </div>
-              <div class="product-row" v-if="product.mileage != null">
-                <dt>Пробег</dt>
-                <dd class="text-right">{{ product.mileage }}</dd>
-              </div>
-              <div class="product-row" v-if="createdAtText">
-                <dt>Добавлен</dt>
-                <dd class="text-right">{{ createdAtText }}</dd>
-              </div>
-              <div class="product-row" v-if="updatedAtText">
-                <dt>Обновлён</dt>
-                <dd class="text-right">{{ updatedAtText }}</dd>
-              </div>
-            </dl>
-          </n-card>
-
-          <!-- Совместимость -->
-          <n-card>
-            <div class="product-card__title">Совместимость с авто</div>
-            <dl class="product-dl">
-              <div class="product-row" v-if="carModelName">
-                <dt>Модель</dt>
-                <dd class="text-right break-words">{{ carModelName }}</dd>
-              </div>
-              <div class="product-row" v-if="carYearRange">
-                <dt>Годы</dt>
-                <dd class="text-right">{{ carYearRange }}</dd>
-              </div>
-              <div class="product-row" v-if="product.eav_attributes?.fuelType">
-                <dt>Топливо</dt>
-                <dd class="text-right break-words">{{ product.eav_attributes.fuelType }}</dd>
-              </div>
-              <div class="product-row" v-if="product.eav_attributes?.gearType">
-                <dt>КПП</dt>
-                <dd class="text-right break-words">{{ product.eav_attributes.gearType }}</dd>
-              </div>
-              <div class="product-row" v-if="product.eav_attributes?.driveType">
-                <dt>Привод</dt>
-                <dd class="text-right break-words">{{ product.eav_attributes.driveType }}</dd>
-              </div>
-              <div class="product-row" v-if="product.eav_attributes?.bodyType">
-                <dt>Кузов</dt>
-                <dd class="text-right break-words">{{ product.eav_attributes.bodyType }}</dd>
-              </div>
-              <div class="product-row" v-if="product.eav_attributes?.steeringType">
-                <dt>Руль</dt>
-                <dd class="text-right break-words">{{ product.eav_attributes.steeringType }}</dd>
-              </div>
-              <div class="product-row" v-if="product.eav_attributes?.power">
-                <dt>Мощность</dt>
-                <dd class="text-right">{{ product.eav_attributes.power }} kW</dd>
-              </div>
-              <div
-                class="product-row"
-                v-if="product.eav_attributes?.capacity || product.eav_attributes?.engineDisplacement"
-              >
-                <dt>Объём</dt>
-                <dd class="text-right">
-                  {{ product.eav_attributes.capacity ?? product.eav_attributes.engineDisplacement }} л
-                </dd>
-              </div>
-            </dl>
-          </n-card>
-
-          <!-- Габариты -->
-          <n-card v-if="showDimensions">
-            <div class="product-card__title">Габариты</div>
-            <dl class="product-dl">
-              <div class="product-row" v-if="product.detail?.weight">
-                <dt>Вес</dt>
-                <dd class="text-right">{{ product.detail.weight }} кг</dd>
-              </div>
-              <div class="product-row" v-if="product.detail?.length">
-                <dt>Длина</dt>
-                <dd class="text-right">{{ product.detail.length }} см</dd>
-              </div>
-              <div class="product-row" v-if="product.detail?.width">
-                <dt>Ширина</dt>
-                <dd class="text-right">{{ product.detail.width }} см</dd>
-              </div>
-              <div class="product-row" v-if="product.detail?.height">
-                <dt>Высота</dt>
-                <dd class="text-right">{{ product.detail.height }} см</dd>
-              </div>
-            </dl>
-          </n-card>
-
-          <!-- Коды -->
-          <n-card v-if="showCodes" class="lg:col-span-2">
-            <div class="product-card__title">Коды</div>
-            <div class="flex flex-wrap gap-2">
-              <n-tag v-for="code in codes" :key="code" size="small">
-                {{ code }}
-              </n-tag>
-            </div>
-          </n-card>
-
-          <!-- Описание -->
-          <n-card v-if="showDescription" class="lg:col-span-2">
-            <div class="product-card__title">Комментарий</div>
-            <p class="whitespace-pre-line text-sm text-slate-700">
-              {{ descriptionText }}
-            </p>
-          </n-card>
         </div>
       </div>
     </div>
 
-    <!-- MOBILE: фиксированная CTA-панель (над нижним меню) -->
+    <!-- MOBILE CTA (Sticky Bottom) -->
     <client-only>
       <div
         v-if="product"
-        class="product-mobile-cta lg:hidden fixed left-0 right-0 z-40 border-t border-slate-200 bg-white/95 backdrop-blur"
+        class="fixed bottom-0 left-0 right-0 z-[60] bg-white dark:bg-dark-card border-t border-gray-200 dark:border-gray-800 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_20px_rgba(0,0,0,0.1)] lg:hidden"
       >
-        <div class="container mx-auto px-4 py-3 flex items-center gap-3">
-          <div class="min-w-0 flex-1">
-            <div class="text-lg font-bold leading-none">
-              {{ bottomBarPrice }}
-            </div>
-            <div class="text-xs text-slate-500 truncate">
-              {{ bottomBarSubtitle }}
-            </div>
-          </div>
-          <n-button
-            size="large"
-            :type="mobileCtaType"
-            :disabled="!mobileCanInteract"
-            @click="addOrGoToCart"
+        <div class="px-4 py-3 flex items-center gap-3">
+          
+          <!-- Add to Cart (Now a Side Icon Button) -->
+           <button 
+             @click="addOrGoToCart"
+             class="flex-none p-3 rounded-xl bg-gray-100 dark:bg-white/10 active:scale-95 transition-transform"
+             :class="{'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20': isInCart, 'text-gray-500': !isInCart}"
+             aria-label="В корзину"
           >
-            <template #icon v-if="showBuyButton && !isInCart">
-              <n-icon size="20"><ShoppingCartIcon /></n-icon>
-            </template>
-            {{ mobileCtaText }}
-          </n-button>
+             <ShoppingCartIcon class="w-6 h-6" />
+          </button>
+          
+          <!-- Buy in 1 Click (Now the Primary Large Button) -->
+          <button
+            class="flex-1 bg-primary text-white font-bold py-3 rounded-xl shadow-lg shadow-primary/30 active:scale-95 transition-transform flex flex-col items-center justify-center leading-tight"
+            @click="openBuyOneClick"
+          >
+            <span class="text-sm">Купить в 1 клик</span>
+            <span class="text-xs opacity-90">{{ getPrice(productPrice) }}</span>
+          </button>
+
+           <!-- Favorite Icon in Sticky Bar -->
+          <button 
+             @click="toggleFavorite"
+             class="flex-none p-3 rounded-xl bg-gray-100 dark:bg-white/10 text-gray-500 active:scale-95 transition-transform"
+             :class="{'!text-wb-red !bg-red-50 dark:!bg-red-900/20': isFavorite}"
+          >
+             <component :is="isFavorite ? HeartIconSolid : HeartIcon" class="w-6 h-6" />
+          </button>
         </div>
       </div>
     </client-only>
@@ -543,40 +417,8 @@ useHead({
 </template>
 
 <style scoped>
-.product-card__title {
-  @apply text-sm font-semibold text-slate-900 mb-3;
-}
-
-.product-dl {
-  @apply flex flex-col gap-2;
-}
-
-.product-row {
-  @apply flex items-start justify-between gap-3 py-2 border-b border-slate-100 last:border-b-0;
-}
-
-.product-row dt {
-  @apply text-xs font-medium text-slate-500;
-}
-
-.product-row dd {
-  @apply text-sm text-slate-900;
-}
-
-.product-kpi {
-  @apply min-w-0 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2;
-}
-
-.product-kpi__label {
-  @apply text-[11px] font-medium text-slate-500;
-}
-
-.product-kpi__value {
-  @apply mt-0.5 text-sm font-semibold text-slate-900 break-words;
-}
-
-/* Высота нижнего меню (bottom-app-bar) + safe-area. */
-.product-mobile-cta {
-  bottom: calc(3.5rem + env(safe-area-inset-bottom));
-}
+/* Gradient Text for Title (Optional) */
+/* .gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600;
+} */
 </style>

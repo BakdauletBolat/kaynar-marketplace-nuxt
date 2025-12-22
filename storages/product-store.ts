@@ -24,7 +24,7 @@ export const useProductStore = defineStore("product-store", {
             })
         },
         loadPopularProducts(options: object) {
-            const popularOptions = {page_size: 4, status: 2, ...options};
+            const popularOptions = {page_size: 10, status: 2, ...options};
             getProducts(popularOptions).then(res=>{
                 this.popularProducts = res.results;
             })

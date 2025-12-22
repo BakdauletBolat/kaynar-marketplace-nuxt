@@ -1,10 +1,11 @@
 <template>
-  <button @click="routeTo" class="flex flex-col items-center text-gray-600 "
+  <button @click="routeTo" 
+          class="flex flex-col items-center justify-center w-full py-1 text-slate-500 transition-all duration-200 active:scale-90"
           :class="{
-            '!text-gray-900': isActive
+            '!text-slate-900 font-medium': isActive
           }">
-    <component class="w-6 h-6" :is="isActive ? activeIcon : baseIcon"></component>
-    <span class="text-xs mt-1">{{ title }}</span>
+    <component class="w-6 h-6 mb-0.5" :is="isActive ? activeIcon : baseIcon"></component>
+    <span class="text-[10px] leading-none">{{ title }}</span>
   </button>
 </template>
 <script lang="ts" setup>
@@ -14,7 +15,7 @@ const router = useRouter();
 
 function routeTo() {
   if ("vibrate" in navigator) {
-    navigator.vibrate(40);
+    navigator.vibrate(10); // Уменьшил вибрацию до более приятной
   }
   router.push({
     name: props.routeName

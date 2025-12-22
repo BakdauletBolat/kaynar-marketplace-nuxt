@@ -1,84 +1,76 @@
 <template>
-    <div
-        class="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
-    >
-        <div class="max-w-3xl w-full space-y-6">
-            <div class="text-center">
-                <h1 class="text-3xl font-extrabold text-gray-900">
-                    Политика возврата
-                </h1>
-                <p class="mt-2 text-lg text-gray-600">
-                    Наша цель — гарантировать удовлетворенность клиентов с
-                    четким и прозрачным процессом возврата.
-                </p>
-            </div>
-
-            <div class="bg-white shadow rounded-lg p-6">
-                <h2 class="text-xl font-semibold text-gray-900">
-                    Условия возврата
-                </h2>
-                <p class="mt-4 text-gray-600">
-                    Мы принимаем возвраты ДВС в течение 14 дней с момента
-                    покупки, а остальной ассортимент 5 дней если товар находится
-                    в исходном состоянии, не был использован и имеет все
-                    оригинальные ярлыки. Для обработки возврата требуется
-                    подтверждение покупки.
-                </p>
-
-                <h2 class="mt-6 text-xl font-semibold text-gray-900">
-                    Как оформить возврат
-                </h2>
-                <ol
-                    class="mt-4 list-decimal list-inside text-gray-600 space-y-2"
-                >
-                    <li>
-                        Свяжитесь с нашей службой поддержки по электронной почте
-                        <a
-                            href="mailto:support@example.com"
-                            class="text-indigo-600 hover:underline"
-                            >kaynaravto@mail.ru</a
-                        >
-                        или по телефону +7 (777) 523 88 88.
-                    </li>
-                    <li>Предоставьте данные заказа и причину возврата.</li>
-                    <li>
-                        Следуйте инструкциям, предоставленным нашей службой
-                        поддержки, чтобы отправить товар обратно.
-                    </li>
-                </ol>
-
-                <h2 class="mt-6 text-xl font-semibold text-gray-900">
-                    Возврат денежных средств
-                </h2>
-                <p class="mt-4 text-gray-600">
-                    После получения и проверки вашего возврата мы уведомим вас
-                    об одобрении или отклонении возврата. Одобренные возвраты
-                    будут обработаны в течение 7-10 рабочих дней и зачислены на
-                    ваш исходный способ оплаты.
-                </p>
-
-                <h2 class="mt-6 text-xl font-semibold text-gray-900">Обмен</h2>
-                <p class="mt-4 text-gray-600">
-                    Если вам нужно обменять товар, пожалуйста, оформите возврат
-                    и сделайте новый заказ на желаемый продукт.
-                </p>
-
-                <h2 class="mt-6 text-xl font-semibold text-gray-900">
-                    Исключения
-                </h2>
-                <p class="mt-4 text-gray-600">
-                    Некоторые товары не подлежат возврату, такие как
-                    персонализированные изделия, скоропортящиеся товары или
-                    товары по распродаже. Пожалуйста, ознакомьтесь с описанием
-                    товара для получения подробной информации.
-                </p>
-
-                <p class="mt-6 text-gray-600">
-                    Если у вас есть дополнительные вопросы, свяжитесь с нашей
-                    службой поддержки. Мы всегда готовы помочь!
-                </p>
-            </div>
-        </div>
+  <main class="bg-light-bg dark:bg-dark-bg min-h-screen pb-12 font-sans">
+    <div class="bg-white dark:bg-dark-card border-b border-gray-100 dark:border-white/5 sticky top-0 z-30 px-4 py-3 flex items-center gap-4 transition-colors">
+       <button @click="router.back()" class="p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition-colors lg:hidden">
+         <ArrowLeftIcon class="w-6 h-6 text-gray-700 dark:text-white" />
+       </button>
+       <h1 class="text-xl font-bold text-light-text-main dark:text-dark-text-main">Возврат товара</h1>
     </div>
+
+    <div class="container mx-auto px-4 py-6 max-w-[900px]">
+      <desktop-only-component>
+        <div class="mb-6">
+          <n-breadcrumb>
+            <n-breadcrumb-item><nuxt-link :to="{ name: 'index' }" class="text-gray-400 hover:text-primary transition-colors">Главная</nuxt-link></n-breadcrumb-item>
+            <n-breadcrumb-item><span class="text-gray-600 dark:text-gray-300">Возврат</span></n-breadcrumb-item>
+          </n-breadcrumb>
+        </div>
+      </desktop-only-component>
+
+      <div class="bg-white dark:bg-dark-card rounded-3xl p-6 lg:p-10 shadow-sm border border-transparent dark:border-white/5">
+        <div class="flex items-center gap-4 mb-8">
+          <div class="w-16 h-16 bg-wb-red/10 text-wb-red rounded-2xl flex items-center justify-center">
+            <ArrowPathIcon class="w-10 h-10" />
+          </div>
+          <div>
+            <h2 class="text-2xl font-black text-light-text-main dark:text-dark-text-main">Гарантия и возврат</h2>
+            <p class="text-gray-500">Прозрачные условия обмена и возврата</p>
+          </div>
+        </div>
+
+        <div class="space-y-8">
+          <section>
+             <h3 class="text-lg font-bold mb-3 flex items-center gap-2">
+                <span class="w-1.5 h-6 bg-wb-red rounded-full"></span>
+                Сроки возврата
+             </h3>
+             <p class="text-gray-600 dark:text-gray-400 leading-relaxed bg-gray-50 dark:bg-white/5 p-4 rounded-xl">
+               Мы принимаем возвраты ДВС (двигателей) в течение <span class="text-wb-red font-bold">14 дней</span> с момента покупки. 
+               Для остального ассортимента срок возврата составляет <span class="text-wb-red font-bold">5 дней</span>.
+             </p>
+          </section>
+
+          <section>
+             <h3 class="text-lg font-bold mb-3">Как оформить возврат?</h3>
+             <ul class="space-y-3">
+                <li class="flex gap-3 text-sm text-gray-600 dark:text-gray-400">
+                   <div class="shrink-0 w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] mt-0.5">✓</div>
+                   Свяжитесь с нами по телефону +7 (777) 523 88 88 или почте kaynaravto@mail.ru
+                </li>
+                <li class="flex gap-3 text-sm text-gray-600 dark:text-gray-400">
+                   <div class="shrink-0 w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] mt-0.5">✓</div>
+                   Предоставьте данные заказа и причину возврата (фото/видео неисправности)
+                </li>
+                <li class="flex gap-3 text-sm text-gray-600 dark:text-gray-400">
+                   <div class="shrink-0 w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] mt-0.5">✓</div>
+                   Следуйте инструкциям менеджера для отправки товара обратно на склад
+                </li>
+             </ul>
+          </section>
+
+          <div class="p-6 rounded-2xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20">
+             <h4 class="font-bold text-amber-800 dark:text-amber-400 mb-2">Важно</h4>
+             <p class="text-xs text-amber-700 dark:text-amber-300 leading-relaxed">
+                Товар должен находиться в исходном состоянии, без следов самостоятельного вскрытия или установки, если не было выявлено скрытых дефектов. Некоторые товары (персонализированные или по спецзаказу) возврату не подлежат.
+             </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
 </template>
-<script lang="ts" setup></script>
+
+<script setup lang="ts">
+import { ArrowLeftIcon, ArrowPathIcon } from "@heroicons/vue/24/outline";
+const router = useRouter();
+</script>
