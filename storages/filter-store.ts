@@ -77,6 +77,8 @@ export const useFilterStore = defineStore("filter-products", {
                 vinCode: null as number | null,
                 year_start: null as number | null,
                 year_end: null as number | null,
+                price_from: null as number | null,
+                price_to: null as number | null,
             },
             filterData: {} as CarFilterData
         }
@@ -110,6 +112,8 @@ export const useFilterStore = defineStore("filter-products", {
                 vinCode: null,
                 year_start: null,
                 year_end: null,
+                price_from: null,
+                price_to: null,
             }
         }
     },

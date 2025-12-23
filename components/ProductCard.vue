@@ -26,22 +26,22 @@
       </div>
 
       <!-- Quick Actions (Hover) -->
-      <div 
+      <div
         class="absolute top-2 right-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-200 flex flex-col gap-2"
         v-if="!horizontal"
       >
-        <button 
-          @click.stop="toggleFavorite" 
-          class="bg-white/80 dark:bg-black/50 backdrop-blur-sm p-1.5 rounded-full text-gray-500 hover:text-wb-red transition-colors shadow-sm"
+        <button
+          @click.stop="toggleFavorite"
+          class="w-8 h-8 flex items-center justify-center bg-white/90 dark:bg-dark-card/90 backdrop-blur-sm rounded-full text-gray-400 dark:text-gray-500 hover:text-wb-red dark:hover:text-wb-red transition-colors shadow-md"
           :class="{ '!text-wb-red': isFavorite }"
         >
-          <n-icon :component="isFavorite ? Heart : HeartOutline" size="20" />
+          <n-icon :component="isFavorite ? Heart : HeartOutline" size="18" />
         </button>
-        <button 
-          @click.stop="shareProduct" 
-          class="bg-white/80 dark:bg-black/50 backdrop-blur-sm p-1.5 rounded-full text-gray-500 hover:text-primary transition-colors shadow-sm"
+        <button
+          @click.stop="shareProduct"
+          class="w-8 h-8 flex items-center justify-center bg-white/90 dark:bg-dark-card/90 backdrop-blur-sm rounded-full text-gray-400 dark:text-gray-500 hover:text-primary dark:hover:text-primary transition-colors shadow-md"
         >
-          <n-icon :component="ShareSocialOutline" size="20" />
+          <n-icon :component="ShareSocialOutline" size="18" />
         </button>
       </div>
 
@@ -55,12 +55,12 @@
     <div class="p-3 flex flex-col flex-grow relative min-w-0">
       <!-- Horizontal Actions (visible in list view) -->
       <div v-if="horizontal" class="absolute top-2 right-2 flex gap-2 z-10">
-         <button 
-          @click.stop="toggleFavorite" 
-          class="p-1 text-gray-400 hover:text-wb-red transition-colors"
+         <button
+          @click.stop="toggleFavorite"
+          class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-white/10 text-gray-400 dark:text-gray-500 hover:text-wb-red dark:hover:text-wb-red transition-colors"
           :class="{ '!text-wb-red': isFavorite }"
         >
-          <n-icon :component="isFavorite ? Heart : HeartOutline" size="22" />
+          <n-icon :component="isFavorite ? Heart : HeartOutline" size="18" />
         </button>
       </div>
 
@@ -89,13 +89,13 @@
       </div>
 
       <!-- Add to Cart Button -->
-      <button 
-        @click.stop="addToCart" 
+      <button
+        @click.stop="addToCart"
         class="mt-auto w-full font-semibold py-2 rounded-lg text-sm transition-all duration-200 active:scale-95 flex items-center justify-center gap-2"
         :class="[
-          isInCart 
-            ? 'bg-green-500 text-white hover:bg-green-600' 
-            : 'bg-primary/10 hover:bg-primary text-primary hover:text-white',
+          isInCart
+            ? 'bg-green-500 dark:bg-green-600 text-white hover:bg-green-600 dark:hover:bg-green-500'
+            : 'bg-primary/10 dark:bg-primary/20 hover:bg-primary text-primary hover:text-white',
            horizontal ? 'md:max-w-[200px]' : ''
         ]"
       >

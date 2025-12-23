@@ -40,117 +40,98 @@
       <!-- Поиск -->
       <section class="filter-form__section">
         <div class="filter-form__section-title">Поиск</div>
-        <n-form-item label="Название или артикул" path="search">
-          <n-input
-            v-model:value="searchValue"
-            clearable
-            placeholder="Например: ремень ГРМ, фильтр, стойка…"
-            @keyup.enter="handleSubmit"
-          />
-        </n-form-item>
+        <n-input
+          v-model:value="searchValue"
+          clearable
+          size="large"
+          placeholder="Например: ремень ГРМ, фильтр, стойка…"
+          @keyup.enter="handleSubmit"
+        />
       </section>
 
-      <!-- Автомобиль -->
+      <!-- Производитель -->
       <section class="filter-form__section">
-        <div class="filter-form__section-title">Автомобиль</div>
+        <FilterChips
+          title="Производитель"
+          :items="manufacturerChipOptions"
+          v-model="selectedManufacturers"
+          :multiple="false"
+          :max-display="8"
+          @view-all="showManufacturerDrawer = true"
+        />
+      </section>
 
-        <n-form-item label="Производитель" path="manufacturer">
-          <n-select
-            placeholder="Начните вводить для поиска"
-            filterable
-            clearable
-            :options="manufacturerStore.manufacturerOptions"
-            v-model:value="filterStore.filterValues.manufacturer"
-            @update:value="handleManufacturerChange"
-          />
-        </n-form-item>
-
-        <n-form-item label="Модель автомобиля" path="modelCar">
-          <div class="filter-form__field">
-            <n-select
-              class="w-full"
-              :placeholder="modelPlaceholder"
-              filterable
-              multiple
-              clearable
-              max-tag-count="responsive"
-              :options="modelCarStore.modelCarOptions"
-              v-model:value="filterStore.filterValues.modelCar"
-              :fallback-option="resolveModelCarFallback"
-              :disabled="!filterStore.filterValues.manufacturer"
-            />
-            <div class="filter-form__hint" v-if="selectedModelCount > 0">
-              Выбрано моделей: {{ selectedModelCount }}
-            </div>
-            <div class="filter-form__hint" v-else>
-              Можно выбрать несколько моделей
-            </div>
+      <!-- Модель автомобиля -->
+      <section class="filter-form__section" v-if="filterStore.filterValues.manufacturer">
+        <!-- Loading skeleton -->
+        <div v-if="modelCarStore.isLoadingModels" class="filter-form__loading">
+          <div class="filter-form__section-title">Модель автомобиля</div>
+          <div class="filter-form__skeleton-grid">
+            <div
+              v-for="i in 6"
+              :key="i"
+              class="filter-chip-skeleton"
+              :style="{ animationDelay: `${i * 0.1}s`, width: `${100 + (i % 3) * 30}px` }"
+            ></div>
           </div>
-        </n-form-item>
+        </div>
+
+        <!-- Loaded chips -->
+        <FilterChips
+          v-else
+          title="Модель автомобиля"
+          :items="modelCarChipOptions"
+          v-model="filterStore.filterValues.modelCar"
+          :max-display="8"
+          @view-all="showModelCarDrawer = true"
+        />
       </section>
 
       <!-- Категории -->
       <section class="filter-form__section">
-        <div class="filter-form__section-title">Категория</div>
-
-        <n-form-item label="Категория запчасти" path="category">
-          <div class="filter-form__field">
-            <n-tree-select
-              class="w-full"
-              placeholder="Выберите одну или несколько категорий"
-              multiple
-              cascade
-              filterable
-              clearable
-              checkable
-              show-path
-              separator=" / "
-              max-tag-count="responsive"
-              :check-strategy="'all'"
-              :options="categoryStore.categoriesTreeOptions"
-              :value="selectedCategories"
-              @update:value="handleCategoryChange"
-            />
-            <div class="filter-form__hint" v-if="selectedCategoryCount > 0">
-              Выбрано категорий: {{ selectedCategoryCount }}
-            </div>
-            <div class="filter-form__hint" v-else>
-              Можно выбрать несколько категорий
-            </div>
-          </div>
-        </n-form-item>
+        <FilterChips
+          title="Категория запчасти"
+          :items="categoryChipOptions"
+          v-model="filterStore.filterValues.category"
+          :max-display="10"
+          @view-all="showCategoryDrawer = true"
+        />
       </section>
 
-      <!-- Доп. параметры -->
-      <section v-if="filterStore.filtersForm.length > 0" class="filter-form__section">
-        <div class="filter-form__section-title">Дополнительные параметры</div>
-        <div v-for="field in filterStore.filtersForm" :key="field.key">
-          <n-form-item :label="field.title" :path="field.key">
-            <n-select
-              v-if="field.type === 'select'"
-              v-model:value="filterStore.filterValues[field.key]"
-              :options="field.options"
-              placeholder="Выберите значение"
-              filterable
-              clearable
-              max-tag-count="responsive"
-              multiple
-            />
-            <n-radio-group
-              v-else-if="field.type === 'radio'"
-              v-model:value="filterStore.filterValues[field.key]"
-              :name="field.key"
-              class="grid grid-cols-2 gap-2 w-full"
-            >
-              <n-radio
-                v-for="option in field.options"
-                :key="option.value"
-                :value="option.value"
-                :label="option.label"
-              />
-            </n-radio-group>
-          </n-form-item>
-        </div>
+      <!-- Цена -->
+      <section class="filter-form__section">
+        <div class="filter-form__section-title">Цена</div>
+        <PriceRange
+          :min="0"
+          :max="1000000"
+          :step="1000"
+          v-model:price-from="filterStore.filterValues.price_from"
+          v-model:price-to="filterStore.filterValues.price_to"
+        />
+      </section>
+
+      <!-- Емкость -->
+      <section class="filter-form__section" v-if="capacityChipOptions.length > 0">
+        <FilterChips
+          title="Емкость"
+          :items="capacityChipOptions"
+          v-model="selectedCapacities"
+          :multiple="false"
+          :max-display="12"
+          @view-all="showCapacityDrawer = true"
+        />
+      </section>
+
+      <!-- Объем двигателя -->
+      <section class="filter-form__section" v-if="engineDisplacementChipOptions.length > 0">
+        <FilterChips
+          title="Объем двигателя"
+          :items="engineDisplacementChipOptions"
+          v-model="selectedEngineDisplacements"
+          :multiple="false"
+          :max-display="12"
+          @view-all="showEngineDisplacementDrawer = true"
+        />
       </section>
     </div>
 
@@ -179,19 +160,66 @@
         </n-button>
       </div>
     </footer>
+
+    <!-- Drawers for full selection screens -->
+    <FilterSelectDrawer
+      v-model:show="showManufacturerDrawer"
+      title="Производитель"
+      :items="manufacturerChipOptions"
+      v-model="selectedManufacturers"
+      :enable-grouping="true"
+      :multiple="false"
+    />
+
+    <FilterSelectDrawer
+      v-model:show="showModelCarDrawer"
+      title="Модель автомобиля"
+      :items="modelCarChipOptions"
+      v-model="filterStore.filterValues.modelCar"
+      :enable-grouping="true"
+    />
+
+    <FilterSelectDrawer
+      v-model:show="showCategoryDrawer"
+      title="Категория запчасти"
+      :items="categoryChipOptions"
+      v-model="filterStore.filterValues.category"
+      :enable-grouping="true"
+    />
+
+    <FilterSelectDrawer
+      v-model:show="showCapacityDrawer"
+      title="Емкость"
+      :items="capacityChipOptions"
+      v-model="selectedCapacities"
+      :enable-grouping="false"
+      :multiple="false"
+    />
+
+    <FilterSelectDrawer
+      v-model:show="showEngineDisplacementDrawer"
+      title="Объем двигателя"
+      :items="engineDisplacementChipOptions"
+      v-model="selectedEngineDisplacements"
+      :enable-grouping="false"
+      :multiple="false"
+    />
   </n-form>
   </template>
   
   <script setup lang="ts">
   import { ref, onMounted, computed, watch } from "vue";
-  import { NForm, NFormItem, NSelect, NRadioGroup, NRadio, NTreeSelect, NButton, NInput } from "naive-ui";
-  import type { SelectOption, TreeSelectOption } from "naive-ui";
+  import { NForm, NButton, NInput } from "naive-ui";
   import { useFilterStore } from "@/storages/filter-store";
   import { useCategoryStore } from "~/storages/category-storage";
   import { useManufacturerStore } from "~/storages/manufacturer-store";
   import { useCarModelsStore } from "~/storages/car-models-store";
   import { useProductStore } from "~/storages/product-store";
-  
+  import FilterChips from "./FilterChips.vue";
+  import FilterSelectDrawer from "./FilterSelectDrawer.vue";
+  import PriceRange from "./PriceRange.vue";
+  import type { FilterChipOption } from "@/composables/useFilterChips";
+
   const filterStore = useFilterStore();
   const categoryStore = useCategoryStore();
   const manufacturerStore = useManufacturerStore();
@@ -199,6 +227,13 @@
   const productStore = useProductStore();
   const emit = defineEmits(['submit', 'clear']);
   const formRef = ref<InstanceType<typeof NForm> | null>(null);
+
+  // Drawer states for "Show All" screens
+  const showManufacturerDrawer = ref(false);
+  const showModelCarDrawer = ref(false);
+  const showCategoryDrawer = ref(false);
+  const showCapacityDrawer = ref(false);
+  const showEngineDisplacementDrawer = ref(false);
 
   const searchValue = computed<string>({
     get: () => filterStore.filterValues.search ?? '',
@@ -208,15 +243,6 @@
     },
   });
 
-  const selectedModelCount = computed(() => {
-    const models = filterStore.filterValues.modelCar;
-    return Array.isArray(models) ? models.length : 0;
-  });
-
-  const selectedCategoryCount = computed(() => {
-    const categories = filterStore.filterValues.category;
-    return Array.isArray(categories) ? categories.length : 0;
-  });
 
   const activeFiltersCount = computed(() => {
     const values = filterStore.filterValues as Record<string, unknown>;
@@ -229,17 +255,90 @@
 
   const hasActiveFilters = computed(() => activeFiltersCount.value > 0);
 
-  const modelPlaceholder = computed(() =>
-    filterStore.filterValues.manufacturer
-      ? 'Выберите модель (можно несколько)'
-      : 'Сначала выберите производителя'
-  );
-  
-  const selectedCategories = computed(() => {
-    const categories = filterStore.filterValues.category;
-    return Array.isArray(categories) ? categories.map(item => parseInt(item, 10)) : [];
+
+  // Transform filter data to chip options
+  const manufacturerChipOptions = computed<FilterChipOption[]>(() => {
+    // Use flat list: popular first, then others
+    const popular = manufacturerStore.popularManufacturers.map(m => ({
+      label: m.name,
+      value: m.id
+    }));
+    const others = manufacturerStore.otherManufacturers.map(m => ({
+      label: m.name,
+      value: m.id
+    }));
+    return [...popular, ...others];
   });
-  
+
+  const modelCarChipOptions = computed<FilterChipOption[]>(() => {
+    return modelCarStore.modelCarOptions.map(opt => ({
+      label: opt.label as string,
+      value: opt.value as string
+    }));
+  });
+
+  const categoryChipOptions = computed<FilterChipOption[]>(() => {
+    return categoryStore.categoriesOptions.map(opt => ({
+      label: opt.label as string,
+      value: String(opt.value)
+    }));
+  });
+
+  const capacityChipOptions = computed<FilterChipOption[]>(() => {
+    return (filterStore.filterData.capacity || []).map(item => ({
+      label: `${item} л`,
+      value: item
+    }));
+  });
+
+  const engineDisplacementChipOptions = computed<FilterChipOption[]>(() => {
+    return (filterStore.filterData.engineDisplacement || []).map(item => ({
+      label: `${item} л`,
+      value: item
+    }));
+  });
+
+  // Selected manufacturers as array (for chips compatibility - single selection with toggle)
+  const selectedManufacturers = computed<(string | number)[]>({
+    get: () => {
+      const value = filterStore.filterValues.manufacturer;
+      return value ? [value] : [];
+    },
+    set: (values: (string | number)[]) => {
+      const newValue = values.length > 0 ? Number(values[0]) : null;
+      const prevValue = filterStore.filterValues.manufacturer;
+
+      // Update manufacturer
+      filterStore.filterValues.manufacturer = newValue;
+
+      // Clear models and reload when manufacturer changes
+      if (newValue !== prevValue) {
+        filterStore.filterValues.modelCar = [];
+        if (!newValue) {
+          modelCarStore.carModels = [];
+          modelCarStore.rawCarModels = [];
+          modelCarStore.isLoadingModels = false;
+        } else {
+          modelCarStore.loadCarModelsByManufacturer(newValue);
+        }
+      }
+    }
+  });
+
+  const selectedCapacities = computed<number[]>({
+    get: () => filterStore.filterValues.capacity ? [filterStore.filterValues.capacity] : [],
+    set: (values: number[]) => {
+      filterStore.filterValues.capacity = values.length > 0 ? values[0] : null;
+    }
+  });
+
+  const selectedEngineDisplacements = computed<number[]>({
+    get: () => filterStore.filterValues.engineDisplacement ? [filterStore.filterValues.engineDisplacement] : [],
+    set: (values: number[]) => {
+      filterStore.filterValues.engineDisplacement = values.length > 0 ? values[0] : null;
+    }
+  });
+
   function handleSubmit() {
     // Just emit submit, data is already loaded via watcher or we can load one last time
     // productStore.loadProducts(filterStore.filterValues); 
@@ -250,24 +349,6 @@
     filterStore.clearValues();
     // Watcher will handle reload
     emit('clear');
-  }
-  
-  function handleManufacturerChange(value: number | null) {
-    filterStore.filterValues.modelCar = [];
-    if (value) {
-      modelCarStore.loadCarModelsByManufacturer(value);
-      return;
-    }
-    modelCarStore.carModels = [];
-    modelCarStore.rawCarModels = [];
-  }
-  
-  function handleCategoryChange(value: Array<string | number>, options: Array<TreeSelectOption | null>) {
-    filterStore.filterValues.category = value.map(String);
-  }
-  
-  function resolveModelCarFallback(value: string): SelectOption {
-    return { label: modelCarStore.getModelCarById(value)?.label ?? value, value };
   }
 
   // --- REACTIVE LOADING ---
@@ -290,7 +371,7 @@
   onMounted(() => {
     Promise.all([
       filterStore.loadFilters(),
-      categoryStore.loadCategoriesTree(),
+      categoryStore.loadCategories(),
       manufacturerStore.loadManufacturers()
     ]);
   });
@@ -300,23 +381,27 @@
   .filter-form {
     @apply flex flex-col;
   }
-  
+
   .filter-form__desktop-actions {
-    @apply hidden lg:flex sticky top-0 z-10 bg-white/95 backdrop-blur border-b border-slate-100 p-3 flex-col gap-2;
+    @apply hidden lg:flex sticky top-0 z-10;
+    @apply bg-white/95 dark:bg-dark-card/95 backdrop-blur;
+    @apply border-b border-slate-100 dark:border-white/5;
+    @apply p-4 flex-col gap-3;
   }
-  
+
   .filter-form__fields {
-    @apply flex flex-col gap-6 p-3;
+    @apply flex flex-col gap-6 p-4;
     /* На мобильных оставляем место под нижний бар с кнопками */
     @apply pb-24 lg:pb-4;
   }
-  
+
   .filter-form__section {
-    @apply flex flex-col gap-3;
+    @apply flex flex-col gap-4;
   }
 
   .filter-form__section-title {
-    @apply text-xs font-semibold tracking-wide text-slate-500 uppercase;
+    @apply text-xs font-semibold tracking-wide;
+    @apply text-slate-500 dark:text-slate-400 uppercase;
   }
 
   .filter-form__summary {
@@ -324,11 +409,12 @@
   }
 
   .filter-form__summary-title {
-    @apply text-sm font-semibold text-slate-900;
+    @apply text-sm font-semibold;
+    @apply text-slate-900 dark:text-white;
   }
 
   .filter-form__summary-subtitle {
-    @apply text-xs text-slate-500;
+    @apply text-xs text-slate-500 dark:text-slate-400;
   }
 
   .filter-form__actions-grid {
@@ -340,15 +426,42 @@
   }
 
   .filter-form__hint {
-    @apply mt-1 text-xs text-slate-500;
+    @apply mt-1 text-xs text-slate-500 dark:text-slate-400;
   }
 
   .filter-form__mobile-summary {
-    @apply lg:hidden px-3 pt-2;
+    @apply lg:hidden px-4 pt-3;
   }
 
   .filter-form__mobile-actions {
-    @apply lg:hidden sticky bottom-0 z-10 bg-white/95 backdrop-blur border-t border-slate-100 px-3 pt-3;
-    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+    @apply lg:hidden sticky bottom-0 z-10;
+    @apply bg-white/95 dark:bg-dark-card/95 backdrop-blur;
+    @apply border-t border-slate-100 dark:border-white/5;
+    @apply px-4 pt-4;
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+
+  .filter-form__loading {
+    @apply flex flex-col gap-4;
+  }
+
+  .filter-form__skeleton-grid {
+    @apply flex flex-wrap gap-2;
+  }
+
+  .filter-chip-skeleton {
+    @apply inline-flex items-center gap-1.5 px-4 py-2 rounded-full;
+    @apply bg-slate-200 dark:bg-white/10;
+    min-height: 38px;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
   }
   </style>

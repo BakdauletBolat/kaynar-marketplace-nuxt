@@ -1,47 +1,44 @@
 <template>
-  <main>
-    <mobile-only-component>
-      <n-page-header :on-back="handleBack" class="fixed w-full z-10 top-0 bg-white px-4 py-2 shadow">
-        <template #title>
-      <span style="text-decoration: none; color: inherit">
-        Регистрация
-      </span>
-        </template>
-      </n-page-header>
-    </mobile-only-component>
+  <div class="min-h-screen bg-light-bg dark:bg-dark-bg font-sans">
+    <!-- Header for desktop -->
     <desktop-only-component>
-      <div class="mt-4 px-4 container mx-auto">
+      <div class="pt-6 container px-4 mx-auto">
         <n-breadcrumb>
           <n-breadcrumb-item>
-            <nuxt-link :to="{
-            name: 'index'
-          }">Главная
-            </nuxt-link>
+            <nuxt-link :to="{ name: 'index' }" class="text-gray-400 hover:text-primary transition-colors">Главная</nuxt-link>
           </n-breadcrumb-item>
           <n-breadcrumb-item>
-            Регистрация
+            <span class="text-gray-600 dark:text-gray-300">Регистрация</span>
           </n-breadcrumb-item>
         </n-breadcrumb>
       </div>
     </desktop-only-component>
-    <section class="mt-[60px] lg:mt-4">
-      <div class="flex flex-col justify-center items-center px-4">
+
+    <!-- Mobile Back Button -->
+    <mobile-only-component>
+       <div class="p-4 flex items-center gap-4">
+          <button @click="handleBack" class="p-2 -ml-2 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full transition-colors">
+            <ArrowLeftIcon class="w-6 h-6 text-gray-700 dark:text-white" />
+          </button>
+          <h1 class="text-xl font-bold text-light-text-main dark:text-dark-text-main">Регистрация</h1>
+       </div>
+    </mobile-only-component>
+
+    <div class="flex items-center justify-center py-10 lg:py-20 px-4">
+      <div class="w-full max-w-[440px]">
         <user-registration-form></user-registration-form>
       </div>
-    </section>
-  </main>
-
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
 import userRegistrationForm from "~/components/user-registration-form.vue";
-import {NPageHeader} from "naive-ui";
-
+import { ArrowLeftIcon } from "@heroicons/vue/24/outline";
 
 const router = useRouter()
 
 function handleBack() {
   router.back();
 }
-
 </script>

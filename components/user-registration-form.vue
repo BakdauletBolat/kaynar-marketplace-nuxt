@@ -1,30 +1,42 @@
 <template>
-    <div class="max-w-[400px] w-full">
-        <div v-if="user" class="flex w-full justify-center items-center">
+    <div class="w-full bg-white dark:bg-dark-card p-6 lg:p-10 rounded-3xl shadow-xl border border-transparent dark:border-white/5">
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-light-text-main dark:text-dark-text-main">Регистрация</h1>
+            <p class="text-sm text-gray-500 mt-2">Создайте аккаунт для покупок</p>
+        </div>
+
+        <div v-if="user" class="w-full">
             <n-form class="w-full" :model="user" ref="formRef" :rules="rules">
-                <n-form-item label="Телефон" path="phone">
+                <n-form-item label="Номер телефона" path="phone">
                     <n-input
                         v-model:value="user.phone"
-                        class="w-full imask-elem"
+                        class="w-full imask-elem !h-12 !rounded-xl"
                         placeholder="+7 (___) ___-__-__"
+                        size="large"
                     />
                 </n-form-item>
                 <n-form-item label="Имя" path="first_name">
                     <n-input
                         v-model:value="user.first_name"
                         placeholder="Введите имя"
+                        class="!h-12 !rounded-xl"
+                        size="large"
                     />
                 </n-form-item>
                 <n-form-item label="Фамилия" path="last_name">
                     <n-input
                         v-model:value="user.last_name"
                         placeholder="Введите фамилию"
+                        class="!h-12 !rounded-xl"
+                        size="large"
                     />
                 </n-form-item>
                 <n-form-item label="Отчество" path="middle_name">
                     <n-input
                         v-model:value="user.middle_name"
-                        placeholder="Введите отчество"
+                        placeholder="Введите отчество (необязательно)"
+                        class="!h-12 !rounded-xl"
+                        size="large"
                     />
                 </n-form-item>
                 <n-form-item label="Пароль" path="password">
@@ -34,16 +46,25 @@
                         maxlength="128"
                         minlength="1"
                         placeholder="Введите пароль"
+                        class="!h-12 !rounded-xl"
+                        size="large"
                     />
                 </n-form-item>
-                <n-button
-                    class="w-full"
-                    round
-                    :loading="isLoading"
-                    type="primary"
-                    @click="handleSubmit"
-                    >Регистрация</n-button
-                >
+
+                <div class="mt-4">
+                    <n-button
+                        class="w-full !h-14 !rounded-xl !text-lg !font-bold shadow-lg shadow-primary/20"
+                        :loading="isLoading"
+                        type="primary"
+                        @click="handleSubmit"
+                    >Зарегистрироваться</n-button>
+                </div>
+
+                <div class="mt-6 text-center">
+                   <nuxt-link :to="{name: 'auth-login'}" class="text-primary hover:text-primary-hover font-semibold text-sm transition-colors">
+                     Уже есть аккаунт? Войти
+                   </nuxt-link>
+                </div>
             </n-form>
         </div>
     </div>

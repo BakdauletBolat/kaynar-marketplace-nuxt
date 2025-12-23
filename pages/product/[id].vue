@@ -195,9 +195,57 @@ useHead({
         </n-breadcrumb>
       </div>
 
-      <!-- Loading / Error -->
-      <div v-if="pending" class="py-20 text-center">
-        <div class="text-xl text-primary animate-pulse">Загрузка...</div>
+      <!-- Loading Skeleton -->
+      <div v-if="pending">
+        <!-- Mobile Skeleton -->
+        <div class="lg:hidden -mx-4 -mt-4">
+          <div class="w-full h-[350px] bg-gray-200 dark:bg-white/10 animate-pulse"></div>
+          <div class="px-4 pt-4 space-y-4">
+            <div class="h-6 bg-gray-200 dark:bg-white/10 rounded-lg w-3/4 animate-pulse"></div>
+            <div class="h-4 bg-gray-200 dark:bg-white/10 rounded-lg w-1/2 animate-pulse"></div>
+            <div class="h-10 bg-gray-200 dark:bg-white/10 rounded-lg w-1/3 animate-pulse"></div>
+            <div class="flex gap-3 pt-2">
+              <div class="h-12 bg-gray-200 dark:bg-white/10 rounded-xl flex-1 animate-pulse"></div>
+              <div class="h-12 bg-gray-200 dark:bg-white/10 rounded-xl w-12 animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Desktop Skeleton -->
+        <div class="hidden lg:grid grid-cols-[minmax(0,1fr)_360px] gap-8">
+          <!-- Left Column -->
+          <div class="space-y-8">
+            <div class="bg-white dark:bg-dark-card rounded-2xl p-4 shadow-sm">
+              <div class="aspect-square bg-gray-200 dark:bg-white/10 rounded-xl animate-pulse"></div>
+              <div class="flex gap-2 mt-4">
+                <div v-for="i in 4" :key="i" class="w-20 h-20 bg-gray-200 dark:bg-white/10 rounded-lg animate-pulse"></div>
+              </div>
+            </div>
+            <div class="bg-white dark:bg-dark-card rounded-2xl p-8 shadow-sm space-y-6">
+              <div class="h-6 bg-gray-200 dark:bg-white/10 rounded-lg w-1/4 animate-pulse"></div>
+              <div class="space-y-3">
+                <div class="h-4 bg-gray-200 dark:bg-white/10 rounded w-full animate-pulse"></div>
+                <div class="h-4 bg-gray-200 dark:bg-white/10 rounded w-5/6 animate-pulse"></div>
+                <div class="h-4 bg-gray-200 dark:bg-white/10 rounded w-4/6 animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+          <!-- Right Column -->
+          <div class="bg-white dark:bg-dark-card rounded-2xl p-5 shadow-lg space-y-4">
+            <div class="h-4 bg-gray-200 dark:bg-white/10 rounded w-1/4 animate-pulse"></div>
+            <div class="h-7 bg-gray-200 dark:bg-white/10 rounded w-3/4 animate-pulse"></div>
+            <div class="h-5 bg-gray-200 dark:bg-white/10 rounded w-1/2 animate-pulse"></div>
+            <div class="h-12 bg-gray-200 dark:bg-white/10 rounded-lg w-1/3 animate-pulse mt-4"></div>
+            <div class="space-y-3 pt-4">
+              <div class="h-14 bg-gray-200 dark:bg-white/10 rounded-xl animate-pulse"></div>
+              <div class="h-12 bg-gray-200 dark:bg-white/10 rounded-xl animate-pulse"></div>
+              <div class="grid grid-cols-2 gap-3">
+                <div class="h-12 bg-gray-200 dark:bg-white/10 rounded-xl animate-pulse"></div>
+                <div class="h-12 bg-gray-200 dark:bg-white/10 rounded-xl animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       
       <div v-else-if="!product" class="py-10">
@@ -311,10 +359,10 @@ useHead({
                 </button>
                 
                 <!-- Secondary Action: Add to Cart -->
-                <button 
+                <button
                   @click="addOrGoToCart"
                   class="hidden lg:block w-full bg-white dark:bg-white/5 border-2 border-primary/20 hover:border-primary text-primary dark:text-white font-bold py-3 rounded-xl transition-all active:scale-[0.98] disabled:opacity-50"
-                  :class="{'!bg-emerald-50 !border-emerald-500 !text-emerald-700': isInCart}"
+                  :class="{'!bg-emerald-50 dark:!bg-emerald-900/30 !border-emerald-500 !text-emerald-700 dark:!text-emerald-400': isInCart}"
                   :disabled="!mobileCanInteract"
                 >
                   {{ mobileCtaText }}
@@ -362,10 +410,10 @@ useHead({
           <!-- Seller Info (Optional) -->
           <div class="bg-white dark:bg-dark-card rounded-2xl p-4 shadow-sm border border-transparent dark:border-white/5 flex items-center justify-between">
              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-xl">🏢</div>
+                <div class="w-10 h-10 rounded-full bg-gray-200 dark:bg-white/10 flex items-center justify-center text-xl">🏢</div>
                 <div>
-                   <div class="text-sm font-bold">Kaynar Warehouse</div>
-                   <div class="text-xs text-gray-500">Продавец</div>
+                   <div class="text-sm font-bold text-gray-900 dark:text-white">Kaynar Warehouse</div>
+                   <div class="text-xs text-gray-500 dark:text-gray-400">Продавец</div>
                 </div>
              </div>
              <div class="text-xs font-bold text-gray-400">4.9 ★</div>

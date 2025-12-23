@@ -15,7 +15,8 @@ export const useCarModelsStore = defineStore("car-models-store", {
         return {
             carModels: [] as CarModel[],
             rawCarModels: [] as CarModel[],
-            searchTermModelCar: '' as string
+            searchTermModelCar: '' as string,
+            isLoadingModels: false
         }
     },
     getters: {
@@ -70,9 +71,14 @@ export const useCarModelsStore = defineStore("car-models-store", {
             return undefined;
         },
         async loadCarModelsByManufacturer(value: number | null) {
-            const response = await loadWithCache(axiosInstance, `/api/car/models/?manufacturer=${value}&page_size=10000`);
-            this.carModels = response.data.results;
-            this.rawCarModels = response.data.results;
+            this.isLoadingModels = true;
+            try {
+                const response = await loadWithCache(axiosInstance, `/api/car/models/?manufacturer=${value}&page_size=10000`);
+                this.carModels = response.data.results;
+                this.rawCarModels = response.data.results;
+            } finally {
+                this.isLoadingModels = false;
+            }
         },
 
     }

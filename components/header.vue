@@ -66,7 +66,7 @@ function openCart() {
 <template>
   <div class="hidden lg:block sticky top-0 z-40 font-sans">
     <!-- Top Tiny Bar (Service Links) -->
-    <div class="bg-[#290e26] text-white/80 text-xs py-1.5 border-b border-white/10">
+    <div class="bg-[#290e26] dark:bg-[#0d0d0e] text-white/80 text-xs py-1.5 border-b border-white/10">
       <div class="container mx-auto flex justify-between items-center">
         <div class="flex items-center gap-4">
            <span class="flex items-center gap-1 cursor-pointer hover:text-white transition-colors">
@@ -84,7 +84,7 @@ function openCart() {
     </div>
 
     <!-- Main Header -->
-    <div class="bg-gradient-to-r from-primary via-primary to-yellow-600 text-white py-4 shadow-lg relative">
+    <div class="bg-gradient-to-r from-primary via-primary to-yellow-600 dark:from-dark-card dark:via-dark-card dark:to-dark-card text-white py-4 shadow-lg dark:shadow-none dark:border-b dark:border-white/5 relative">
       <div class="container mx-auto flex items-center justify-between gap-6 relative">
         
         <!-- Logo -->
@@ -111,47 +111,47 @@ function openCart() {
 
         <!-- Search Bar -->
         <div class="flex-grow max-w-2xl relative z-50">
-           <div 
+           <div
              class="relative flex items-center w-full rounded-3xl transition-all duration-300"
-             :class="isSearchFocused ? 'bg-white shadow-2xl rounded-b-none' : 'bg-white/20 hover:bg-white/30'"
+             :class="isSearchFocused ? 'bg-white dark:bg-dark-bg shadow-2xl rounded-b-none' : 'bg-white/20 hover:bg-white/30'"
            >
-             <input 
+             <input
                v-model="searchWord"
                type="text"
                class="w-full bg-transparent py-3 px-6 pr-14 text-lg outline-none transition-colors placeholder:text-white/60"
-               :class="isSearchFocused ? 'text-black placeholder:text-gray-400' : 'text-white'"
+               :class="isSearchFocused ? 'text-black dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500' : 'text-white'"
                placeholder="Найти на Kaynar..."
                @focus="isSearchFocused = true"
                @blur="setTimeout(() => isSearchFocused = false, 200)"
                @keyup.enter="searchAndNavigateCatalog"
              />
-             <button 
+             <button
                @click="searchAndNavigateCatalog"
                class="absolute right-2 p-2 rounded-full transition-colors"
-               :class="isSearchFocused ? 'text-primary hover:bg-gray-100' : 'text-white hover:bg-white/10'"
+               :class="isSearchFocused ? 'text-primary hover:bg-gray-100 dark:hover:bg-white/10' : 'text-white hover:bg-white/10'"
              >
                <n-icon :component="SearchIcon" size="24" />
              </button>
            </div>
-           
+
            <!-- Search Dropdown (Categories) -->
-           <div 
+           <div
              v-if="isSearchFocused"
-             class="absolute top-full left-0 w-full bg-white shadow-xl rounded-b-3xl overflow-hidden border-t border-gray-100 animate-in fade-in slide-in-from-top-1 duration-200"
+             class="absolute top-full left-0 w-full bg-white dark:bg-dark-bg shadow-xl rounded-b-3xl overflow-hidden border-t border-gray-100 dark:border-white/5 animate-in fade-in slide-in-from-top-1 duration-200"
            >
               <div class="py-2">
                  <div v-if="filteredCategories.length > 0">
-                    <div 
-                      v-for="cat in filteredCategories" 
+                    <div
+                      v-for="cat in filteredCategories"
                       :key="cat.id"
                       @click="selectCategory(cat)"
-                      class="px-6 py-2.5 hover:bg-gray-50 flex items-center justify-between cursor-pointer group"
+                      class="px-6 py-2.5 hover:bg-gray-50 dark:hover:bg-white/5 flex items-center justify-between cursor-pointer group"
                     >
-                       <span class="text-gray-700 font-medium group-hover:text-primary transition-colors">{{ cat.name }}</span>
-                       <n-icon :component="ChevronForward" class="text-gray-300 group-hover:text-primary transition-colors" />
+                       <span class="text-gray-700 dark:text-gray-200 font-medium group-hover:text-primary transition-colors">{{ cat.name }}</span>
+                       <n-icon :component="ChevronForward" class="text-gray-300 dark:text-gray-600 group-hover:text-primary transition-colors" />
                     </div>
                  </div>
-                 <div v-else class="px-6 py-4 text-center text-gray-500 text-sm">
+                 <div v-else class="px-6 py-4 text-center text-gray-500 dark:text-gray-400 text-sm">
                     Ничего не найдено
                  </div>
               </div>

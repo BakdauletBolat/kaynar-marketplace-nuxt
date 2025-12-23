@@ -1,8 +1,8 @@
 <template>
-  <button @click="routeTo" 
-          class="flex flex-col items-center justify-center w-full py-1 text-slate-500 transition-all duration-200 active:scale-90"
+  <button @click="routeTo"
+          class="flex flex-col items-center justify-center w-full py-1 text-slate-400 dark:text-slate-500 transition-all duration-200 active:scale-90"
           :class="{
-            '!text-slate-900 font-medium': isActive
+            '!text-primary font-medium': isActive
           }">
     <component class="w-6 h-6 mb-0.5" :is="isActive ? activeIcon : baseIcon"></component>
     <span class="text-[10px] leading-none">{{ title }}</span>

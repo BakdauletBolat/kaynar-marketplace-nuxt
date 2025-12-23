@@ -112,6 +112,39 @@
          </button>
       </div>
 
+      <!-- Theme Switcher -->
+      <div class="bg-white dark:bg-dark-card p-4 rounded-xl border border-gray-100 dark:border-white/5 shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-sm font-bold text-gray-700 dark:text-gray-200">Тема оформления</span>
+        </div>
+        <div class="theme-switcher">
+          <button
+            @click="setTheme('light')"
+            class="theme-option"
+            :class="{ 'theme-option-active': themeMode === 'light' }"
+          >
+            <SunIcon class="w-5 h-5" />
+            <span>Светлая</span>
+          </button>
+          <button
+            @click="setTheme('dark')"
+            class="theme-option"
+            :class="{ 'theme-option-active': themeMode === 'dark' }"
+          >
+            <MoonIcon class="w-5 h-5" />
+            <span>Тёмная</span>
+          </button>
+          <button
+            @click="setTheme('system')"
+            class="theme-option"
+            :class="{ 'theme-option-active': themeMode === 'system' }"
+          >
+            <SystemIcon class="w-5 h-5" />
+            <span>Авто</span>
+          </button>
+        </div>
+      </div>
+
       <!-- Logout Button -->
       <button @click="handlePositiveClick" class="w-full bg-white dark:bg-dark-card p-4 rounded-xl border border-gray-100 dark:border-white/5 shadow-sm flex items-center justify-center gap-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors">
          <LogOutIcon class="w-5 h-5" />
@@ -123,14 +156,18 @@
 </template>
 
 <script setup lang="ts">
-import { 
-  HeartOutline as HeartIcon, 
+import {
+  HeartOutline as HeartIcon,
   HelpCircleOutline as HelpIcon,
   PersonOutline as PersonIcon,
   CartOutline as CartIcon,
   LogOutOutline as LogOutIcon,
-  SettingsOutline as SettingsIcon
+  SettingsOutline as SettingsIcon,
+  SunnyOutline as SunIcon,
+  MoonOutline as MoonIcon,
+  PhonePortraitOutline as SystemIcon
 } from "@vicons/ionicons5";
+import { useTheme } from "~/composables/useTheme";
 import { useAuthStore } from "~/storages/auth-store";
 import { useFavoritesStore } from "~/storages/favorites-store";
 import { timeAgo } from "~/utils/timeAgo";
@@ -139,6 +176,7 @@ import { getPrice } from "~/utils/getPrice";
 const authStore = useAuthStore();
 const favoritesStore = useFavoritesStore();
 const router = useRouter();
+const { themeMode, setTheme } = useTheme();
 
 onMounted(() => {
     authStore.loadUser();
@@ -178,7 +216,21 @@ definePageMeta({
 
 <style scoped>
 .menu-tile {
-  @apply bg-white dark:bg-dark-card rounded-xl p-4 border border-gray-100 
+  @apply bg-white dark:bg-dark-card rounded-xl p-4 border border-gray-100
          dark:border-white/5 flex flex-col items-start justify-between min-h-[100px] shadow-sm active:scale-[0.98] transition-all;
+}
+
+.theme-switcher {
+  @apply flex gap-2 p-1 bg-gray-100 dark:bg-white/5 rounded-xl;
+}
+
+.theme-option {
+  @apply flex-1 flex flex-col items-center gap-1.5 py-3 px-2 rounded-lg;
+  @apply text-gray-500 dark:text-gray-400 text-xs font-medium;
+  @apply transition-all duration-200 active:scale-95;
+}
+
+.theme-option-active {
+  @apply bg-white dark:bg-dark-card text-primary shadow-sm;
 }
 </style>
