@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   nuxt:
-    image: baqdauled/kaynar-nuxt-app:pilot
+    image: baqdauled/kaynar-nuxt-app
     deploy:
       restart_policy:
         condition: on-failure
