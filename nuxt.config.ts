@@ -45,6 +45,11 @@ export default defineNuxtConfig({
       ],
     },
   },
+  runtimeConfig: {
+    public: {
+      gaMeasurementId: process.env.NUXT_PUBLIC_GA_MEASUREMENT_ID || "",
+    },
+  },
   compatibilityDate: "2024-07-11",
   modules: ["@pinia/nuxt", "@bg-dev/nuxt-naiveui"],
   vite: {

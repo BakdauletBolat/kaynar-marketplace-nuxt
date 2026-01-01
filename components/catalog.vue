@@ -234,7 +234,7 @@ onMounted(() => {
              <selected-filters />
         </desktop-only-component>
       
-        <div class="grid grid-cols-1 gap-x-6 items-start lg:grid-cols-[280px_1fr]">
+        <div class="grid grid-cols-1 gap-x-6 items-start lg:grid-cols-[1fr_1.5fr]">
             
             <!-- Sidebar (Desktop) -->
             <aside class="hidden lg:block sticky top-[90px] h-[calc(100vh-100px)] overflow-y-auto pr-2 custom-scrollbar">

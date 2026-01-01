@@ -45,7 +45,7 @@ const showHeader = computed(() => route.name === 'index');
         <mobile-header v-if="showHeader" />
 
         <!-- Main Content -->
-        <main class="flex-grow w-full">
+        <main class="flex-grow w-full bg-gray-50 dark:bg-dark-bg min-h-screen">
             <slot></slot>
         </main>
 

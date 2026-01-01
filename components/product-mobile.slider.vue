@@ -11,6 +11,7 @@
           moveType: 'snap'
         }"
         @changed="onChange"
+        @click="emit('open', currentValue)"
       >
         <div
           v-for="picture in pictures"
@@ -92,6 +93,9 @@ const props = withDefaults(defineProps<{
 });
 
 const currentValue = ref(0);
+const emit = defineEmits<{
+  (e: "open", index: number): void;
+}>();
 const flicking = ref<InstanceType<typeof Flicking> | null>(null);
 const thumbnailsRef = ref<HTMLDivElement | null>(null);
 const thumbnailRefs = ref<Map<number, HTMLButtonElement>>(new Map());

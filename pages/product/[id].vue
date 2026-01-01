@@ -13,6 +13,7 @@ import { HeartIcon as HeartIconSolid } from "@heroicons/vue/24/solid";
 import { computed, h, ref } from "vue"; // Added ref
 import ProductSlider from "@/components/product-slider.vue";
 import ProductMobileSlider from "@/components/product-mobile.slider.vue";
+import ProductFullscreenCarousel from "@/components/product-fullscreen-carousel.vue";
 import BuyOneClickModal from "@/components/modals/buy-one-click-modal.vue"; // Import modal
 import { CardStorage } from "@/storages/storage";
 import { useFavoritesStore } from "@/storages/favorites-store";
@@ -27,6 +28,8 @@ const cardStorage = CardStorage.getInstance();
 const favoritesStore = useFavoritesStore();
 
 const showBuyOneClick = ref(false); // Modal state
+const showFullscreenGallery = ref(false);
+const fullscreenIndex = ref(0);
 
 const productId = computed(() => parseInt(route.params.id.toString(), 10));
 
@@ -127,6 +130,14 @@ function openBuyOneClick() {
     showBuyOneClick.value = true;
 }
 
+function openFullscreenGallery(index: number) {
+  const pictures = product.value?.pictures ?? [];
+  if (!pictures.length) return;
+  const safeIndex = Math.min(Math.max(index, 0), pictures.length - 1);
+  fullscreenIndex.value = safeIndex;
+  showFullscreenGallery.value = true;
+}
+
 function toggleFavorite() {
     if (!product.value) return;
     const action = favoritesStore.addToFavorite(product.value as any);
@@ -160,6 +171,12 @@ useHead({
         :product-name="productName" 
         :product-id="productId" 
     />
+    <ProductFullscreenCarousel
+        v-if="product"
+        v-model:show="showFullscreenGallery"
+        :pictures="product.pictures"
+        :start-index="fullscreenIndex"
+    />
 
     <!-- MOBILE: Header & Gallery -->
     <div class="relative lg:hidden bg-white dark:bg-dark-card">
@@ -182,7 +199,7 @@ useHead({
         </button>
       </div>
      
-      <ProductMobileSlider :pictures="product?.pictures" />
+      <ProductMobileSlider :pictures="product?.pictures" @open="openFullscreenGallery" />
     </div>
 
     <div class="container mx-auto px-4 pt-4 lg:pt-8">
@@ -265,14 +282,14 @@ useHead({
       <!-- Content Grid -->
       <div
         v-else
-        class="grid w-full grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start"
+        class="grid w-full grid-cols-1 gap-8 lg:grid-cols-[1.5fr_1fr] lg:items-start"
       >
         <!-- LEFT COLUMN: Gallery & Specs -->
         <div class="space-y-8 min-w-0">
           
           <!-- Desktop Gallery -->
           <div class="hidden lg:block bg-white dark:bg-dark-card rounded-2xl overflow-hidden shadow-sm p-4">
-            <ProductSlider :pictures="product.pictures" />
+            <ProductSlider :pictures="product.pictures" @open="openFullscreenGallery" />
           </div>
 
           <!-- Description & Specs (Both Mobile & Desktop) -->

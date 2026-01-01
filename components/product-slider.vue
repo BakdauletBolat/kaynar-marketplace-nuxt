@@ -1,7 +1,7 @@
 <template>
     <div v-if="pictures.length > 0" class="w-full flex flex-col gap-3">
         <div class="w-full relative">
-            <Flicking @changed="onChange" class="rounded-sm" ref="flicking" :options="{
+            <Flicking @changed="onChange" @click="emit('open', currentValue)" class="rounded-sm cursor-zoom-in" ref="flicking" :options="{
                 preventClickOnDrag: true,
                 duration: 100
             }">
@@ -46,6 +46,9 @@ type ChangedValue = {
 }
 
 const currentValue = ref(0);
+const emit = defineEmits<{
+    (e: "open", index: number): void;
+}>();
 
 function onChange(changed: ChangedValue) {
     currentValue.value = changed.index;
