@@ -8,6 +8,7 @@ import {loadWithCache} from "~/api/loadWithCache";
 export interface Category {
     id: number;
     name: string;
+    products_count: number;
 }
 
 function recursiveCategory(children: any, options: TreeSelectOption[]) {

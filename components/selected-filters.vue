@@ -140,10 +140,10 @@
   
   <style scoped>
   .selected-filters-container {
-    @apply flex items-start gap-4;
+    @apply flex items-start gap-4 dark:bg-black;
   }
   .selected-filters-container.is-default {
-      @apply p-3 mb-4 bg-slate-50 border rounded-lg;
+      @apply p-3 mb-4 bg-slate-50 dark:bg-dark-bg dark:border dark:border-0 rounded-lg;
   }
   .selected-filters-container.is-compact {
       @apply p-0 mb-0 bg-transparent border-0;

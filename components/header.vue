@@ -91,7 +91,7 @@ function openCart() {
         <nuxt-link :to="{ name: 'index' }" class="flex-shrink-0 flex items-center gap-2 group">
            <n-image preview-disabled class="w-10 h-10 rounded-lg bg-white p-0.5" alt="Logo" :src="Logo" />
            <div class="leading-none flex flex-col">
-             <span class="font-black text-2xl tracking-tighter uppercase italic group-hover:scale-105 transition-transform">KAYNARAVTo</span>
+             <!-- <span class="font-black text-2xl tracking-tighter uppercase italic group-hover:scale-105 transition-transform">KAYNARAVTo</span> -->
              <!-- <span class="text-[10px] font-medium tracking-widest opacity-80 uppercase">Marketplace</span> -->
            </div>
         </nuxt-link>
@@ -147,7 +147,7 @@ function openCart() {
                       @click="selectCategory(cat)"
                       class="px-6 py-2.5 hover:bg-gray-50 dark:hover:bg-white/5 flex items-center justify-between cursor-pointer group"
                     >
-                       <span class="text-gray-700 dark:text-gray-200 font-medium group-hover:text-primary transition-colors">{{ cat.name }}</span>
+                       <span class="text-gray-700 dark:text-gray-200 font-medium group-hover:text-primary transition-colors">{{ cat.name }} ({{ cat.products_count }})</span>
                        <n-icon :component="ChevronForward" class="text-gray-300 dark:text-gray-600 group-hover:text-primary transition-colors" />
                     </div>
                  </div>
