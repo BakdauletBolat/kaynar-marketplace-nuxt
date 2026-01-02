@@ -8,6 +8,7 @@ export interface Address {
   postal_code: string;
   apartment: string;
   building: string;
+  user_id?: number
 }
 
 export interface UserInfo {
@@ -40,10 +41,10 @@ export const useOrderStore = defineStore("order-store", {
     };
   },
   actions: {
-    async loadAddresses() {
+    async loadAddresses(userId?: number) {
       this.isAddressLoading = true;
       try {
-        const res = await axiosInstance.get("/api/address/");
+        const res = await axiosInstance.get(`/api/address/user/${userId}/`);
         // Assuming the API returns a paginated response or a list. 
         // Based on common patterns in this project, if it's paginated it might be res.data.results or just res.data
         // Let's assume it's an array or we handle it.
@@ -69,7 +70,7 @@ export const useOrderStore = defineStore("order-store", {
           const res = await axiosInstance.post("/api/address/", address);
           this.createdAddressId = res.data.id;
           this.selectedAddressId = res.data.id; // Select the newly created address
-          await this.loadAddresses(); // Refresh list
+          await this.loadAddresses(address.user_id); // Refresh list
       } catch (e) {
           throw e;
       } finally {

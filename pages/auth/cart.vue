@@ -4,7 +4,7 @@
     <!-- Functional Header (Sticky Address Selector) -->
     <div class="bg-white dark:bg-[#202022] sticky top-0 z-40 px-3 py-2 shadow-sm transition-colors">
        <div class="container mx-auto max-w-[800px] flex items-center gap-2">
-           <div class="flex-1 flex flex-col justify-center cursor-pointer" @click="showAddressModal = true">
+           <div class="flex-1 flex flex-col justify-center cursor-pointer" @click="handleAddressClick">
               <div class="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
                   <span>Адрес</span>
                   <ChevronDownIcon class="w-3 h-3" />
@@ -145,6 +145,7 @@
                 <span class="text-xl font-bold text-black dark:text-white">{{ getPrice(cardStorage.totalCost) }}</span>
             </div>
             <button 
+                v-if="isAuthenticated"
                 @click="handleOrder"
                 :disabled="!isValidOrder || orderStore.isOrderCreateLoading"
                 class="w-full bg-primary hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold h-12 rounded-xl text-base shadow-lg shadow-yellow-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
@@ -152,7 +153,14 @@
                 <span v-if="orderStore.isOrderCreateLoading"><n-spin size="small" stroke="#fff" /></span>
                 <span v-else>Заказать</span>
             </button>
-            <div class="text-[10px] text-center text-gray-400 mt-2">
+            <NuxtLink
+                v-else
+                :to="{ name: 'auth-selection' }"
+                class="w-full bg-primary hover:bg-primary-hover text-white font-bold h-12 rounded-xl text-base shadow-lg shadow-yellow-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+            >
+                Перейти к регистрации
+            </NuxtLink>
+            <div v-if="isAuthenticated" class="text-[10px] text-center text-gray-400 mt-2">
                 Нажимая кнопку, вы соглашаетесь с условиями использования
             </div>
         </div>
@@ -187,7 +195,7 @@
                          <input v-model="newAddress.apartment" placeholder="Кв." class="w-full p-2 rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-black text-base outline-none focus:border-primary">
                          <input v-model="newAddress.postal_code" placeholder="Индекс" class="w-full p-2 rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-black text-base outline-none focus:border-primary">
                      </div>
-                     <button @click="createNewAddress" :disabled="!newAddress.address" class="w-full bg-primary text-white py-2 rounded-lg font-bold text-sm disabled:opacity-50">
+                     <button @click="()=>createNewAddress(authStore.user?.id)" :disabled="!newAddress.address" class="w-full bg-primary text-white py-2 rounded-lg font-bold text-sm disabled:opacity-50">
                          Сохранить
                      </button>
                 </div>
@@ -250,25 +258,29 @@ const authStore = useAuthStore();
 const showAddressModal = ref(false);
 const isEditMode = ref(false);
 const isCreatingAddress = ref(false);
+const isAuthenticated = computed(() => Boolean(authStore.user?.id));
 
 const newAddress = reactive<Address>({
     address: '',
     postal_code: '',
     apartment: '',
-    building: ''
+    building: '',
+    user_id: undefined
 });
 
 onMounted(async () => {
-    await authStore.loadUser();
-    if (authStore.user) {
+    const user = await authStore.loadUser();
+    if (user) {
         orderStore.updateUserInfo({
-            first_name: authStore.user.first_name || '',
-            last_name: authStore.user.last_name || '',
-            email: authStore.user.email || '',
-            phone_number: authStore.user.phone || '',
+            first_name: user.first_name || '',
+            last_name: user.last_name || '',
+            email: user.email || '',
+            phone_number: user.phone || '',
         });
+        if (user.id) {
+            await orderStore.loadAddresses(user.id);
+        }
     }
-    await orderStore.loadAddresses();
 });
 
 const selectedAddress = computed(() => {
@@ -292,14 +304,22 @@ function routeToCatalog() {
   router.push({ name: "catalog" });
 }
 
+function handleAddressClick() {
+    if (!isAuthenticated.value) {
+        router.push({ name: "auth-selection" });
+        return;
+    }
+    showAddressModal.value = true;
+}
+
 function selectAddress(addr: any) {
     orderStore.selectedAddressId = addr.id;
     showAddressModal.value = false;
 }
 
-async function createNewAddress() {
+async function createNewAddress(userId?: number) {
     try {
-        await orderStore.createAddress({ ...newAddress });
+        await orderStore.createAddress({ ...newAddress, user_id: userId });
         message.success("Адрес добавлен");
         isCreatingAddress.value = false;
         // Reset
