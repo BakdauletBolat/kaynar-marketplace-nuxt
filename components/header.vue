@@ -91,12 +91,12 @@ function openCart() {
         <nuxt-link :to="{ name: 'index' }" class="flex-shrink-0 flex items-center gap-2 group">
            <n-image preview-disabled class="w-10 h-10 rounded-lg bg-white p-0.5" alt="Logo" :src="Logo" />
            <div class="leading-none flex flex-col">
-             <span class="font-black text-2xl tracking-tighter uppercase italic group-hover:scale-105 transition-transform">KAYNAR</span>
-             <span class="text-[10px] font-medium tracking-widest opacity-80 uppercase">Marketplace</span>
+             <span class="font-black text-2xl tracking-tighter uppercase italic group-hover:scale-105 transition-transform">KAYNARAVTo</span>
+             <!-- <span class="text-[10px] font-medium tracking-widest opacity-80 uppercase">Marketplace</span> -->
            </div>
         </nuxt-link>
 
-        <!-- Catalog Button -->
+        <!-- Catalog Button
         <button 
           @click="openSidebar"
           class="flex items-center gap-2.5 px-6 py-3 rounded-xl border border-white/20 bg-white/10 hover:bg-white/20 active:bg-white/30 transition-all duration-200 backdrop-blur-sm group"
@@ -107,7 +107,7 @@ function openCart() {
              <span class="w-full h-0.5 bg-white rounded-full group-hover:w-1/2 transition-all"></span>
           </div>
           <span class="font-bold text-lg tracking-wide">Каталог</span>
-        </button>
+        </button> -->
 
         <!-- Search Bar -->
         <div class="flex-grow max-w-2xl relative z-50">

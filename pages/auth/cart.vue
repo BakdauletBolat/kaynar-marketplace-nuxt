@@ -6,7 +6,7 @@
        <div class="container mx-auto max-w-[800px] flex items-center gap-2">
            <div class="flex-1 flex flex-col justify-center cursor-pointer" @click="showAddressModal = true">
               <div class="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-                  <span>Доставка в пункт выдачи</span>
+                  <span>Адрес</span>
                   <ChevronDownIcon class="w-3 h-3" />
               </div>
               <div class="text-sm font-bold leading-tight line-clamp-1">

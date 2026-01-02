@@ -10,7 +10,7 @@
     <div 
       class="relative overflow-hidden bg-gray-100 dark:bg-gray-800 flex-shrink-0"
       :class="[
-         horizontal ? 'w-32 md:w-48 aspect-[3/4] md:aspect-square' : 'w-full aspect-[2/3]'
+         horizontal ? 'w-32 md:w-48 aspect-[3/4] md:aspect-square' : 'w-full aspect-[3/4]'
       ]"
     >
       <img

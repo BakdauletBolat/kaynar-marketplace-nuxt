@@ -2,12 +2,15 @@
   <main class="bg-light-bg dark:bg-dark-bg min-h-screen pb-24 lg:pb-12 font-sans">
     
     <!-- Mobile Header -->
-    <div class="bg-white dark:bg-dark-card border-b border-gray-100 dark:border-white/5 sticky top-0 z-30 px-4 py-3 flex items-center gap-4 transition-colors">
+     <MobileOnlyComponent>
+      <div class="bg-white dark:bg-dark-card border-b border-gray-100 dark:border-white/5 sticky top-0 z-30 px-4 py-3 flex items-center gap-4 transition-colors">
        <button @click="router.back()" class="p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition-colors lg:hidden">
          <ArrowLeftIcon class="w-6 h-6 text-gray-700 dark:text-white" />
        </button>
        <h1 class="text-xl font-bold text-light-text-main dark:text-dark-text-main">Избранное</h1>
     </div>
+     </MobileOnlyComponent>
+    
 
     <!-- Desktop Breadcrumbs -->
     <desktop-only-component>

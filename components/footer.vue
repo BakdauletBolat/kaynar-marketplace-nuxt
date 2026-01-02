@@ -50,7 +50,7 @@
           </div>
         </div>
 
-        <!-- Column 4: App -->
+        <!-- Column 4: App
         <div>
            <h3 class="text-white font-bold mb-4">Мобильное приложение</h3>
            <p class="text-xs mb-4 leading-relaxed">Скачивайте приложение, чтобы покупать товары быстрее и удобнее</p>
@@ -81,12 +81,12 @@
                  Наведите камеру,<br>чтобы скачать
               </div>
            </div>
-        </div>
+        </div> -->
 
       </div>
 
       <div class="mt-12 border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
-        <p>© 2004-{{ new Date().getFullYear() }} Kaynar Avto — модный маркетплейс одежды, обуви и аксессуаров.</p>
+        <p>© 2004-{{ new Date().getFullYear() }} Kaynar Avto</p>
         <p>Все права защищены.</p>
       </div>
     </div>

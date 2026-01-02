@@ -42,10 +42,10 @@ const userActions = [
 </script>
 
 <template>
-  <div class="flex flex-col h-full bg-white">
+  <div class="flex flex-col h-full">
     <!-- Основное меню -->
     <div class="mb-6">
-      <ul class="flex flex-col gap-4 text-base text-slate-700 font-medium">
+      <ul class="flex flex-col dark:text-dark-text-main gap-4 text-base text-slate-700 font-medium">
         <li v-for="item in menuItems" :key="item.route">
           <nuxt-link
             @click="handleNavigation"
@@ -68,7 +68,7 @@ const userActions = [
         :key="action.route"
         @click="handleNavigation"
         :to="{ name: action.route }"
-        class="flex items-center gap-4 py-2 px-1 text-slate-800 hover:bg-slate-50 rounded-lg transition-colors"
+        class="flex items-center gap-4 dark:text-dark-text-main py-2 px-1 text-slate-800 hover:bg-slate-50 rounded-lg transition-colors"
       >
         <component :is="action.icon" class="w-6 h-6 text-slate-500" />
         <span class="font-medium">{{ action.label }}</span>

@@ -407,13 +407,13 @@ useHead({
 
              <!-- Delivery Info -->
              <div class="mt-6 space-y-4 pt-6 border-t border-gray-100 dark:border-white/5">
-                <div class="flex items-start gap-3">
+                <!-- <div class="flex items-start gap-3">
                    <div class="mt-1"><TruckIcon class="w-5 h-5 text-gray-400" /></div>
                    <div>
                       <div class="text-sm font-bold text-gray-900 dark:text-white">Доставка завтра</div>
                       <div class="text-xs text-gray-500">Курьером или в пункт выдачи</div>
                    </div>
-                </div>
+                </div> -->
                 <div class="flex items-start gap-3">
                    <div class="mt-1"><CheckBadgeIcon class="w-5 h-5 text-gray-400" /></div>
                    <div>
