@@ -37,6 +37,12 @@
                    >
                 </div>
 
+                <div class="mt-4 text-center">
+                   <nuxt-link :to="{name: 'auth-forgot-password'}" class="text-gray-500 hover:text-primary font-medium text-sm transition-colors">
+                     Забыли пароль?
+                   </nuxt-link>
+                </div>
+
                 <div class="mt-6 text-center">
                    <nuxt-link :to="{name: 'auth-register'}" class="text-primary hover:text-primary-hover font-semibold text-sm transition-colors">
                      Нет аккаунта? Зарегистрироваться

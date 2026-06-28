@@ -59,6 +59,15 @@ export const useAuthStore = defineStore("auth-store", {
     async confirm(phone: string, otp: string): Promise<void> {
       return axiosInstance.post('/api/users/otp/token/', {phone, otp})
     },
+    async passwordResetRequest(phone: string): Promise<void> {
+      return axiosInstance.post('/api/users/password-reset/request/', {phone})
+    },
+    async passwordResetConfirm(phone: string, otp: string, new_password: string): Promise<void> {
+      return axiosInstance.post('/api/users/password-reset/confirm/', {phone, otp, new_password})
+    },
+    async changePassword(old_password: string, new_password: string): Promise<void> {
+      return axiosInstance.post('/api/users/change-password/', {old_password, new_password})
+    },
     async loadOrders() {
       const token = useCookie("token");
       if (!token.value) {

@@ -110,6 +110,16 @@
                <span class="text-xs text-gray-400">Профиль, адрес</span>
             </div>
          </button>
+
+         <button @click="navigateChangePassword" class="menu-tile group">
+            <div class="flex justify-between items-start w-full">
+               <span class="text-sm font-bold text-gray-700 dark:text-gray-200 group-hover:text-primary transition-colors">Сменить пароль</span>
+               <LockIcon class="w-5 h-5 text-gray-400 group-hover:text-primary transition-colors" />
+            </div>
+            <div class="w-full text-left mt-2">
+               <span class="text-xs text-gray-400">Безопасность</span>
+            </div>
+         </button>
       </div>
 
       <!-- Theme Switcher -->
@@ -163,6 +173,7 @@ import {
   CartOutline as CartIcon,
   LogOutOutline as LogOutIcon,
   SettingsOutline as SettingsIcon,
+  LockClosedOutline as LockIcon,
   SunnyOutline as SunIcon,
   MoonOutline as MoonIcon,
   PhonePortraitOutline as SystemIcon
@@ -194,6 +205,12 @@ function handlePositiveClick() {
 function navigateSettings() {
   router.push({
     name: 'auth-settings',
+  })
+}
+
+function navigateChangePassword() {
+  router.push({
+    name: 'auth-change-password',
   })
 }
 
